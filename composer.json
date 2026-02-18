@@ -1,0 +1,26 @@
+{
+    "name": "ken/search-filter-display",
+    "description": "Plugin for Wordpress that provides shortcode and configuration options for Search with Pods",
+    "type": "project",
+    "require": {
+        "php-stubs/wordpress-stubs": "^6.9",
+        "pods-framework/pods": "^3.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ken\\SearchFilterDisplay\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ken",
+            "email": "kengfx@gmail.com"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}

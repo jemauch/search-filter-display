@@ -1,0 +1,4 @@
+{
+    "$schema": "/phpactor.schema.json",
+    "worse_reflection.stub_dir": "%project_root%/vendor/php-stubs"
+}
