@@ -14,19 +14,6 @@ add_filter('rest_api_init', function() {
 });
 
 
-function getAllData($data) {
-  $pod_name = $data['pod'];
-  $id = $data['id'];
-  $pod_obj = pods($pod_name);
-  $condition = `id=${id}`;
-  $params = array('limit' => 1, 'pagination' => true, 'page' => 1, 'where' => $condition);
-  $pod_obj->find($params);
-  $result = [];
-  while ($pod_obj->fetch()) {  
-    array_push($result, $pod_obj->export());
-  }
-  return $result;
-}
 
 
 //  NOTE: key pods search function
@@ -98,11 +85,42 @@ function sfd_pods($data) {
 }
 
 
+
+
+function getAllData($data) {
+  $pod_name = $data['pod'];
+  $id = $data['id'];
+  $pod_obj = pods($pod_name);
+  $condition = "id={$id}";
+  $params = array('limit' => 1, 'pagination' => true, 'page' => 1, 'where' => $condition);
+  $pod_obj->find($params);
+  $result = [];
+
+  /* if (isset($data['termid'])) { */
+    /* $term_id = $data['termid']; */
+    /* $term_vals = pods('collectible_type', 3068); */
+    /* $terms = get_terms( array( */
+    /* 'taxonomy' => 'inventory_main_type', */
+    /* 'hide_empty' => false)); */
+    /* $result['term_vals'] = $terms; */
+  /* } */
+
+  while ($pod_obj->fetch()) {  
+    /* array_push($result, $pod_obj->total()); */
+    array_push($result, $pod_obj->export());
+  }
+  return $result;
+}
+
+
+
+
 function sfd_archive_inventory_callback( WP_REST_Request $request) {
   /* $param_list = $request->get_params(); */
   $param_list = $request->get_query_params();
-  $q = $param_list['q'];
-  $d = $param_list['d'];
+  $q = $param_list['q']; // q for query
+  $d = $param_list['d']; // d for dev
+  $t = $param_list['t']; // t for taxonomy
 
   if (isset($q['filter'])) {
     $filter = $q['filter'];
@@ -122,14 +140,19 @@ function sfd_archive_inventory_callback( WP_REST_Request $request) {
   if (isset($d['dev'])) {
     $dev = $d['dev'];
   }
+
   if ($dev == true) {
     $pod_name = 'archive_inventory';
     if (isset($d['id'])) {
       $pod_params = array('id' => $d['id'], 'pod' => $pod_name);
+      if (isset($t['termid'])) {
+        $pod_params['termid'] = $t['termid'];
+      } 
     } else {
       $pod_params = array('pod' => $pod_name);
     }
     $sfd = getAllData($pod_params);
+    $sfd['idquery'] = $d['id'];
   } else {
     $pod_name = 'archive_inventory';
     $pod_params = array(
