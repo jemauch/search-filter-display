@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Table UI: Siggraph History Archive</title>
+    <link rel="stylesheet" href="css/simpui.css">
+    <link rel="stylesheet" href="css/simpicker.css">
+    <link rel="stylesheet" href="css/filtration-buttons-style.css">
+    <link rel="stylesheet" href="css/tables.css">
+    <link rel="stylesheet" href="css/yearpicker.css">
+  </head>
+
+  <body>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script src="js/yearpicker.js"></script>
+    <script src="js/simpicker.js"></script>
+
+  <style>
+  /* icons */ 
+
+  /* debugging */
+  body {
+    background-color: #7d818a;
+  }
+
+
+  .hud-item {
+    font-family: Arial; 
+    font-size: 14px;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid aquamarine;
+    color: aquamarine;
+  }
+  
+
+  /* top gui */
+
+  .filter-badge-row {
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+  }
+
+  .filter-popup {
+    font-family: Arial; 
+    font-size: 14px;
+    padding: 8px 10px;
+    min-width: 380px;
+  }
+
+  .filter-popup-item {
+    margin: 10px 4px 0px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* Style the buttons that are used to open and close the accordion panel */
+  .accordion {
+    color: #444;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    padding: 5px;
+    width: 100%;
+    font-weight: 700;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #d9d9d9; 
+    border-radius: 0.3em;
+    outline: none;
+    transition: 0.4s;
+    height: 24px;
+    position: relative;
+  }
+
+  .accordion:hover {
+    background-color: #ededed;
+  }
+
+  .accordion:after {
+    content: url("svg/chevron-down.svg");
+    height: 100%;
+    color: #777;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    margin-left: 5px;
+  }
+
+  .accordion.active {
+    box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.15);
+    border-radius: 0.3em;
+  }
+
+  .accordion.active:after {
+    content: url("svg/chevron-up.svg");
+  }
+
+  /* Style the accordion panel. Note: hidden by default */
+  .panel {
+    display: none;
+    gap: 3px;
+    background-color: white;
+    max-height: 100vh;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+  }
+
+  .panel.active {
+    margin-top: 5px;
+    margin-bottom: 5px;
+      padding: 0px 0px 10px 5px;
+      overflow: visible;
+  }
+
+  .filter-option {
+    /* justify-content: center; */
+    align-items: center;
+    margin-left: 14px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #d9d9d9; 
+  }
+
+  .subpanel {
+    /* inactive */ 
+    display: none;
+  }
+
+  .subpanel.active {
+    display: block;
+    margin: 5px 0px;
+  }
+
+  .refine {
+    color: #65a8ff;
+    font-size: 11px;
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  .filter-close {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .more {
+  /* display: none; */
+    content: url("svg/add-r.svg");
+    filter: invert(75%);
+    margin-left: auto;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    position:absolute;
+    right:30px;
+    top: -2px;
+  }
+
+  .more.open {
+    content: url("svg/remove-r.svg");
+    display: block;
+   }
+
+  .simpui-checkbox input[type="checkbox"]:checked+.simpui-box.implicit { 
+     background: #b5b5b5;
+     border: 1px solid #b5b5b5;
+  }
+</style>
+
+<script type="text/javascript">
+  
+  const jQuery = window.jQuery;
+  function clone(el) {
+    let newNode = el.cloneNode(true);
+    newNode.classList.remove("hidden");
+    return newNode;
+  }
+
+  window.onload = function() {
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        // panel.classList.toggle("active");
+        if ($(panel).is(':visible')) {
+          $(panel).slideUp('slow');
+        } else {
+          panel.style.maxHeight = "100vh";
+          $(panel).slideDown('slow');
+        }
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+        }
+      });
+    }
+    const yearnow = new Date();
+    const thisYear = yearnow.getFullYear()
+
+    $('.yearpicker').yearpicker({
+      year: thisYear,
+      startYear: 1974,
+      endYear: thisYear,
+      template: `
+          <div class="yearpicker-container">
+            <div class="yearpicker-header">
+              <div class="yearpicker-prev" data-view="yearpicker-prev">&lsaquo;</div>
+              <div class="yearpicker-current" data-view="yearpicker-current">SelectedYear</div>
+              <div class="yearpicker-next" data-view="yearpicker-next">&rsaquo;</div>
+            </div>
+            <div class="yearpicker-body">
+              <ul class="yearpicker-year" data-view="years">
+              </ul>
+            </div>
+          </div>`
+    });
+
+  };
+</script>
+
+  <div id="corner_hud" style="background-color: #6c757d; display: flex; position: absolute; left: 0px; top: 0px; height: 65px; width: 100vw; align-items: center; justify-content: center; gap: 10px">
+  
+    <div id="mode" class="hud-item"></div>
+    <div id="pod" class="hud-item"></div>
+    <div id="filtertype" class="hud-item"></div>
+    <div id="filtercard_hidden" class="hud-item"></div>
+    <div id="perpage" class="hud-item"></div>
+    <div id="filter" class="hud-item"></div>
+    <div id="page" class="hud-item"></div>
+    <div id="query-text" class="hud-item">default</div>
+  </div>
+
+
+      <!-- original state & result objects -->  
+      <script id='results_object' type='application/json'>
+      </script>
+
+      <!-- center formatting -->
+      <div class="center" style="width: 85%; height: 100vh; margin: 0 auto; box-sizing: border-box; display: block; padding-top: 100px">
+      <section id="ui-section" data-page="1" data-filter="none" style="width: 100%">
+          <div id="toolbar" style="display: flex; flex-direction: row; border-bottom: 1px solid #bbbbbb; margin-top: 15px; padding-bottom: 3px;">
+
+            <div id="filter-wrapper" style="width: auto">
+              <div id="dropdown-layout" style="display: flex; flex-direction: row; flex-grow: 1; width: 100%; gap: 5px;">
+
+<div class="filter-card-wrapper" id="filterWrapper">
+    <div class="filter-trigger" id="filterTrigger">
+      <button id="filter-button" class="simpui-btn secondary xs" style="padding: 2px; margin: 0px;">
+        <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/filter-funnel.svg"/ >
+      </button>
+    </div>
+
+    <div class="filter-card filter-popup" id="filterCard">
+      <h4>Filter</h4>
+      <div id="inv-main-type" class="filter-popup-item">
+
+        <!-- this is the close button -->
+
+        <div id="filterClose" class="filter-close" >
+          <img decoding="async" style="filter: invert(75%); margin: 0px; height: 18px; width: 18px" src="svg/close-circle.svg"/ >
+        </div> 
+        <button class="accordion">Item Type</button>
+        <div id="type-filter-panel" class="panel">
+        </div>
+
+        <button class="accordion">Origin</button>
+        <div id="origin-filter-panel" class="panel">
+        </div>
+
+        <button class="accordion">Media</button>
+        <div id="media-filter-panel" class="panel">
+        </div>
+
+        <button class="accordion">Year</button>
+        <div id="year-filter-panel" class="panel" data-taxonomy="inventory_year">  
+          <div class="filter-option" style="display: flex; flex-direction: row; align-items: end;">
+            <div style="display: inline-block; height: fit-content;">
+              <label class="simpui-checkbox" style="gap:0.325rem">
+                <input type="checkbox" id="year-filter-cb"/>
+                  <span class="simpui-box"></span>
+              </label>
+            </div>
+            <div style="margin-left: 5px;">
+              <input id="year-filter-picker" type="text" class="simpui-input-lookonly yearpicker" style="height: 22px; width: 65px" value="" disabled>
+            </div>
+          </div>
+        </div>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: end;">
+  <div id="filterReset">
+    <button id="filter-reset" class="simpui-btn danger sm">Reset</button>
+  </div>
+  <div id="filterApply">
+    <button id="filter-apply" class="simpui-btn dark sm">Apply</button>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+</div>
+</div>
+    <!-- <div class="simpui-form-group" style="margin-left: 4px; width: 300px; height: 30px;"></div> -->
+  <div id="spacing" style="flex: grow;"></div>
+  
+  <div id="filter-badges" class="filter-badge-row">
+    <!-- <span class="simpui-badge primary" style="font-family: 'Roboto'; font-size: 14px ; height: 18px;"> -->
+    <!--     filter 1 -->
+    <!--   <button class="simpui-badge-close" aria-label="Remove">&times;</button> -->
+    <!-- </span> -->
+  </div>
+
+    <!-- <div id="spinner-layout" style="width: 28px; height: 28px; margin-left: auto; margin-right: 6px;"> -->
+    <!--   <div id="spinner" class="loader"></div></div> -->
+    <div id="results-per-page" style="width: 100px; margin-left: auto; margin-right: 0px;"><div class="simpui-dropdown-wrapper" style="height: 28px;">
+      <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
+        <div class="simpui-select-trigger" style="height: 28px;">
+          <span id="current-per-page" class="simpui-selected-text" style="height: 18px; vertical-align: middle;">25</span>
+        <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+    <div class="simpui-options" >
+        <span data-value="100" style="height: 18px;">100</span>
+        <span data-value="75" style="height: 18px;">75</span>
+        <span data-value="50" style="height: 18px;">50</span>
+        <span data-value="25" style="height: 18px;">25</span>
+        <span data-value="10" style="height: 18px;">10</span>
+    </div>
+    </div>
+    <input type="hidden" id="rpp_amt" name="rpp" style="height: 18px;" required/>
+    <div class="simpui-error" style="height: 18px;">This field is required</div>
+  </div>
+  </div>
+  
+  <div id="display" style="width: auto; margin-left: 6px; margin-right: 0px;">
+
+  <button id="list-button" class="simpui-btn secondary xs" style="padding: 2px; margin: 0px;">
+    <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/layout-list.svg"/ >
+  </button>
+  
+  <button id="grid-button" class="simpui-btn secondary xs" style="padding: 2px; margin: 0px;">
+    <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/layout-grid.svg"/ >
+  </button>
+
+  </div>
+  </div>
+
+<table id="main_table" class="unstyle table table-striped custom-table" style="margin-bottom: 0rem; table-layout: fixed; border-spacing: 0px;">
+  <colgroup>
+    <col style="width: 1.1rem; text-align: center;">
+    <col style="width: 8rem; text-align: left;">
+    <col style="width: 1.5rem; text-align: center;">
+    <col style="width: 2%;" class="align-center">
+    <col style="width: 25%;">
+    <col style="width: 1.2rem;" class="align-center">
+  </colgroup>
+  
+      <thead>
+        <tr>
+          <th>Year</th> <th style="text-align: left;">Title</th> <th>Category</th> <th></th> <th style="text-align: left;">Item Type</th> <th>Quantity</th>
+        </tr>
+      </thead>
+      
+  <tbody id="custom_search_results"><tr data-id="224371">
+          <td style="text-align: center;">2026</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2026-siggraph-2026-conference-pin/">SIGGRAPH 2026 Conference Pin</a><b></b></b></td>
+          <td style="text-align: center;">Collectible</td>
+          <td style="text-align: center;"></td>
+          <td>Pin + Button</td>
+            <td style="text-align: center;"><span class="simpui-badge subtle sm">9</span></td>
+          </tr><tr data-id="211260">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-conference-locator-2025/">SIGGRAPH 2025 Conference Locator</a><b></b></b></td>
+          <td style="text-align: center;">Publication</td>
+          <td style="text-align: center;"></td>
+          <td>Publication</td>
+            <td style="text-align: center;"><span class="simpui-badge danger sm">0</span></td>
+          </tr><tr data-id="211199">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-conference-proceedings-acm-transactions-on-graphics-2025-vol-44-no-4/">SIGGRAPH 2025 Conference Proceedings</a><b></b></b></td>
+          <td style="text-align: center;">Publication</td>
+          <td style="text-align: center;"></td>
+          <td>Publication</td>
+            <td style="text-align: center;"><span class="simpui-badge danger sm">0</span></td>
+          </tr><tr data-id="211261">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-asia-2025-conference-locator-2025/">SIGGRAPH Asia 2025 Conference Locator</a><b></b></b></td>
+          <td style="text-align: center;">Publication</td>
+          <td style="text-align: center;"></td>
+          <td>Publication</td>
+            <td style="text-align: center;"><span class="simpui-badge danger sm">0</span></td>
+          </tr><tr data-id="211181">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-asia-2025-conference-proceedings-acm-transactions-on-graphics-2025-vol-44-no-6/">SIGGRAPH Asia 2025 Conference Proceedings</a><b></b></b></td>
+          <td style="text-align: center;">Publication</td>
+          <td style="text-align: center;"></td>
+          <td>Publication</td>
+            <td style="text-align: center;"><span class="simpui-badge danger sm">0</span></td>
+          </tr><tr data-id="224368">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-siggraph-2025-bee-conference-pin/">SIGGRAPH 2025 Bee Conference Pin</a><b></b></b></td>
+          <td style="text-align: center;">Collectible</td>
+          <td style="text-align: center;"></td>
+          <td>Pin + Button</td>
+            <td style="text-align: center;"><span class="simpui-badge subtle sm">3</span></td>
+          </tr><tr data-id="224380">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-siggraph-2025-glass-mug/">SIGGRAPH 2025 Glass Mug</a><b></b></b></td>
+          <td style="text-align: center;">Drinkware</td>
+          <td style="text-align: center;"></td>
+          <td>Mug</td>
+            <td style="text-align: center;"><span class="simpui-badge subtle sm">3</span></td>
+          </tr><tr data-id="224370">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-siggraph-2025-logo-pin/">SIGGRAPH 2025 Logo Pin</a><b></b></b></td>
+          <td style="text-align: center;">Collectible</td>
+          <td style="text-align: center;"></td>
+          <td>Pin + Button</td>
+            <td style="text-align: center;"><span class="simpui-badge subtle sm">5</span></td>
+          </tr><tr data-id="224367">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-siggraph-2025-seagull-conference-pin/">SIGGRAPH 2025 Seagull Conference Pin</a><b></b></b></td>
+          <td style="text-align: center;">Collectible</td>
+          <td style="text-align: center;"></td>
+          <td>Pin + Button</td>
+            <td style="text-align: center;"><span class="simpui-badge danger sm">1</span></td>
+          </tr><tr data-id="224369">
+          <td style="text-align: center;">2025</td>
+          <td style="text-align: left;"><b><a href="http://localhost/archive-inventory/siggraph-2025-siggraph-2025-vancouver-conference-pin/">SIGGRAPH 2025 Vancouver Conference Pin</a><b></b></b></td>
+          <td style="text-align: center;">Collectible</td>
+          <td style="text-align: center;"></td>
+          <td>Pin + Button</td>
+            <td style="text-align: center;"><span class="simpui-badge subtle sm">5</span></td>
+          </tr>
+
+          </tbody>
+</table>
+<!-- <table id="main_table" class="unstyle table table-striped custom-table" style="margin-bottom: 0rem; table-layout: fixed;"> -->
+<!--   <colgroup> -->
+<!--     <col style="width: 1.1rem; text-align: center;"> -->
+<!--     <col style="width: 8rem; text-align: left;"> -->
+<!--     <col style="width: 1.5rem; text-align: center;"> -->
+<!--     <col style="width: 2%;" class="align-center"> -->
+<!--     <col style="width: 25%;"> -->
+<!--     <col style="width: 1.2rem;" class="align-center"> -->
+<!--   </colgroup> -->
+<!--   <thead id="table-header"> -->
+<!--   </thead> -->
+<!--   <tbody id="custom_search_results"> -->
+<!--   </tbody> -->
+<!-- </table> -->
+
+<div id="bottom-toolbar" style="display: flex; flex-direction: row; border-top: 1px solid #bbbbbb; margin-top: 0rem; padding-bottom: 15px;">
+  <div id="none" style="width: 30px"></div>
+  <div id="spacing" style="flex: grow;"></div>
+
+    <div id="pagination" style="width: auto; margin-left: auto; margin-right: 0px;"><div style="display:flex; flex-direction: row; align-items:center;">
+
+      <button id="goto-firstpage-button" class="simpui-btn secondary xs" style="padding: 0.11rem; margin: 5px 2px;">
+        <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/push-chevron-left.svg">
+      </button>
+
+      <button id="back-onepage-button" class="simpui-btn secondary xs" style="padding: 0.11rem; margin: 5px 2px;">
+        <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/chevron-left.svg">
+      </button>
+
+       <div id="page-counter" style="height: fit-content; width: auto; margin: 4px; color: var(--simpui-placeholder); border-bottom: 1px dotted;">
+       </div>
+
+      <button id="forward-onepage-button" class="simpui-btn secondary xs" style="padding: 0.11rem; margin: 5px 2px;">
+        <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/chevron-right.svg">
+      </button>
+
+      <button id="goto-lastpage-button" class="simpui-btn secondary xs" style="padding: 0.11rem; margin: 5px 2px;">
+        <img decoding="async" style="filter: invert(100%); margin: 0px" src="svg/push-chevron-right.svg">
+      </button>
+
+      </div>
+      </div>
+      </div>
+
+
+      <div id="filter-test-display">
+        </div>
+
+      <div id="url-query-display" style="color: white;">
+        </div>
+
+    </div> 
+    <!-- end of center -->
+
+                <div id="generic-dropdown" class="simpui-dropdown-wrapper hidden" style="height: 28px;">
+                  <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
+                    <div class="simpui-select-trigger" style="height: 28px;">
+                      <span id="current-filter-generic" class="simpui-selected-text" style="min-width: 80px; height: 18px; vertical-align: middle;">View All</span>
+                      <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <div id="filter-generic-options" class="simpui-options">
+                      <span data-term="0" style="height: 18px;">----</span>
+                      <span data-term="0" style="height: 18px;">Any</span>
+                      <span data-term="17271" style="height: 18px;">Other</span>
+                    </div>
+                  </div>
+                  <input type="hidden" id="filter-generic" name="filter-generic" style="height: 18px;" required/>
+                  <div class="simpui-error" style="height: 18px;">This field is required</div>
+                </div>
+
+
+
+
+
+
+        <!-- panel items 
+          <div class="filter-option" style="display: flex; flex-direction: row;">
+          <label class="simpui-checkbox" style="gap:0.325rem">
+            <input type="checkbox" id="17269" required/><span class="simpui-box"></span><span class="simpui-checkbox-label">
+              Collectibles</span></label><div class="amt">(82)</div><div class="refine">more...</div>
+          </div>
+
+          <div class="filter-option" style="display: flex; flex-direction: row;">
+          <label class="simpui-checkbox" style="gap:0.325rem">
+            <input type="checkbox" id="17270" required/><span class="simpui-box"></span><span class="simpui-checkbox-label">
+            Publications</span></label>
+          </div>
+          
+          <div class="filter-option" style="display: flex; flex-direction: row;">
+          <label class="simpui-checkbox" style="gap:0.325rem">
+            <input type="checkbox" id="17271" required/><span class="simpui-box"></span><span class="simpui-checkbox-label">
+            Other</span></label>
+          </div>
+        -->
+    
+    <script src="js/simpui.js"></script>
+    <script src="js/state-man.js"></script>
+    <script src="js/initial-load.js"></script>
+  </body>
+</html>

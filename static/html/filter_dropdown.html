@@ -1,20 +1,74 @@
-<div class="simpui-dropdown-wrapper" style="height: 28px;">
-    <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
-        <div class="simpui-select-trigger" style="height: 28px;">
-          <span id="current-filter" class="simpui-selected-text" style="height: 24px; vertical-align: middle;">[default]</span>
-            <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
-                <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="simpui-options" >
-            <span data-value="View All" style="height: 24px;">View All</span>
-            <span data-value="Collectible" style="height: 24px;">Collectibles</span>
-            <span data-value="Publications" style="height: 24px;">Publications</span>
-            <span data-value="Other" style="height: 24px;">Other</span>
-        </div>
-    </div>
-    <input type="hidden" id="filter-opt" name="rpp" style="height: 24px;" required/>
-    <div class="simpui-error" style="height: 24px;">This field is required</div>
-</div>
+<div id="dropdown-layout" style="display: flex; flex-direction: row; flex-grow: 1; width: 100%; gap: 5px;">
 
+  <div id="dropdown-group-level-01" class="simpui-dropdown-wrapper" style="height: 28px;">
+      <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
+          <div class="simpui-select-trigger" style="height: 28px;">
+            <span id="current-filter-level-01" class="simpui-selected-text" style="min-width: 80px; height: 24px; vertical-align: middle;">[default]</span>
+              <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
+          <div id="filter-level-01" class="simpui-options">
+              <span data-term="0" style="height: 24px;">View All</span>
+              <span data-term="17269" style="height: 24px;">Collectibles</span>
+              <span data-term="17270" style="height: 24px;">Publications</span>
+              <span data-term="17271" style="height: 24px;">Other</span>
+          </div>
+      </div>
+      <input type="hidden" id="filter-opt-level-01" name="filter-opt-level-01" style="height: 24px;" required/>
+      <div class="simpui-error" style="height: 24px;">This field is required</div>
+  </div>
+
+  <div id="dropdown-group-level-02"  class="simpui-dropdown-wrapper" style="display: none; height: 28px;">
+      <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
+          <div class="simpui-select-trigger" style="height: 28px;">
+            <span id="current-filter-level-02" class="simpui-selected-text" style="min-width: 80px; height: 24px; vertical-align: middle;">View All</span>
+              <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
+          <div id="filter-level-02" class="simpui-options">
+              <span data-term="0" style="height: 24px;">View All</span>
+              <span data-term="17271" style="height: 24px;">Other</span>
+          </div>
+      </div>
+      <input type="hidden" id="filter-opt-level-02" name="filter-opt-level-02" style="height: 24px;" required/>
+      <div class="simpui-error" style="height: 24px;">This field is required</div>
+  </div>
+
+  <div id="dropdown-group-level-03"  class="simpui-dropdown-wrapper" style="display: none; height: 28px;">
+      <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
+          <div class="simpui-select-trigger" style="height: 28px;">
+            <span id="current-filter-level-03" class="simpui-selected-text" style="min-width: 80px; height: 24px; vertical-align: middle;">View All</span>
+              <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
+          <div id="filter-level-03" class="simpui-options">
+              <span data-term="0" style="height: 24px;">View All</span>
+              <span data-term="17271" style="height: 24px;">Other</span>
+          </div>
+      </div>
+      <input type="hidden" id="filter-opt-level-03" name="filter-opt-level-03" style="height: 24px;" required/>
+      <div class="simpui-error" style="height: 24px;">This field is required</div>
+  </div>
+  
+  <div id="dropdown-group-level-04" class="simpui-dropdown-wrapper" style="display: none; height: 28px;">
+      <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
+          <div class="simpui-select-trigger" style="height: 28px;">
+            <span id="current-filter-level-04" class="simpui-selected-text" style="min-width: 80px; height: 24px; vertical-align: middle;">View All</span>
+              <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+          </div>
+          <div id="filter-level-04" class="simpui-options">
+              <span data-term="0" style="height: 24px;">View All</span>
+              <span data-term="17271" style="height: 24px;">Other</span>
+          </div>
+      </div>
+      <input type="hidden" id="filter-opt-level-04" name="filter-opt-level-04" style="height: 24px;" required/>
+      <div class="simpui-error" style="height: 24px;">This field is required</div>
+  </div>
+
+</div>
 

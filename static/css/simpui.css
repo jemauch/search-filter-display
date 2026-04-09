@@ -1,6 +1,7 @@
 /*!
  * SimpUI CSS: A simple UI component css library
- * Author: A. M. Reasad Azim Bappy
+ * Author: A. M. Reasad Azi
+ * Bappy
  * License: GPL-3.0
  * Version: 1.0
  */
@@ -102,6 +103,26 @@
 
 
 /* Inputs */
+.simpui-input-lookonly {
+    width: 100%;
+    padding: 10px 15px 10px 15px;
+    font-size: 14px;
+    border: 1px solid var(--simpui-input-border);
+    border-radius: 0.5rem;
+    background: var(--simpui-bg);
+    color: var(--simpui-text-dim);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+.simpui-input-lookonly:disabled {
+    background-color: lightgray;
+    color: gray;
+}
+.simpui-input-lookonly:focus {
+    outline: none;
+    border-color: var(--simpui-focus);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.10);
+}
 
 .simpui-input,
 .simpui-textarea {
@@ -1368,6 +1389,68 @@
 .simpui-multimodal-body::-webkit-scrollbar-thumb {
     background: var(--simpui-input-border);
     border-radius: 4px;
+}
+
+/* filter Card */
+
+.filter-card-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-trigger {
+    /*  add css if necessary  */
+}
+
+.filter-trigger:filter {
+    /*  add css if necessary  */
+}
+
+.filter-card {
+    position: absolute;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    padding: 16px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    white-space: normal;
+}
+
+.filter-card.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(5px);
+}
+
+.filter-card.left-adjust {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(5px);
+}
+
+.filter-card.right-adjust {
+    left: 0;
+    transform: translateX(0) translateY(5px);
+}
+
+.filter-card h4 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.filter-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #4b5563;
 }
 
 

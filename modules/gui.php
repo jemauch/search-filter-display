@@ -42,7 +42,7 @@ function make_button($src_icon, $b_id, $style_arr = null) {
 }
 
 
-// FUNC: Generate user interface
+// Generate SPA GUI
 function search_filter_gui ($atts) {
 
 
@@ -50,21 +50,22 @@ function search_filter_gui ($atts) {
   $json_encoded_atts = json_encode($atts);
   $json_state_obj = "<script id='state_object' type='application/json'>$json_encoded_atts</script>";
   $json_results_obj = "<script id='results_object' type='application/json'></script>";
+  $json_terms_obj = "<script id='terms_object' type='application/json'></script>";
 
   // -------------------------------------------------------------------- load the button component ----
   $button_url = THIS_PLUGIN_PATH . "/static/html/button.html";
   $button = file_get_contents("$button_url");
 
   // ------------------------------------------------------------------ if the filter option is yes ----
-  $filter_url = THIS_PLUGIN_PATH . "/static/html/filter_dropdown.html";
-  if ($atts['filter'] == "true") {
-    $filter_button = make_button("/static/svg/filter-funnel.svg", "filter");
-    $filter_dropdown = file_get_contents("$filter_url");
-    $filter_dropdown = preg_replace("/\[default\]/", "View All",$filter_dropdown);
+  /* $filter_url = THIS_PLUGIN_PATH . "/static/html/filter_dropdown.html"; */
+  /* if ($atts['filter'] == "true") { */
+  $filter_button = make_button("/static/svg/filter-funnel.svg", "filter");
+  /* $filter_dropdown = file_get_contents("$filter_url"); */
+    /* $filter_dropdown = preg_replace("/\[default\]/", "View All",$filter_dropdown); */
 
-  } else {
-    $filter_button = "";
-  }
+  /* } else { */
+    /* $filter_button = ""; */
+  /* } */
 
   // ------------------------------------------------------------------------- if search is enabled ----
   if ($atts['search'] == "true") {
@@ -110,9 +111,10 @@ function search_filter_gui ($atts) {
   $bottombar_url = THIS_PLUGIN_PATH . "/static/html/bottombar.html";
   $bottombar = file_get_contents("$bottombar_url");
   $bottombar = preg_replace("/\[pagination\]/", "$page_buttons", $bottombar);
-
   // ------------------------------------------------------------------- compile the gui /static/html ----
-  $tempA = preg_replace("/\[filter\]/", "$filter_dropdown", $container);
+  $filter_icon = THIS_PLUGIN_URL . "/static/svg/filter-funnel.svg";
+
+  $tempA = preg_replace("/\[filter\]/", "$filter_icon", $container);
   $tempB = preg_replace("/\[search\]/", "$search_bar", $tempA);
   $tempC = preg_replace("/\[result_per_page\]/", "$rpp", $tempB);
   $topbar_gui_compiled = preg_replace("/\[display_buttons\]/", "$list_button$grid_button", $tempC);
@@ -129,10 +131,27 @@ function search_filter_gui ($atts) {
   $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js';
   $js_REST_inject = preg_replace("/\[state\]/", $js_REST_url, $js_REST_template);
 
-
+  $debug_hud = `
+    <div id="corner_hud" style="background-color: #6c757d; display: flex; position: absolute; left: 0px; top: 0px; height: 65px; width: 100vw; align-items: center; justify-content: center; gap: 10px">
+    <div id="mode" class="hud-item"></div>
+    <div id="pod" class="hud-item"></div>
+    <div id="filtertype" class="hud-item"></div>
+    <div id="filtercard_hidden" class="hud-item"></div>
+    <div id="perpage" class="hud-item"></div>
+    <div id="filter" class="hud-item"></div>
+    <div id="page" class="hud-item"></div>
+    <div id="query-text" class="hud-item">default</div>
+    </div>`;
   // ------------------------------------------------------------------- return value from function ----
-  return $json_state_obj . $json_results_obj . $topbar_gui_compiled . $table . $grid_content . $bottombar . $section_cap . $js_REST_inject;
+  return $json_state_obj . $json_results_obj . $debug_hud . $topbar_gui_compiled . $table . $grid_content . $bottombar . $section_cap . $js_REST_inject;
 }
+
+
+
+
+
+
+
 
 
 

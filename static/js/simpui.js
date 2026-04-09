@@ -190,9 +190,11 @@ document.addEventListener("DOMContentLoaded", () => {
         options.forEach(option => {
             option.addEventListener("click", () => {
                 const value = option.getAttribute("data-value");
+                const term = option.getAttribute("data-term");
                 const label = option.textContent.trim();
 
-                hiddenInput.value = value;
+                hiddenInput.setAttribute("value", term);
+                selectedText.setAttribute("value", term);
                 selectedText.textContent = label;
                 selectedText.dispatchEvent(dropDownEvent);
                 // Live remove has-error if valid
@@ -686,6 +688,77 @@ if (trigger && card) {
     window.addEventListener("resize", adjustHoverCardPosition);
 }
 
+
+
+// FilterCard
+const filter_trigger = document.getElementById("filterTrigger");
+const filter_close = document.getElementById("filterClose");
+const filter_reset = document.getElementById("filterReset");
+const filter_apply = document.getElementById("filterApply");
+const filter_card = document.getElementById("filterCard");
+const filter_wrapper = document.getElementById("filterWrapper");
+
+function adjustFilterCardPosition() {
+    if (!filter_trigger || !filter_card) return;
+
+    const cardRect = filter_card.getBoundingClientRect();
+    const triggerRect = filter_trigger.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+
+    // Reset adjustments
+    filter_card.classList.remove("left-adjust", "right-adjust");
+
+    // Check if card will overflow on the right
+    if (triggerRect.left + filter_card.offsetWidth / 2 > viewportWidth) {
+        filter_card.classList.add("left-adjust"); // move it to the left
+    }
+    // Check if card will overflow on the left
+    else if (triggerRect.left - filter_card.offsetWidth / 2 < 0) {
+        filter_card.classList.add("right-adjust"); // move it to the right
+    }
+}
+
+// Only attach listeners if elements exist
+if (filter_trigger && filter_card) {
+    filter_trigger.addEventListener("click", () => {
+        if (filter_card.classList.contains("visible")) {
+          filter_card.classList.remove("visible");
+        } else {
+          filter_card.classList.add("visible");
+          adjustFilterCardPosition();
+        }
+    });
+if (filter_close) {
+    filter_close.addEventListener("click", () => {
+      filter_card.classList.remove("visible");
+    });
+}
+if (filter_reset) {
+    filter_reset.addEventListener("click", () => {
+      filter_card.classList.remove("visible");
+    });
+}
+if (filter_apply) {
+    filter_apply.addEventListener("click", () => {
+      filter_card.classList.remove("visible");
+    });
+}
+
+    // trigger.addEventListener("mouseleave", () => {
+        // card.classList.remove("visible");
+    // });
+
+    filter_card.addEventListener("click", () => {
+        // filter_card.classList.add("visible");
+        // console.log('clicked');
+    });
+
+    // card.addEventListener("mouseleave", () => {
+        // card.classList.remove("visible");
+    // });
+
+    window.addEventListener("resize", adjustFilterCardPosition);
+}
 
 
 

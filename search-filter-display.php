@@ -2,25 +2,24 @@
 /*
 Plugin Name:	Search Filter Display..
 Plugin URI:
-Description:	Heavily customizable search and filtration options per page via WP shortcodes. <a href="#"> "Sed ut perspiciatis </a> unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa?"
+Description:	Heavily customizable search and filtration options per page via WP shortcodes. 
 Version:		0.5.1
 Author:			Ken Stewart
 Author URI:		https:/kenstewart.ca
 License:		MIT
  */
 
+
+
+
 /* require 'modules/helpers.php'; */
 require 'modules/rest_query.php';
 require 'modules/gui.php';
 
-// DEF: All the global functions
-// ------------------------------
 
 
-
-
-// FUNC: function to disable caching, tag with context and attach endpoint lookup
-// ------------------------------------------------------------------------------
+// Function to disable caching, tag with context and attach endpoint lookup
+// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 add_action( 'wp_head', 'search_filter_display_head' );
 function search_filter_display_head() {
   if( is_single() ) {
@@ -35,8 +34,8 @@ function search_filter_display_head() {
 
 
 
-// FUNC: Dependencies injected into the header
-// -------------------------------------------
+// Dependencies injected into the header
+// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 function inject_header_content() {
   if ( is_page('inventory-view-all') ) {
 
@@ -44,10 +43,17 @@ function inject_header_content() {
     $tables_css = plugins_url( '/static/css/tables.css', __FILE__ );
     $simpui_css = plugins_url( '/static/css/simpui.css', __FILE__ );
     $simpui_js  = plugins_url( '/static/js/simpui.js', __FILE__);
+    $stateman_js  = plugins_url( '/static/js/state-man.js', __FILE__);
+    $initialload_js  = plugins_url( '/static/js/initial-load.js', __FILE__);
+    $yearpicker_js  = plugins_url( '/static/js/yearpicker.js', __FILE__);
+    
     /* $rest_handler_js  = plugins_url( '/static/js/rest-handler.js', __FILE__); */
     wp_enqueue_style('sfd-css', $tables_css, [], null);
     wp_enqueue_style('sfd-simpui-css', $simpui_css, [], null);
     wp_enqueue_script('sfd-simpui-js', $simpui_js, ['jquery'], null, true);
+    wp_enqueue_script('sfd-stateman-js', $stateman_js, ['jquery'], null, true);
+    wp_enqueue_script('sfd-initialload-js', $initialload_js, ['jquery'], null, true);
+    wp_enqueue_script('sfd-yearpicker-js', $yearpicker_js, ['jquery'], null, true);
     /* wp_enqueue_script('sfd-rest-handler-js', $rest_handler_js, ['jquery'], null, true); */
   }
 }

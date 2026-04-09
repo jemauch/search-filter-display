@@ -3,127 +3,58 @@
 /* require 'helpers.php'; */
 
 
-//  NOTE: full custom endpoint
-
+// REST api 'GET' method
 add_filter('rest_api_init', function() {
   register_rest_route('/sfd/v1', '/archive_inventory/', array(
     'methods' => 'GET',
     'callback' => 'sfd_archive_inventory_callback',
   ));
+});
 
+// REST api 'POST' method
+add_filter('rest_api_init', function() {
+  register_rest_route('/sfd/v1', '/archive_inventory/', array(
+    'methods' => 'POST',
+    'callback' => 'sfd_inventory_filter_callback',
+  ));
 });
 
 
+// POST callback for filtering in the SPA
+function sfd_inventory_filter_callback( WP_REST_Request $request) {
 
-
-//  NOTE: key pods search function
-function sfd_pods($data) {
-  $pod_name = $data['pod'];
-  $limit = $data['limit'] ?? 10;
-  $pagin = true;
-  $current_page = $data['page'];
-  $orderby = $data['orderby'] . " " . $data['order'];
-  if (isset($data['filter'])) {
-    $flt_arr = explode(",", $data['filter']);
-    $filter_where = "$flt_arr[0]=$flt_arr[1]";
-    $params = array('limit' => $limit, 'pagination' => $pagin, 'page' => $current_page, 'orderby' => $orderby, 'where' => $filter_where);
-  } else {
-    $params = array('limit' => $limit, 'pagination' => $pagin, 'page' => $current_page, 'orderby' => $orderby);
-  }
-  $pod_obj = pods($pod_name);
-  $pod_obj->find($params);
-  $total_records = $pod_obj->total_found();
-  $proc = [];
-
-  if ($total_records != 0) {
-    $total_pages = $total_records/$limit;
-    $total_pages = (int) $total_pages;
-  } else {
-    $total_pages = 'unknown';
-  }
-
-  while ($pod_obj->fetch()){
-
-    $item_category = $pod_obj->field('inventory_item_main_type.name');
-    if ($item_category == "Collectible") {
-        $item_type = $pod_obj->display('inventory_collectible_type.name');
-        $subtype = $pod_obj->display('inventory_collectible_subtype.name');
-    } elseif ($item_category == "Publication") {
-        $item_type = $pod_obj->display('inventory_publication_type.name');
-        $subtype = $pod_obj->display('inventory_publication_subtype.name');
-    } else {
-      $item_type = "";
-      $subtype = "";
-    }
-    $id = $pod_obj->field('id');
-    $donated_by = $pod_obj->field('inventory_donated_by');
-    $link = $pod_obj->field('permalink');
-    $item = [
-      "id" => $id,
-      "url" => esc_url($link), 
-      "year" => $pod_obj->display('inventory_year'),
-      "title" => $pod_obj->field('inventory_title'),
-      "sub_type" => $subtype,
-      "cat_type" => $pod_obj->field('inventory_item_main_type.name'),
-      "cat_id" => $pod_obj->field('inventory_item_main_type.term_id'),
-      "volume" => $pod_obj->display('inventory_volume_raw'),
-      "number" => $pod_obj->display('inventory_number_raw'),
-      "type" => $item_type,
-      "quantity" => $pod_obj->field('inventory_total_number_of_item'),
-      "image" => $pod_obj->display('inventory_featured_image.guid'),
-    ];
-    array_push($proc, $item);
-  }
-  $results = [
-    "entries" => $proc,
-    "total_found" => $total_records,
-    "filtered_by" => $filter_where,
-    "pages" => $total_pages
-  ];
-
-  return $results;
+  $param_list = $request->get_query_params();
+  $data = file_get_contents('php://input');
+  $json = json_decode($data, true);
+  /* $data = array( 'some', 'response', 'data'); */
+  /* var_dump($request); */
+  $response = new WP_REST_Response($json);
+  /* $response->header('X-WP-Total', "100000"); */
+  return $response;
 }
 
 
 
 
-function getAllData($data) {
-  $pod_name = $data['pod'];
-  $id = $data['id'];
-  $pod_obj = pods($pod_name);
-  $condition = "id={$id}";
-  $params = array('limit' => 1, 'pagination' => true, 'page' => 1, 'where' => $condition);
-  $pod_obj->find($params);
-  $result = [];
-
-  /* if (isset($data['termid'])) { */
-    /* $term_id = $data['termid']; */
-    /* $term_vals = pods('collectible_type', 3068); */
-    /* $terms = get_terms( array( */
-    /* 'taxonomy' => 'inventory_main_type', */
-    /* 'hide_empty' => false)); */
-    /* $result['term_vals'] = $terms; */
-  /* } */
-
-  while ($pod_obj->fetch()) {  
-    /* array_push($result, $pod_obj->total()); */
-    array_push($result, $pod_obj->export());
-  }
-  return $result;
-}
-
-
-
+/**
+  * sfd_archive_inventory_callback( WP_REST_Request $request)
+  * ---
+  * Callback for GET Queries with the REST API. Handles the parameters and
+  * hands off to the appropriate function. Sort of like directing traffic.
+  * @param   {Named Array}      $id       - params from user or default
+  * @returns {WP_REST_Response} $response - pods entries
+  */
 
 function sfd_archive_inventory_callback( WP_REST_Request $request) {
-  /* $param_list = $request->get_params(); */
+   // Sample url encode: q[filter]=inventory_main_type.term_id,12769
   $param_list = $request->get_query_params();
-  $q = $param_list['q']; // q for query
-  $d = $param_list['d']; // d for dev
-  $t = $param_list['t']; // t for taxonomy
+  $q = $param_list['q'] ?? null; // q for query
 
   if (isset($q['filter'])) {
     $filter = $q['filter'];
+  }
+  if (isset($q['childof'])) {
+    $childof = $q['childof'];
   }
   if (isset($q['orderby'])) {
     $orderby = $q['orderby'];
@@ -137,38 +68,429 @@ function sfd_archive_inventory_callback( WP_REST_Request $request) {
   if (isset($q['order'])) {
     $order = $q['order'];
   }
-  if (isset($d['dev'])) {
-    $dev = $d['dev'];
+  // setting $tax allows taxonomy and terms lookup to be queried up front
+  if (isset($q['taxonomy'])) {
+    $tax = $q['taxonomy'];
   }
 
-  if ($dev == true) {
+  // taxonomy and terms query
+  if (isset($tax)) {
     $pod_name = 'archive_inventory';
-    if (isset($d['id'])) {
-      $pod_params = array('id' => $d['id'], 'pod' => $pod_name);
-      if (isset($t['termid'])) {
-        $pod_params['termid'] = $t['termid'];
-      } 
-    } else {
-      $pod_params = array('pod' => $pod_name);
-    }
-    $sfd = getAllData($pod_params);
-    $sfd['idquery'] = $d['id'];
+    $pod_params = array(
+      'pod' => $pod_name, 
+      'taxonomy' => $tax
+    );
+
+    $sfd = getTermHierarchy($pod_params);
+    $response = new WP_REST_Response($sfd, 200);
+
   } else {
+    // default query returning everything / view all
+    
     $pod_name = 'archive_inventory';
     $pod_params = array(
       'pod' => $pod_name,
-      'filter' => $filter,
-      'orderby' => $orderby,
+      'filter' => $filter ?? null,
+      'orderby' => $orderby ?? null,
       'order' => $order ?? 'DESC',
-      'limit' => $limit,
+      'limit' => $limit ?? null,
       'page' => $page ?? '1');
+    if (isset($childof)) {
+      $pod_params['childof'] = $childof;
+    }
     $sfd = sfd_pods($pod_params);
+    $response = new WP_REST_Response($sfd, 200);
+    $response->header('X-WP-Total', $sfd['total_found']);
+    $response->header('X-WP-Totalpages', $sfd['pages']);
   }
-  $response = new WP_REST_Response($sfd, 200);
-  $response->header('X-WP-Total', $sfd['total_found']);
-  $response->header('X-WP-Totalpages', $sfd['pages']);
   return $response;
 }
+
+
+
+/**
+  * function sfd_pods($data)
+  * ---
+  * Function queries the DB for pods items matching the parameters given
+  * @param   {Named Array}      $data    - params from user or default
+  * @returns {WP_REST_Response} $results - pods entries
+  */
+
+function sfd_pods($data) {
+
+  $pod_name = $data['pod'];
+  $limit = $data['limit'] ?? 10;
+  $pagin = true;
+  $current_page = $data['page'];
+  $orderby = $data['orderby'] . " " . $data['order'];
+
+  if (isset($data['filter'])) {
+    $flt_arr = explode(",", $data['filter']);
+    $filter_where = "$flt_arr[0]=$flt_arr[1]";
+    $params = array(
+      'limit' => $limit, 
+      'pagination' => $pagin,
+      'page' => $current_page, 
+      'orderby' => $orderby,
+      'where' => $filter_where
+    );
+    /* var_dump($params); */
+  } else {
+    $params = array(
+      'limit' => $limit, 
+      'pagination' => $pagin, 
+      'page' => $current_page, 
+      'orderby' => $orderby
+    );
+  }
+  /* if (isset($data['childof'])) { */
+  /*   $childof = $data['childof']; */
+  /*   $children = get_term_children($childof, 'inventory_main_type'); */
+  /*   $child_ids = join("','", $children); */
+  /*   $params['where'] = "inventory_item_main_type.term_id IN ('$child_ids')"; */
+  /* } */
+
+  $pod_obj = pods($pod_name);
+  $pod_obj->find($params);
+
+  $total_records = $pod_obj->total_found();
+  $proc = [];
+
+  if ($total_records != 0) {
+    $total_pages = $total_records/$limit;
+    $total_pages = (int) $total_pages;
+  } else {
+    $total_pages = 'unknown';
+  }
+
+  while ($pod_obj->fetch()) {
+    $id = $pod_obj->field('id');
+    $donated_by = $pod_obj->field('inventory_donated_by');
+    $link = $pod_obj->field('permalink');
+    $item = [
+      "id" => $id,
+      /* "all" => $pod_obj->export(), */
+      "url" => esc_url($link), 
+      "year" => $pod_obj->display('inventory_year'),
+      "title" => $pod_obj->field('inventory_title'),
+      "item_main_type" => $pod_obj->field('inventory_item_main_type.term_id'),
+      "item_type_id" => $pod_obj->display('inventory_item_main_type.term_id'),
+      "parent_type_id" => $pod_obj->display('inventory_item_main_type.parent'),
+      "volume" => $pod_obj->display('inventory_volume_raw'),
+      "number" => $pod_obj->display('inventory_number_raw'),
+      "quantity" => $pod_obj->field('inventory_total_number_of_item'),
+      "image" => $pod_obj->display('inventory_featured_image.guid'),
+    ];
+    array_push($proc, $item);
+  }
+
+  // this is the part that gets the terms and lookup 
+  $tax_attr = [];
+  $hierarchy = _get_term_hierarchy('inventory_main_type');
+  $tax_attr['taxonomy'] = 'inventory_main_type';
+  $tax_attr['lookup'] = true;
+  $term_lookup = createLookup($tax_attr);
+  $results = [
+    "entries" => $proc,
+    "total_found" => $total_records,
+    "pages" => $total_pages,
+    "hierarchy" => $hierarchy, 
+    "lookup" => $term_lookup,
+    "params" => $params];
+  if (isset($children)) {
+    $results['children'] = $children;
+  }
+  if (isset($childof)) {
+    $results['parent'] = $childof;
+  }
+  return $results;
+}
+
+
+
+
+
+// self-explanatory helper functions
+// ----------------------------------------------------
+// provide an entry id to identify the taxonomy term_id
+function getTermById($term_id) {
+  $term = get_term($term_id);
+  return $term;
+}
+
+// provide a term_id to identify the taxonomy
+function getTaxByTermId($term_id) {
+  $term = get_term($term_id);
+  $taxonomy = get_taxonomy($term->taxonomy);
+  return $taxonomy;
+}
+
+// provide the child id to get the direct parent entry
+function getParentObj($child_id) {
+  $child_term = get_term($child_id);
+  $parent_id = $child_term->parent;
+  $parent_obj = get_term($parent_id);
+  return $parent_obj;
+}
+
+// provide child id to find parent entry name
+function getParentName($child_id) {
+  $parent_name = getParentObj($child_id)->name;
+  return $parent_name;
+}
+
+// recursive traversal up heirarchy
+function getHierarchyById($id, &$store) {
+  $term = get_term($id);
+  $obj = array( 
+    'name' => $term->name,
+    'term_id' => $term->term_id,
+    'parent_id' => $term->parent);
+  $pid = $obj['parent_id'];
+  array_push($store, $obj);
+  
+  if ($pid === 0) {
+    return $store;
+  } else {
+    getHierarchyById($pid, $store);
+  }
+}
+
+// query whether child is child of parent
+function is_ancestor($child_term_id, $anc_term_id) {
+  $term = get_term($child_term_id);
+  if ($term.parent === $anc_term_id) {
+    return true;
+  } elseif (!($term.parent === 0)) {
+    is_ancestor($term.parent, $anc_term_id);   
+  } else {
+    return false;
+  }
+}
+
+
+
+
+// get all terms from a specific taxonomy
+function getAllTerms($data) {
+  $results = [];
+  /* var_dump($data); */
+  $terms = get_terms(array(
+      'taxonomy' => $data['taxonomy'],
+      'hide_empty' => false));
+  // taxonomy search
+  if (isset($data['fields'])) {
+    // more than one supplied field
+    $all_fields = $data['fields'];
+    /* var_dump($all_fields); */
+    $i = 0;
+    if (substr_count($all_fields, ",") > 0) {
+      $fields_arr = explode(",", $all_fields);
+      /* var_dump($fields_arr); */
+      foreach ($terms as $term) {
+        $temp_arr = [];
+        foreach ($fields_arr as $field) {
+          $temp_arr[$field] = $term->$field;
+          /* array_push($temp_arr, $temp); */
+        }
+        array_push($results, $temp_arr);
+        } // end of condition-met loop
+    } else {
+      // only one supplied field
+      $field = $all_fields;
+      foreach ($terms as $term_item) {
+        $results[$i] = $term_item->$field;
+        $i = $i + 1;
+      }
+    } // end of else loop
+  } else {
+    // all fields
+    $results = $terms;
+  }
+  /* return getTaxByTermId(17417); */
+  return $results;
+}
+
+
+// process WP_REST_Response to Array
+function resultsProcToArr($data) {
+  $newarr = [];
+  foreach($data as $record) {
+    $newarr[] = $record->to_array();
+  }
+  return $newarr;
+  }
+
+
+// process returned Array data into bare-bones 
+function stripData($data) {
+  $newarr = [];
+  foreach($data as $record) {
+    $new_record = array(
+      'name' => $record['name'],
+      'term_id' => $record['term_id'],
+      'slug' => $record['slug'],
+      'parent' => $record['parent'] );
+    $newarr[] = $new_record;
+  }
+  return $newarr;
+}
+
+
+// returns a hierarchical search object that conveys item lineage
+function getSearchObject($data) {
+  $raw = getAllTerms($data);
+  // NOTE: $raw array of WP_TERM objects
+    
+  $term_array = resultsProcToArr($raw);
+  $cleaned = stripData($term_array); 
+  $top_level = [];
+  
+  $root_parents = getChildren($cleaned, 0);
+  foreach($root_parents as &$root_parent) {
+    $children = getChildren($cleaned, $root_parent['term_id']);
+    foreach($children as &$child) {
+      $grandchildren = getChildren($cleaned, $child['term_id']);
+      foreach($grandchildren as &$grandchild) {
+        $greatgrandchildren = getChildren($cleaned, $grandchild['term_id']);
+        $grandchild['children'] = $greatgrandchildren;
+      }
+      $child['children'] = $grandchildren;
+    }
+    $root_parent['children'] = $children;
+  }
+
+  return $root_parents;
+  /* return $cleaned; */
+}
+  
+// returns all children of a specified parent id
+function getChildren($all_items, $parent_id) {
+  $child_arr = [];
+  foreach($all_items as $item) {
+    if ($item['parent'] == $parent_id) {
+      $child_arr[] = $item;
+    } 
+  }
+  return $child_arr;
+}
+
+
+// pulls alot of unconstrained pods information 
+function getAllData($data) {
+  $pod_name = $data['pod'];
+  $pod_obj = pods($pod_name);
+  if (isset($data['id'])) {
+    $id = $data['id'];
+    $condition = "id={$id}";
+  $params = array('limit' => 1, 'pagination' => true, 'page' => 1, 'where' => $condition);
+  }
+  $pod_obj->find($params);
+  $result = [];
+  while ($pod_obj->fetch()) {  
+    array_push($result, $pod_obj->export());
+  }
+  return $result;
+}
+
+
+/**
+ * This function build a map of id codes to names.
+ * Expects an array where keys 'taxonomy' is set to the item,
+ * and 'lookup' is set to true.
+ *
+ * @param array $atts Arguments passed from main call.
+ * @return array Returns a key value array mapping of term ids to term names.
+ *
+ */
+function createLookup($atts) {
+  $raw = getAllTerms($atts);
+  $term_array = resultsProcToArr($raw);
+  $newarr = [];
+  foreach($term_array as $record) {
+    $newarr[$record['term_id']] = $record['name'];
+  }
+  return $newarr;
+}
+
+
+
+function sfd_childof($data) {
+  $pod_name = $data['pod'];
+  $limit = $data['limit'] ?? 10;
+  if (isset($data['childof'])) {
+    $childof = $data['childof'];
+    $children = get_term_children($childof, 'inventory_main_type');
+    $child_ids = join("','", $children);
+    $params = array('limit' => $limit, 'where' => "inventory_item_main_type.term_id IN ('$child_ids')");
+  }
+  $pod_obj = pods($pod_name);
+  $pod_obj->find($params);
+  $proc = [];
+
+  while ($pod_obj->fetch()) {
+    $id = $pod_obj->field('id');
+    $term_id = $pod_obj->display('inventory_main_type.term_id');
+    $item = [
+      "id" => $id,
+      "term_id" => $term_id,
+      "title" => $pod_obj->field('inventory_title')
+    ];
+
+    array_push($proc, $item);
+  }
+  $results = [
+    "params" => $params,
+    "entries" => $proc
+  ];
+  return $results;
+}
+
+
+
+function getTermHierarchy($data) {
+  $result = [];
+  /* var_dump($data); */
+  if (isset($data['taxonomy'])) {
+    $tax_string = $data['taxonomy'];
+    // split input string into array
+    $tax_arr = explode(",", $tax_string);
+    
+    // check for array
+    if (is_array($tax_arr)) {
+
+      // loop through the input taxonomy strings in the array
+      foreach ($tax_arr as $tax) {
+        // attempt to pull hierarchy (object of sub objects)
+        $h = _get_term_hierarchy($tax);
+
+        // if returned data is 0 then its not hierarchical so we need terms instead
+        if (sizeof($h)=== 0) {
+          // pull terms (array of WP objects)...
+          $types = get_terms(array('taxonomy' => $tax, 'hide_empty' => false));
+          $term_arr = [];
+          foreach ($types as $type) {
+            // sanitize out each entry
+            $type_entry = array('term_id' => $type->term_id, 'name' => $type->name, 'slug' => $type->slug);
+            $term_arr[] = $type_entry;
+          }
+          $result[$tax] = $term_arr;
+        } else {
+          $result[$tax] = $h;
+        }
+      }
+    }
+  }
+  $tax_attr = [];
+  $tax_attr['taxonomy'] = 'inventory_main_type';
+  $tax_attr['lookup'] = true;
+  $term_lookup = createLookup($tax_attr);
+  $term_srch = getSearchObject($tax_attr);
+  $result['lookup'] = $term_lookup;
+  $result['search'] = $term_srch;
+  return $result;
+}
+
 
 
 
@@ -181,11 +503,8 @@ function custom_inventory_args ( $args, $post_type ) {
   return $args;
 }
 
-function prefix_get_endpoint_phrase() {
-}
 
 // registers the filter hook
-   
 /* add_filter('rest_archive_inventory_query', 'filter_posts_by_field', 10, 2); */
 
 /* function filter_posts_by_field( $args, $request ) { */
@@ -208,7 +527,7 @@ function prefix_get_endpoint_phrase() {
 /*   return $args; */
 /* } */
 
-// NOTE: this would work on ALL types
+
 
 /* add_action('rest_api_init', 'rest_api_filter_add_filters'); */
 /* function rest_api_filter_add_filters() { */
@@ -216,22 +535,6 @@ function prefix_get_endpoint_phrase() {
 /* 		add_filter('rest_' . $post_type->name . '_query', 'rest_api_filter_add_filter_param', 10, 2); */
 /*   } */
 /* } */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -283,14 +586,6 @@ add_filter('rest_archive_inventory_query', function($args, $request) {
 
 
 
-
-
-
-
-
-
-
-
 /* add_action('rest_api_init', 'rest_api_custom_filters'); */
 function rest_api_custom_filters() {
   add_filter('rest_archive_inventory_query', 'rest_archive_inventory_filter_param', 10, 2);
@@ -316,11 +611,11 @@ function rest_archive_inventory_filter_param($args, $request) {
 		$args['posts_per_page'] = $filter['posts_per_page'];
   }
   global $wp;
+
   // allows us to modify the var array for query changes
   $vars = apply_filters('rest_query_vars', $wp->public_query_vars);
 
   function allow_meta_query($valid_vars) {
-
     $valid_vars = array_merge($valid_vars, array('meta_query', 'meta_key', 'meta_value', 'meta_compare'));
     return $valid_vars;
   }

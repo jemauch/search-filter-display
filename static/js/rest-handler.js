@@ -1,7 +1,7 @@
 
 // Description:  Supporting js library for search and interactive display
 // Version:      0.2b
-// Last Change:  26 February 2026
+// Last Change:  18 March 2026
 // Author:       Ken Stewart <kengfx@gmail.com>
 //
 // This code is a supporting library only implementing functions to   
@@ -13,224 +13,231 @@
 
 // import jQuery from '../../../../../wp-includes/js/jquery/jquery.min.js';
 
-import {getState, getStateItem, setState, setStateItem, setResults, getResults, getFunc} from './statelib.js';
+import { getState, getStateItem, setState, setStateItem, setResults, getResults, 
+  getFunc } from './statelib.js';
 import {rebuildTable, rebuildGrid} from './displaylib.js';
 
+// import van from './van.js';
 
 
 // NOTE: globally scoped vars and objects
+//       -----------------------------------------------------------------
+
+// const {a, div, span, li, p, ul} = van.tags;
 
 var sfd_inventory = "sfd/v1/archive_inventory"
-var inventory_all = "wp/v2/archive_inventory/";
 var jQuery = window.jQuery;
 var $ = jQuery;
 
-function sanitize(data) {
-  if (Array.isArray(data)) {
-    data = data.join(', ');
-  } else if (typeof data == String) {
-    console.log(data);
-  }
-  return data;
-};
+// const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
-
-// NOTE: Only trigger once the entire page has loaded its content
-
-jQuery(document).ready(function($) {
-  async function getFromEndpoint(url, filter = null) {
-    console.log(getFunc(new Error().stack));
-    console.log(url, filter);
-    try {
-      if (filter != null) {
-         url = url + filter;
-      }
-      const resp = await fetch(url);
-      if (!resp.ok) {
-        throw new Error(`Error: ${url}`);
-      }
-      // const total = resp.headers.get("X-WP-Total");
-      // const pages = resp.headers.get("X-WP-Totalpages");
-      const results = await resp.json();
-      let entries = [];
-      // console.log(results);
-      $.each(results.entries, function(idx, item) {
-        const entry = {
-          id: item.id,
-          title: item.title,
-          image: item.image,
-          category: item.cat_type,
-          year: item.year,
-          url: item.url,
-          item_type: item.sub_type,
-          item_type_id_fallback: item.cat_id,
-          item_type_id: item.cat_id,
-          volume: item.volume,
-          number: item.number,
-          amount: item.quantity
-        };
-        // console.log(idx, entry)
-        entries.push(entry);
-      });
-      // returns
-      const total = results.total_found;
-      const pages = results.pages;
-      results_obj = {entries, pages, total};
-      
-    } catch (err) {
-      console.error('fetch error:', err);
-    }
-  }
-
-  // console.log(item); 
-  // decide which sub-type to return
-  // let category = item.cat_type;
-  // let item_type;
-  // if (category == "Publications") {
-  //   item_type = item.inventory_publication_type;
-  // } else if (category == "Collectibles") {
-  //   item_type = item.inventory_collectible_type[0].name;
-  // }
-  // if (Array.isArray(item_type)) {
-  //   item_type = item_type.join(', ');
-  // }
-  // hone the results down into a tight package 
-
-
+const QueryDetails = {
   
-  // NOTE: define which fields are needed to display in the table
+  //  NOTE: OBJECT: define which fields are needed to display in the table
   // 	 also add functions for constructing the query and adding
   // 	 filters to the results. Add defaults to the query.
+  //   -----------------------------------------------------------------
 
-  // const obj = { version: "22", who: "234234234234" };
-  // const queryString = Object.entries(obj)
-  // .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-  // .join('&');
+  pagenum: 1,
+  per_page: 15,
+  show_filter: "false",
+  show_search: "false",
+  mode: "list",
+  orderby: "&q[orderby]=inventory_year",
+  order: "DESC",
+  pod: "",
+  filt: "",
+  childof: "",
+  fields: [
+  'id',
+  'type',
+  'link',
+  'inventory_title',
+  'inventory_image-one',
+  'inventory_item_main_type',
+  'inventory_main_type',
+  'inventory_year',
+  'inventory_volume',
+  'inventory_number',
+  'inventory_total_number_of_item',
+  '_links'
+  ],
+  baseurl: 'localhost',
+  endpoint: '',
+  setEndpoint: function (e) {
+    var links = document.getElementsByTagName( 'link' );
+    var link = Array.prototype.filter.call( links, function ( item ) {
+      return (item.rel === 'https://api.w.org/');
+    });
+    var api_root = link[0].href;
+    this.endpoint = `${api_root}${e}`;
+  },
+  setPage: function (pnum) {
+    let oldnum = this.pagenum;
+    this.pagenum = pnum;
+    console.log(`page: ${oldnum} changed to page: ${pnum}`);
+  },
+  setPerPage: function (per) {
+    let oldper = this.per_page;
+    this.per_page = per;
+    console.log(`per_page: ${oldper} changed to per_page: ${per}`);
+  },
+  queryCompile: function () {
+    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}${this.orderby}`;
+    console.log(comp);
+    return comp;
+  },
+  addFilter: function (key, val) {
+    if (this.filt === "") { 
+      // http://localhost/wp-json/sfd/v1/archive_inventory?q[filter]=&q[orderby]=inventory_year&q[limit]=10
+      this.filt += `q[filter]=${key},${val}&`;
+    } else {
+      this.filt += `q[filter]=${key},${val}&`;
+    }
+    console.log(`filter is now: ${this.filt}`);
+  },
+  setChildOf: function (key) {
+    // http://localhost/wp-json/sfd/v1/archive_inventory?q[childof]=
+    if (key == "") {
+      this.childof = "";
+    } else {
+    this.childof = `q[childof]=${key}&`;
+    console.log(`childof is now: ${this.childof}`);
+    }
+  },
+  clearChildOf: function () {
+    this.childof = "";
+  },
+  setOrderBy: function (orderby) {
+    this.orderby = `&q[orderby]=${orderby}`;
+  },
+  clearFilter: function () {
+    this.filt = "";
+  }
+}
 
-  // const myParams = {'foo': 'hi there', 'bar': '???'};
-  // const u = new URLSearchParams(myParams).toString();
-  // console.log(u);
 
 
 
-  const QueryDetails = {
-    pagenum: 1,
-    per_page: 15,
-    show_filter: "false",
-    show_search: "false",
-    mode: "list",
-    orderby: "&q[orderby]=inventory_year",
-    order: "DESC",
-    pod: "",
-    filt: "",
-    fields: [
-    'id',
-    'type',
-    'link',
-    'inventory_title',
-    'inventory_image-one',
-    'inventory_item_main_type',
-    'inventory_main_type',
-    'inventory_year',
-    'inventory_collectible_type',
-    'inventory_publication_type',
-    'inventory_volume',
-    'inventory_number',
-    'inventory_total_number_of_item',
-    '_links'
-    ],
-    baseurl: 'localhost',
-    endpoint: '',
-    setEndpoint: function (e) {
-      var links = document.getElementsByTagName( 'link' );
-      var link = Array.prototype.filter.call( links, function ( item ) {
-        return (item.rel === 'https://api.w.org/');
-      });
-      var api_root = link[0].href;
-      this.endpoint = `${api_root}${e}`;
-    },
-    setPage: function (pnum) {
-      let oldnum = this.pagenum;
-      this.pagenum = pnum;
-      console.log(`page: ${oldnum} changed to page: ${pnum}`);
-    },
-    setPerPage: function (per) {
-      let oldper = this.per_page;
-      this.per_page = per;
-      console.log(`per_page: ${oldper} changed to per_page: ${per}`);
-    },
-    queryCompile: function () {
-      let comp = `${this.endpoint}?${this.filt}q[limit]=${this.per_page}&q[page]=${this.pagenum}${this.orderby}`;
-      console.log(comp);
-      return comp;
-    },
-    addFilter: function (key, val) {
-      if (this.filt === "") { 
-        // http://localhost/wp-json/sfd/v1/archive_inventory?q[filter]=&q[orderby]=inventory_year&q[limit]=10
-        this.filt += `q[filter]=${key},${val}&`;
+
+
+
+
+
+// NOTE: All global Functions Start here:
+//       ---------------------------------------------------------------------------------------------------
+// FUNC: Core function to get data from the REST API and return to the app
+// 
+//       Function: getFromEndpoint - url(string), filter(null)
+//       Description: retreive data using custom api endpoint
+
+
+
+async function getFromEndpoint(url, filter = null) {
+  console.log(getFunc(new Error().stack));
+  console.log(url, filter);
+  try {
+    if (filter != null) {
+       url = url + filter;
+    }
+    const resp = await fetch(url);
+    if (!resp.ok) {
+      throw new Error(`Error: ${url}`);
+    }
+    const results = await resp.json();
+    let entries = [];
+    $.each(results.entries, function(idx, item) {
+      
+      let parent_type_id;
+      if (item.parent_type_id === false) {
+        parent_type_id = item.item_type_id;
       } else {
-        this.filt += `q[filter]=${key},${val}&`;
+        parent_type_id = item.parent_type_id;
       }
-      console.log(`filter is now: ${this.filt}`);
-    },
-    setOrderBy: function (orderby) {
-      this.orderby = `&q[orderby]=${orderby}`;
-    },
-    clearFilter: function () {
-      this.filt = "";
+      const entry = {
+        id: item.id,
+        all_info: item.all_info,
+        title: item.title,
+        image: item.image,
+        year: item.year,
+        url: item.url,
+        item_type_id: item.item_type_id,
+        parent_type_id: parent_type_id,
+        volume: item.volume,
+        number: item.number,
+        amount: item.quantity
+      };
+      entries.push(entry);
+    });
+    const total = results.total_found;
+    const pages = results.pages;
+    const lookup = results.lookup;
+    const hierarchy = results.hierarchy;
+    const children = results.children;
+    const parent = results.parent;
+    
+    // returns
+    const results_obj = {
+      entries, pages, total, lookup, parent, children, hierarchy
+    }; 
+    // added lookup information
+    updateResults(results_obj);
+
+  } catch (err) {
+    console.error('fetch error:', err);
+  }
+}
+
+
+
+ 
+
+
+
+
+
+function dropdownHandler( event ) {
+  const level = event.data.level; 
+  const t = event.target;
+  const chosen_name = t.textContent;
+  const chosen_id = t.getAttribute("value");
+  const selection = { name: chosen_name, id: chosen_id};
+  if (chosen_name === 'View All') {
+    setStateItem('childof', "");
+    QueryDetails.setChildOf("");
+  } else {
+    setStateItem('childof', chosen_id);
+  }
+  console.log(selection);
+  
+  function setWidgetVisibility(widget_name, isvisible) {
+    const w = $(widget_name);
+    if (isvisible) {
+      w.show();
+    } else {
+      w.hide();
     }
   }
 
+  // after request is resolved....
 
+  function childOptions() {
+    let res_obj = getResults();
+    const lookup = res_obj.lookup;
+    const children_ids = res_obj.hierarchy[parent_id];
+    let options_array = [];
 
-  // NOTE: Running as main thread
+    children_ids.forEach((child_id) => {
+      let newOption = document.createElement("span");
+      newOption.setAttribute("data-term", child_id);
+      newOption.setAttribute("style", "height: 24px;");
+      newOption.textContent = lookup[child_id];
+      options_array.push(newOption);
+      });
+    }
+  }
 
-  // get the details from the json embedded in the page 
-  let state_obj = $("#state_object");
-  state_obj = JSON.parse(state_obj.text());
-  console.log(state_obj); 
-  
-  // adjust query-details to match sfd
-  QueryDetails.pagenum = state_obj.page;
-  QueryDetails.per_page = state_obj.perpage;
-  QueryDetails.show_filter = state_obj.filter;
-  // QueryDetails.show_search = state_obj.search;
-  QueryDetails.mode = state_obj.mode;
-  QueryDetails.setOrderBy('inventory_year');
-  QueryDetails.pod = state_obj.pod;
-  QueryDetails.setEndpoint(sfd_inventory);
-
-  // global result object
-  var results_obj;
-
-  // call the main REST endpoint request 
-  getFromEndpoint(QueryDetails.queryCompile());     // WARN:
-
-  // update the interface
-  const container = $('#container');
-  var initial_interval = setInterval(function() {
-    if (results_obj) {
-      clearInterval(initial_interval);
-      // console.log(results_obj);
-      $('#results_object').text(JSON.stringify(results_obj));
-      // update on delivery
-    } }, 500);
-  updateResults();
-
-
-
-
-
-
-
-  // NOTE: Dropdown binding
-
-  $("#current-filter").bind('dropDownEvent', function() {
-    let newValue = this.textContent;
-    console.log(this);
-    setStateItem('filter', newValue);
-  });
 
   $("#current-per-page").bind('dropDownEvent', function() {
     let newValue = this.textContent;
@@ -238,32 +245,26 @@ jQuery(document).ready(function($) {
     setStateItem('perpage', newValue);
   });
 
-
-
-
-
-
   const st_obj = $('#state_object');
 
   st_obj.bind('change', function() {
     console.log('STATE_OBJECT changed');
-    if (! results_obj) {
-      let results_obj;
-    }
     updateQuery(st_obj);
   });
 
   let filter_option = $("#current-filter");
   filter_option.bind('dropDownEvent', function() { 
     console.log(`filter option changed: ${this.textContent}`);
-
-    updateQuery();
+    updateQuery(st_obj);
   });
 
   // let rpp_amt_hidden = $("rpp_amt");
   // rpp_amt_hidden.bind('input', function() { 
   //   console.log('result amount changed'); 
   // });
+
+
+
   $("#current-per-page").bind('dropDownEvent', function() {
     let newValue = this.textContent;
     console.log(this);
@@ -278,95 +279,143 @@ jQuery(document).ready(function($) {
   }
 
 
-  function updateQuery() {
+  function updateQuery(inline_state) {
     /* updates query from html object */
-
     console.log(getFunc(new Error().stack)); 
     let st = getState();
-
     QueryDetails.pagenum = st.page;
+
+    if (st.childof) {
+      if (st.childof === 0 || st.childof === "") {
+        // const st_obj = $('#state_object');
+        QueryDetails.setChildOf("");
+        QueryDetails.clearChildOf();
+      } else {
+      QueryDetails.setChildOf("");
+      QueryDetails.setChildOf(st.childof);
+    }
     QueryDetails.per_page = st.perpage;
     QueryDetails.show_search = st.search;
     QueryDetails.mode = st.mode;
-    // QueryDetails.orderby = st.orderby;
+    QueryDetails.orderby = st.orderby;
     QueryDetails.pod = st.pod;
 
-    /* check filter options */
-    QueryDetails.clearFilter();
-    let selected_filter = $("#current-filter").text();
-    if (selected_filter === "Publications") {
-      QueryDetails.addFilter("inventory_item_main_type.term_id", "17270");
-    } else if (selected_filter === "Collectibles") {
-      QueryDetails.addFilter("inventory_item_main_type.term_id", "17269");
-    } else if (selected_filter === "Other") {
-      QueryDetails.addFilter("inventory_item_main_type.term_id", "17271");
-    }
-    
-    /* kick off the search */
-    let results_obj;
     let new_query = QueryDetails.queryCompile();
     console.log(new_query);
+    /* kick off the search */
     getFromEndpoint(QueryDetails.queryCompile());
-    updateResults();
+
+    // getFromEndpoint(QueryDetails.queryCompile()).then((result_data) => {
+    //   updateResults(result_data);
+    // }).catch(err)(console.log('getFromEndpoint promise:', e));
+    }
   }
 
 
 
-  function updateResults() {
+  function updateResults(results_obj) {
+    
+    // await results_obj;
+    console.log('result: ', results_obj);
+    console.log(getFunc(new Error().stack));
+    
+    // HINT: put in new results object
+    $('#results_object').text(JSON.stringify(results_obj));
+    
+    // every time the table is updated with results it updates the results object,
+    // aswell as updating the state object with the page range and total entries found.
+    
+    setStateItem('firstpage', "1", false);
+    setStateItem('lastpage', results_obj.pages, false);
+    setStateItem('total_found', results_obj.total, false);
+    const container = $('#container');
+    container.innerHTML = '';
 
-    // NOTE: workaround for async update
-      var interval = setInterval(function() {
-        try {
-          if (results_obj) {
-            console.log(results_obj);
 
-            console.log(getFunc(new Error().stack));
-            // HINT: put in new results object
-            clearInterval(interval);
-            $('#results_object').text(JSON.stringify(results_obj));
-            // every time the table is updated with results it updates the results object,
-            // aswell as updating the state object with the page range and total entries found.
-            setStateItem('firstpage', "1", false);
-            setStateItem('lastpage', results_obj.pages, false);
-            setStateItem('total_found', results_obj.total, false);
-            container.innerHTML = '';
+    // HINT: Get missing bits for pagination
+    const total_found = getStateItem('total_found') ?? 0;
+    const current_page = getStateItem('page');
+    const per_page = getStateItem('perpage');
+    let count = 0;
+    if (total_found > 0){
+      count = total_found/Number(per_page);
+    }
 
-            // HINT: Get missing bits for pagination
-            const total_found = getStateItem('total_found') ?? 0;
-            const current_page = getStateItem('page');
-            const per_page = getStateItem('perpage');
-            let count = 0;
-            if (total_found > 0){
-              count = total_found/Number(per_page);
-            }
-            // update pagination
-            count = ~~count;
-            const display_page_count = `${current_page} / ${count}`;
-            $('#page_counter').text(display_page_count);
-            if (getStateItem('mode') == 'list') {
-              logger('should rebuild table now');
-              rebuildTable(results_obj.entries);
-            }
-            if (getStateItem('mode') == 'grid') {
-              rebuildGrid(results_obj.entries);
-            }
-            // });
-          }  
-        } catch (err) {
-          console.error('fetch error:', err);
-        }
-      }, 
-      500);
-      results_obj = null;
+    // update pagination
+    count = ~~count;
+    const display_page_count = `${current_page} / ${count}`;
+    $('#page_counter').text(display_page_count);
+    if (getStateItem('mode') == 'list') {
+      logger('should rebuild table now');
+      rebuildTable(results_obj.entries, results_obj.lookup);
+    }
+    if (getStateItem('mode') == 'grid') {
+      rebuildGrid(results_obj.entries, results_obj.lookup);
+    }
   }
 
 
+
+jQuery(document).ready(function($) {
+  // NOTE: Instantiate main thread
+  main($);
+});
+
+// NOTE: Running as main thread
+function main($) {
+  // get the details from the json embedded in the page 
+
+  let state_obj = $("#state_object");
+  state_obj = JSON.parse(state_obj.text());
+  console.log(state_obj); 
+  
+  // adjust query-details to match sfd
+  QueryDetails.pagenum = state_obj.page;
+  QueryDetails.per_page = state_obj.perpage;
+  // QueryDetails.show_filter = state_obj.filter;
+  // QueryDetails.show_search = state_obj.search;
+  QueryDetails.mode = state_obj.mode;
+  QueryDetails.setOrderBy('inventory_year');
+  QueryDetails.pod = state_obj.pod;
+  QueryDetails.setEndpoint(sfd_inventory);
+
+
+
+
+  // call the main REST endpoint request 
+  getFromEndpoint(QueryDetails.queryCompile());     // FUNC:
+
+  //  NOTE: Dropdown binding
+
+  const filter01 = $("#current-filter-level-01");
+  const group01 = $("#dropdown-group-level-01");
+  filter01.index = 1;
+  group01.index = 1;
+  const filter02 = $("#current-filter-level-02");
+  const group02 = $("#dropdown-group-level-02");
+  filter02.index = 2;
+  group02.index = 2;
+  const filter03 = $("#current-filter-level-03");
+  const group03 = $("#dropdown-group-level-03");
+  group03.index = 3;
+  filter03.index = 3;
+  const filter04 = $("#current-filter-level-04");
+  const group04 = $("#dropdown-group-level-04");
+  group04.index = 4;
+  filter04.index = 4;
+
+  //  NOTE: ---- One by One method --- starting with small chunks ------------
+  
+  // * Filter01 is already set up with options.
+  // * the logic is build into the data-term value
+  
+  filter01.on('dropDownEvent', { level: 1 }, dropdownHandler);
+  filter02.on('dropDownEvent', { level: 2 }, dropdownHandler);
+  filter03.on('dropDownEvent', { level: 3 }, dropdownHandler);
+  filter04.on('dropDownEvent', { level: 4 }, dropdownHandler);
 
 
   //  NOTE:  Bindings to buttons and changes
-
-
-  //  NOTE:  Button bindings
   
   $('#list-button').bind('click', function() {
     let st = getState();
@@ -425,4 +474,6 @@ jQuery(document).ready(function($) {
     setStateItem('page', forward_page.toString());
   });
 
-});
+  // end of main
+}
+

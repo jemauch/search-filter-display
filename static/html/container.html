@@ -1,7 +1,60 @@
     <section id="ui-section" data-page="1" data-filter="none" style="width: 100%">
       <div id="toolbar" style="display: flex; flex-direction: row; border-bottom: 1px solid #bbbbbb; margin-top: 15px; padding-bottom: 3px;">
-        <div id="filter" style="width: 150px">[filter]</div>
-        <div class="simpui-form-group" style="margin-left: 4px; width: 300px; height: 30px;">[search]</div>
+
+      <div id="filter-wrapper" style="width: auto">
+      <div id="dropdown-layout" style="display: flex; flex-direction: row; flex-grow: 1; width: 100%; gap: 5px;">
+
+        <div class="filter-card-wrapper" id="filterWrapper">
+          <div class="filter-trigger" id="filterTrigger">
+            <button id="filter-button" class="simpui-btn secondary xs" style="padding: 2px; margin: 0px;">
+              <img decoding="async" style="filter: invert(100%); margin: 0px"
+              src="[filter]"/ >
+            </button>
+          </div>
+          <div class="filter-card filter-popup" id="filterCard">
+            <h4>Filter</h4>
+            <div id="inv-main-type" class="filter-popup-item">
+              <!-- this is the close button -->
+              <div id="filterClose" class="filter-close" >
+                <img decoding="async" style="filter: invert(75%); margin: 0px;
+                height: 18px; width: 18px" src="[close]"/ >
+              </div> 
+              <button class="accordion">Item Type</button>
+              <div id="type-filter-panel" class="panel"></div>
+              <button class="accordion">Origin</button>
+              <div id="origin-filter-panel" class="panel"></div>
+              <button class="accordion">Media</button>
+              <div id="media-filter-panel" class="panel"></div>
+              <button class="accordion">Year</button>
+              <div id="year-filter-panel" class="panel" data-taxonomy="inventory_year">  
+                <div class="filter-option" style="display: flex; flex-direction: row; align-items: end;">
+                  <div style="display: inline-block; height: fit-content;">
+                    <label class="simpui-checkbox" style="gap:0.325rem">
+                      <input type="checkbox" id="year-filter-cb"/>
+                      <span class="simpui-box"></span>
+                    </label>
+                  </div>
+                  <div style="margin-left: 5px;">
+                    <input id="year-filter-picker" type="text" class="simpui-input-lookonly yearpicker" style="height: 22px; width: 65px" value="" disabled>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; justify-content: end;">
+                <div id="filterReset">
+                  <button id="filter-reset" class="simpui-btn danger sm">Reset</button>
+                </div>
+                <div id="filterApply">
+                  <button id="filter-apply" class="simpui-btn dark sm">Apply</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+        
+        <!-- <div class="simpui-form-group" style="margin-left: 4px; width: 300px; height: 30px;">[search]</div> -->
+
         <div id="spacing" style="flex: grow;"></div>
         <!-- <div id="spinner-layout" style="width: 28px; height: 28px; margin-left: auto; margin-right: 6px;"> -->
         <!--   <div id="spinner" class="loader"></div></div> -->

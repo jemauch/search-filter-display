@@ -431,11 +431,24 @@
   font-size: 14px;
 }
   .custom-table thead tr, .custom-table thead th {
+    /* resize:horizontal; */
     padding-bottom: 15px;
+    /* border-right: 1px solid #b3b3b3; */
     border-top: none;
     border-bottom: none !important;
     color: #000; }
-  .custom-table tbody th, .custom-table tbody td {
+  .custom-table tbody td {
+    color: #2d2d2d;
+    font-weight: 400;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-weight: 300;
+    border: none;
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease; }
+  .custom-table tbody th { 
+    /* resize:horizontal; */
     color: #2d2d2d;
     font-weight: 400;
     padding-bottom: 5px;
@@ -507,6 +520,8 @@
       -webkit-box-shadow: 0 0 2px #aaa, 0 2px 5px #999;
       box-shadow: 0 0 2px #aaa, 0 2px 5px #999; }
 
+
+
 /* Custom Checkbox */
 .control {
   display: block;
@@ -574,3 +589,152 @@
 
 
 
+.hud-item {
+  font-family: Arial; 
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 5px;
+  border: 1px solid aquamarine;
+  color: aquamarine;
+}
+
+
+/* top gui */
+
+.filter-badge-row {
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px;
+}
+
+.filter-popup {
+  font-family: Arial; 
+  font-size: 14px;
+  padding: 8px 10px;
+  min-width: 380px;
+}
+
+.filter-popup-item {
+  margin: 10px 4px 0px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+  color: #444;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  padding: 5px;
+  width: 100%;
+  font-weight: 700;
+  text-align: left;
+  border: none;
+  border-bottom: 1px solid #d9d9d9; 
+  border-radius: 0.3em;
+  outline: none;
+  transition: 0.4s;
+  height: 24px;
+  position: relative;
+}
+
+.accordion:hover {
+  background-color: #ededed;
+}
+
+.accordion:after {
+  content: url("../svg/chevron-down.svg");
+  height: 100%;
+  color: #777;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin-left: 5px;
+}
+
+.accordion.active {
+  box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.15);
+  border-radius: 0.3em;
+}
+
+.accordion.active:after {
+  content: url("../svg/chevron-up.svg");
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+  display: none;
+  gap: 3px;
+  background-color: white;
+  max-height: 100vh;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.panel.active {
+  margin-top: 5px;
+  margin-bottom: 5px;
+    padding: 0px 0px 10px 5px;
+    overflow: visible;
+}
+
+.filter-option {
+  /* justify-content: center; */
+  align-items: center;
+  margin-left: 14px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  border-bottom: 1px solid #d9d9d9; 
+}
+
+.subpanel {
+  /* inactive */ 
+  display: none;
+}
+
+.subpanel.active {
+  display: block;
+  margin: 5px 0px;
+}
+
+.refine {
+  color: #65a8ff;
+  font-size: 11px;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.filter-close {
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.more {
+/* display: none; */
+  content: url("../svg/add-r.svg");
+  filter: invert(75%);
+  margin-left: auto;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  position:absolute;
+  right:30px;
+  top: -2px;
+}
+
+.more.open {
+  content: url("../svg/remove-r.svg");
+  display: block;
+ }
+
+.simpui-checkbox input[type="checkbox"]:checked+.simpui-box.implicit { 
+   background: #b5b5b5;
+   border: 1px solid #b5b5b5;
+}
