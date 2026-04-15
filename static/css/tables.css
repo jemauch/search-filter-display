@@ -588,18 +588,38 @@
   border: 2px solid #007bff; }
 
 
+/* top gui */
+
+.thn_post_wrap {
+  all: unset !important;
+}
+.hud-box {
+  background-color: #4e555a; 
+  display: flex;
+  position: fixed; 
+  left: 0px; 
+  top: 0px; 
+  height: 45px; 
+  width: 100%; 
+  z-index: 99;
+  align-items: center; 
+  justify-content: left;  
+  gap: 5px;
+  padding-left: 20px;
+}
 
 .hud-item {
   font-family: Arial; 
   font-size: 14px;
-  padding: 2px 4px;
-  border-radius: 5px;
+  line-height: unset !important;
+  padding: 2px 2px;
+  /* border-radius: 5px; */
+  height:20px;
   border: 1px solid aquamarine;
   color: aquamarine;
 }
 
 
-/* top gui */
 
 .filter-badge-row {
   display: flex;
@@ -625,8 +645,11 @@
   display: none;
 }
 
-/* Style the buttons that are used to open and close the accordion panel */
-.accordion {
+/* Style the buttons that are used to open and close the filter-accordion panel */
+/* fix previous filter-accordion tags */
+
+
+.filter-accordion {
   color: #444;
   background-color: #FFFFFF;
   cursor: pointer;
@@ -639,15 +662,15 @@
   border-radius: 0.3em;
   outline: none;
   transition: 0.4s;
-  height: 24px;
+  height: 26px;
   position: relative;
 }
 
-.accordion:hover {
+.filter-accordion:hover {
   background-color: #ededed;
 }
 
-.accordion:after {
+.filter-accordion:after {
   content: url("../svg/chevron-down.svg");
   height: 100%;
   color: #777;
@@ -657,16 +680,16 @@
   margin-left: 5px;
 }
 
-.accordion.active {
+.filter-accordion.active {
   box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.15);
   border-radius: 0.3em;
 }
 
-.accordion.active:after {
+.filter-accordion.active:after {
   content: url("../svg/chevron-up.svg");
 }
 
-/* Style the accordion panel. Note: hidden by default */
+/* Style the filter-accordion panel. Note: hidden by default */
 .panel {
   display: none;
   gap: 3px;
@@ -725,8 +748,8 @@
   width: 18px;
   height: 18px;
   position:absolute;
-  right:30px;
-  top: -2px;
+  right:20px;
+  top: 2px;
 }
 
 .more.open {

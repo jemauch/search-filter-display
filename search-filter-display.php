@@ -39,22 +39,23 @@ function search_filter_display_head() {
 function inject_header_content() {
   if ( is_page('inventory-view-all') ) {
 
-    wp_enqueue_script('jquery');
     $tables_css = plugins_url( '/static/css/tables.css', __FILE__ );
     $simpui_css = plugins_url( '/static/css/simpui.css', __FILE__ );
-    $simpui_js  = plugins_url( '/static/js/simpui.js', __FILE__);
-    $stateman_js  = plugins_url( '/static/js/state-man.js', __FILE__);
-    $initialload_js  = plugins_url( '/static/js/initial-load.js', __FILE__);
-    $yearpicker_js  = plugins_url( '/static/js/yearpicker.js', __FILE__);
+    $yearpicker_css = plugins_url( '/static/css/yearpicker.css', __FILE__);
+    $simpui_js = plugins_url( '/static/js/simpui.js', __FILE__);
+    $stateman_js = plugins_url( '/static/js/state-man.js', __FILE__);
+    $initialload_js = plugins_url( '/static/js/initial-load.js', __FILE__);
+    $yearpicker_js = plugins_url( '/static/js/yearpicker.js', __FILE__);
     
-    /* $rest_handler_js  = plugins_url( '/static/js/rest-handler.js', __FILE__); */
     wp_enqueue_style('sfd-css', $tables_css, [], null);
+    wp_enqueue_style('sfd-yearpicker-css', $yearpicker_css, [], null);
     wp_enqueue_style('sfd-simpui-css', $simpui_css, [], null);
+    /* wp_enqueue_script('jquery'); */
     wp_enqueue_script('sfd-simpui-js', $simpui_js, ['jquery'], null, true);
+    wp_enqueue_script('sfd-yearpicker-js', $yearpicker_js, ['jquery'], null, true);
     wp_enqueue_script('sfd-stateman-js', $stateman_js, ['jquery'], null, true);
     wp_enqueue_script('sfd-initialload-js', $initialload_js, ['jquery'], null, true);
-    wp_enqueue_script('sfd-yearpicker-js', $yearpicker_js, ['jquery'], null, true);
-    /* wp_enqueue_script('sfd-rest-handler-js', $rest_handler_js, ['jquery'], null, true); */
+    // note: the rest-handler.js is being injected into the body via the GUI
   }
 }
 add_action('wp_enqueue_scripts', 'inject_header_content');

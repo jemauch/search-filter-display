@@ -1,6 +1,10 @@
 const version = "1.1.0";
 const namespace = "yearpicker";
 
+var jQuery = window.jQuery;
+var $ = jQuery;
+
+
 if (!jQuery) {
   alert(`${namespace} ${version} requires jQuery`);
 }

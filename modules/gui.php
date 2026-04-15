@@ -84,11 +84,11 @@ function search_filter_gui ($atts) {
 
   // [17-02-2026] ------------------------------------------------------- bottom pagination buttons ----
   $bottom_bar_style = array("padding" => "0.11rem", "margin" => "5px 2px");
-  $goto_firstpage_button = make_button("/static/svg/push-chevron-left.svg", "goto_firstpage_button", $bottom_bar_style );
-  $goto_lastpage_button = make_button("/static/svg/push-chevron-right.svg", "goto_lastpage_button", $bottom_bar_style );
+  $goto_firstpage_button = make_button("/static/svg/push-chevron-left.svg", "goto-firstpage-button", $bottom_bar_style );
+  $goto_lastpage_button = make_button("/static/svg/push-chevron-right.svg", "goto-lastpage-button", $bottom_bar_style );
   
-  $back_onepage_button = make_button("/static/svg/chevron-left.svg", "back_onepage_button", $bottom_bar_style );
-  $forward_onepage_button = make_button("/static/svg/chevron-right.svg", "forward_onepage_button", $bottom_bar_style );
+  $back_onepage_button = make_button("/static/svg/chevron-left.svg", "back-onepage-button", $bottom_bar_style );
+  $forward_onepage_button = make_button("/static/svg/chevron-right.svg", "forward-onepage-button", $bottom_bar_style );
   
   $page_buttons = "<div style='display:flex; flex-direction: row; align-items:center;'>
                     $goto_firstpage_button
@@ -113,11 +113,13 @@ function search_filter_gui ($atts) {
   $bottombar = preg_replace("/\[pagination\]/", "$page_buttons", $bottombar);
   // ------------------------------------------------------------------- compile the gui /static/html ----
   $filter_icon = THIS_PLUGIN_URL . "/static/svg/filter-funnel.svg";
+  $close_icon = THIS_PLUGIN_URL . "/static/svg/close-circle.svg";
 
   $tempA = preg_replace("/\[filter\]/", "$filter_icon", $container);
-  $tempB = preg_replace("/\[search\]/", "$search_bar", $tempA);
-  $tempC = preg_replace("/\[result_per_page\]/", "$rpp", $tempB);
-  $topbar_gui_compiled = preg_replace("/\[display_buttons\]/", "$list_button$grid_button", $tempC);
+  $tempB = preg_replace("/\[close\]/", "$close_icon", $tempA);
+  $tempC = preg_replace("/\[search\]/", "$search_bar", $tempB);
+  $tempD = preg_replace("/\[result_per_page\]/", "$rpp", $tempC);
+  $topbar_gui_compiled = preg_replace("/\[display_buttons\]/", "$list_button$grid_button", $tempD);
 
   // -------------------------------------------------------------------- loading the table element ----
   $table_url = THIS_PLUGIN_PATH . "/static/html/table.html";
@@ -131,17 +133,16 @@ function search_filter_gui ($atts) {
   $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js';
   $js_REST_inject = preg_replace("/\[state\]/", $js_REST_url, $js_REST_template);
 
-  $debug_hud = `
-    <div id="corner_hud" style="background-color: #6c757d; display: flex; position: absolute; left: 0px; top: 0px; height: 65px; width: 100vw; align-items: center; justify-content: center; gap: 10px">
-    <div id="mode" class="hud-item"></div>
-    <div id="pod" class="hud-item"></div>
-    <div id="filtertype" class="hud-item"></div>
-    <div id="filtercard_hidden" class="hud-item"></div>
-    <div id="perpage" class="hud-item"></div>
-    <div id="filter" class="hud-item"></div>
-    <div id="page" class="hud-item"></div>
-    <div id="query-text" class="hud-item">default</div>
-    </div>`;
+  $debug_hud = '<div id="corner_hud" class="hud-box"> 
+      <div id="mode" class="hud-item"></div>
+      <div id="pod" class="hud-item"></div>
+      <div id="filtertype" class="hud-item"></div> 
+      <div id="filtercard_hidden" class="hud-item"></div>
+      <div id="perpage" class="hud-item"></div>
+      <div id="filter" class="hud-item"></div>
+      <div id="page" class="hud-item"></div>
+      <div id="query-text" class="hud-item">default</div>
+    </div>';
   // ------------------------------------------------------------------- return value from function ----
   return $json_state_obj . $json_results_obj . $debug_hud . $topbar_gui_compiled . $table . $grid_content . $bottombar . $section_cap . $js_REST_inject;
 }
@@ -157,11 +158,8 @@ function search_filter_gui ($atts) {
 
 /* http://localhost/wp-includes/js/jquery/jquery.min.js */
 
-
 // NOTE: Register the shortcode to the above gui function
-
 function register_filter() {
   add_shortcode('sfd', __NAMESPACE__.'\search_filter_gui');
 }
-
 add_action('init', __NAMESPACE__.'\register_filter');

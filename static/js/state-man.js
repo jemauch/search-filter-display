@@ -7,7 +7,6 @@
 
 
 
-
 /**
   * StateMan class
   * ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
@@ -41,149 +40,136 @@ class StateMan {
 
 
 
-// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ State Store (tableManager) ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+  // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ State Store (tableManager) ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
-const tableManager = new StateMan({
-  pod: 'archive_inventory',
-  mode: 'list',  // list or mode
-  filtercard_hidden: true,
-  perpage: 25,
-  page: 1,
-  search: false,
-  filter: 'View All',
-  orderby: 'inventory_year DESC',
-  pagination: true
-});
+  const tableManager = new StateMan({
+    pod: 'archive_inventory',
+    mode: 'list',  // list or mode
+    filtercard_hidden: true,
+    perpage: 25,
+    page: 1,
+    search: false,
+    filter: 'View All',
+    orderby: 'inventory_year DESC',
+    pagination: true
+  });
 
-const filterManager = new StateMan({
-  filters: {}
-});
-
-
-
-
-
-// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ filterDisplay function ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-
-
-const filterDisplay = (state) => {
-  let f = JSON.stringify(state.type);
-  document.getElementById('filtertype').textContent = `Filter Type: ${f}`;
-};
+  const filterManager = new StateMan({
+    filters: {}
+  });
 
 
 
 
 
-// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ mini-functions state display ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-
-const tableModeDisplay = (state) => {
-  document.getElementById('mode')
-    .textContent = `Mode: ${state.mode}`;
-};
-const tableFilterCardDisplay = (state) => {
-  document.getElementById('filtercard_hidden')
-    .textContent = `Popup: ${state.filtercard_hidden}`;
-};
-const tablePodDisplay = (state) => {
-  document.getElementById('pod')
-    .textContent = `Pod: ${state.pod}`;
-};
-const tablePerPageDisplay = (state) => {
-  document.getElementById('perpage')
-    .textContent = `Perpage: ${state.perpage}`;
-};
-const tablePageDisplay = (state) => {
-  document.getElementById('page')
-    .textContent = `Page: ${state.page}`;
-};
-const tableFilterDisplay = (state) => {
-  document.getElementById('filter')
-    .textContent = `Filter: ${state.filter}`;
-};
+  // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ filterDisplay function ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
 
-const unsubMode = tableManager.subscribe(tableModeDisplay);
-const unsubPod = tableManager.subscribe(tablePodDisplay);
-const unsubPerPage = tableManager.subscribe(tablePerPageDisplay);
-const unsubPage = tableManager.subscribe(tablePageDisplay);
-const unsubFilter = tableManager.subscribe(tableFilterDisplay);
-const unsubFilterCard = tableManager.subscribe(tableFilterCardDisplay);
+  const filterDisplay = (state) => {
+    let f = JSON.stringify(state.filters);
+    document.getElementById('filtertype').textContent = `Filter Type: ${f}`;
+  };
 
 
 
 
 
+  // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ mini-functions state display ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
-// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ UI Event Bindings ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+  const tableModeDisplay = (state) => {
+    document.getElementById('mode')
+      .textContent = `Mode: ${state.mode}`;
+  };
+  const tableFilterCardDisplay = (state) => {
+    document.getElementById('filtercard_hidden')
+      .textContent = `Popup: ${state.filtercard_hidden}`;
+  };
+  const tablePodDisplay = (state) => {
+    document.getElementById('pod')
+      .textContent = `Pod: ${state.pod}`;
+  };
+  const tablePerPageDisplay = (state) => {
+    document.getElementById('perpage')
+      .textContent = `Perpage: ${state.perpage}`;
+  };
+  const tablePageDisplay = (state) => {
+    document.getElementById('page')
+      .textContent = `Page: ${state.page}`;
+  };
+  const tableFilterDisplay = (state) => {
+    document.getElementById('filter')
+      .textContent = `Filter: ${state.filter}`;
+  };
 
 
-// display buttons
-document.getElementById('list-button').addEventListener('click', () => {
-  tableManager.setState({ mode: 'list' });
-});
-document.getElementById('grid-button').addEventListener('click', () => { 
-  tableManager.setState({ mode: 'grid' });
-});
-
-// navigation buttons
-document.getElementById('forward-onepage-button')
-  .addEventListener('click', () => {
-    _page = tableManager.getState().page;
-    _page += 1;
-    tableManager.setState({ page: _page });
-});
-document.getElementById('back-onepage-button')
-  .addEventListener('click', () => { 
-    _page = tableManager.getState().page;
-    _page -= 1;
-    tableManager.setState({ page: _page });
-});
-document.getElementById('goto-firstpage-button')
-  .addEventListener('click', () => { 
-    let _page = 1;
-    tableManager.setState({ page: _page });
-});
-
-// dropdown cpp & filter
-document.getElementById('current-per-page')
-  .addEventListener('dropDownEvent', (e) => { 
-    const current = Number(e.target.textContent);
-    tableManager.setState({ perpage: current });
-});
+  const unsubMode = tableManager.subscribe(tableModeDisplay);
+  const unsubPod = tableManager.subscribe(tablePodDisplay);
+  const unsubPerPage = tableManager.subscribe(tablePerPageDisplay);
+  const unsubPage = tableManager.subscribe(tablePageDisplay);
+  const unsubFilter = tableManager.subscribe(tableFilterDisplay);
+  const unsubFilterCard = tableManager.subscribe(tableFilterCardDisplay);
 
 
 
 
 
 
-// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ Bind Filter Buttons ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-
-const picker = document.getElementById('year-filter-picker');
-document.getElementById('year-filter-cb')
-  .addEventListener('click', (e) => {
-    if (e.target.checked) {
-      console.log('year checked');
-      picker.disabled = false;
-    } else {
-      console.log('year unchecked');
-      picker.disabled = true;
-    }
-    // tableManager.setState({ perpage: current });
-});
+  // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ UI Event Bindings ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
 
+  // display buttons
+  document.getElementById('list-button').addEventListener('click', () => {
+    tableManager.setState({ mode: 'list' });
+  });
+  document.getElementById('grid-button').addEventListener('click', () => { 
+    tableManager.setState({ mode: 'grid' });
+  });
+
+  // navigation buttons
+  document.getElementById('forward-onepage-button')
+    .addEventListener('click', () => {
+      _page = tableManager.getState().page;
+      _page += 1;
+      tableManager.setState({ page: _page });
+  });
+  document.getElementById('back-onepage-button')
+    .addEventListener('click', () => { 
+      _page = tableManager.getState().page;
+      _page -= 1;
+      tableManager.setState({ page: _page });
+  });
+  document.getElementById('goto-firstpage-button')
+    .addEventListener('click', () => { 
+      let _page = 1;
+      tableManager.setState({ page: _page });
+  });
+
+  // dropdown cpp & filter
+  document.getElementById('current-per-page')
+    .addEventListener('dropDownEvent', (e) => { 
+      const current = Number(e.target.textContent);
+      tableManager.setState({ perpage: current });
+  });
 
 
 
-// ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ Initialize the UI ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
 
-tableModeDisplay(tableManager.getState());
-tableFilterCardDisplay(tableManager.getState());
-tablePodDisplay(tableManager.getState());
-tablePerPageDisplay(tableManager.getState());
-tableFilterDisplay(tableManager.getState());
-tablePageDisplay(tableManager.getState());
-filterDisplay(filterManager.getState());
 
+  // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ Bind Filter Buttons ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
+
+
+
+
+
+  // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ Initialize the UI ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
+
+  tableModeDisplay(tableManager.getState());
+  tableFilterCardDisplay(tableManager.getState());
+  tablePodDisplay(tableManager.getState());
+  tablePerPageDisplay(tableManager.getState());
+  tableFilterDisplay(tableManager.getState());
+  tablePageDisplay(tableManager.getState());
+  filterDisplay(filterManager.getState());

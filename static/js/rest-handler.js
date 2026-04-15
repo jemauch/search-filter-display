@@ -1,44 +1,45 @@
-
-// Description:  Supporting js library for search and interactive display
-// Version:      0.2b
-// Last Change:  18 March 2026
-// Author:       Ken Stewart <kengfx@gmail.com>
+//  ╭──────────────┬──────────────────────────────────┬───────┬────────────╮
+//  │ NAME:        │ Rest Handler v0.01               │ DATE: │ 2026-04-09 │
+//  ├──────────────┼──────────────────────────────────┴───────┴────────────┤
+//  │ DESCRIPTION: │ REST requests and query creation library              │
+//  │ PROJECT:     │ SIGGRAPH History Archive Website Search Filter Plugin │
+//  ╰──────────────┴───────────────────────────────────────────────────────╯
 //
-// This code is a supporting library only implementing functions to   
-// call wordpress specific php and pod searches using REST API requests.         
-// This was created expressly for the ACM SIGGRAPH History Archive at BGSU, 
-// all software is provided as-is and is not licensed for commercial use 
-// by anyone outside of the ACM unless explicitly authorized by the author
-// or the presiding ACM Siggraph History Archive team.
+//  Description:  Supporting JavaScript for filter and interactive display
+//  Version:      0.01
+//  Last Change:  9 April 2026
+//  Author:       Ken Stewart <kengfx@gmail.com>
+// 
+//  This code is a supporting library only implementing functions to   
+//  call wordpress specific php and pod searches using REST API requests.         
+//  This was created expressly for the ACM SIGGRAPH History Archive at BGSU, 
+//  all software is provided as-is and is not licensed for commercial use 
+//  by anyone outside of the ACM unless explicitly authorized by the author
+//  or the presiding ACM Siggraph History Archive team.
 
-// import jQuery from '../../../../../wp-includes/js/jquery/jquery.min.js';
 
 import { getState, getStateItem, setState, setStateItem, setResults, getResults, 
   getFunc } from './statelib.js';
 import {rebuildTable, rebuildGrid} from './displaylib.js';
 
-// import van from './van.js';
 
 
-// NOTE: globally scoped vars and objects
-//       -----------------------------------------------------------------
-
-// const {a, div, span, li, p, ul} = van.tags;
+                                                                         
 
 var sfd_inventory = "sfd/v1/archive_inventory"
 var jQuery = window.jQuery;
 var $ = jQuery;
 
-// const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
+/*
+  QueryDetails object w/function
+  ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+  OBJECT: define which fields are needed to display in the table
+  also add functions for constructing the query and adding filters to the
+  results. Adds defaults to the query.
+  ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈ */
 
 const QueryDetails = {
   
-  //  NOTE: OBJECT: define which fields are needed to display in the table
-  // 	 also add functions for constructing the query and adding
-  // 	 filters to the results. Add defaults to the query.
-  //   -----------------------------------------------------------------
-
   pagenum: 1,
   per_page: 15,
   show_filter: "false",
@@ -122,60 +123,55 @@ const QueryDetails = {
 
 
 
-
-
-
-// NOTE: All global Functions Start here:
-//       ---------------------------------------------------------------------------------------------------
-// FUNC: Core function to get data from the REST API and return to the app
-// 
-//       Function: getFromEndpoint - url(string), filter(null)
-//       Description: retreive data using custom api endpoint
-
-
+//  Function: getFromEndpoint - url(string), filter(null)
+//  Description: retreive data using custom api endpoint
 
 async function getFromEndpoint(url, filter = null) {
+
   console.log(getFunc(new Error().stack));
   console.log(url, filter);
+
   try {
     if (filter != null) {
        url = url + filter;
     }
-    const resp = await fetch(url);
-    if (!resp.ok) {
-      throw new Error(`Error: ${url}`);
-    }
-    const results = await resp.json();
-    let entries = [];
-    $.each(results.entries, function(idx, item) {
-      
-      let parent_type_id;
-      if (item.parent_type_id === false) {
-        parent_type_id = item.item_type_id;
-      } else {
-        parent_type_id = item.parent_type_id;
-      }
-      const entry = {
-        id: item.id,
-        all_info: item.all_info,
-        title: item.title,
-        image: item.image,
-        year: item.year,
-        url: item.url,
-        item_type_id: item.item_type_id,
-        parent_type_id: parent_type_id,
-        volume: item.volume,
-        number: item.number,
-        amount: item.quantity
-      };
-      entries.push(entry);
-    });
-    const total = results.total_found;
-    const pages = results.pages;
-    const lookup = results.lookup;
-    const hierarchy = results.hierarchy;
-    const children = results.children;
-    const parent = results.parent;
+    // if (!resp.ok) {
+    //   throw new Error(`Error: ${url}`);
+    // }
+
+    const resp = fetch(url)
+      .then(res => res.json())
+      .then((res) => {
+        let entries = [];
+
+        $.each(res.entries, function(idx, item) {
+          let parent_type_id;
+          if (item.parent_type_id === false) {
+            parent_type_id = item.item_type_id;
+          } else {
+            parent_type_id = item.parent_type_id;
+          }
+          const entry = {
+            id: item.id,
+            all_info: item.all_info,
+            title: item.title,
+            image: item.image,
+            year: item.year,
+            url: item.url,
+            item_type_id: item.item_type_id,
+            parent_type_id: parent_type_id,
+            volume: item.volume,
+            number: item.number,
+            amount: item.quantity
+          };
+          entries.push(entry);
+        });
+      const total = res.total_found;
+      const pages = res.pages;
+      const lookup = res.lookup;
+      const hierarchy = res.hierarchy;
+      const children = res.children;
+      const parent = res.parent;
     
     // returns
     const results_obj = {
@@ -183,15 +179,11 @@ async function getFromEndpoint(url, filter = null) {
     }; 
     // added lookup information
     updateResults(results_obj);
-
+  });
   } catch (err) {
     console.error('fetch error:', err);
   }
 }
-
-
-
- 
 
 
 
@@ -316,6 +308,7 @@ function dropdownHandler( event ) {
   function updateResults(results_obj) {
     
     // await results_obj;
+
     console.log('result: ', results_obj);
     console.log(getFunc(new Error().stack));
     
