@@ -73,14 +73,63 @@ window.onload = function() {
 
 async function filterQuery(data) {
   console.log(data);
+
+  let st = JSON.parse($("#state_object").text());
+  
+  st['filter'] = data.filters;
+
   let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
-  }).then(res => res.json()).then(res => console.log(res));
+    body: JSON.stringify(st)
+  }).then(res => res.json()).then(res => {
+    let entries = [];
+
+    $.each(res.entries, function(idx, item) {
+      let parent_type_id;
+      if (item.parent_type_id === false) {
+        parent_type_id = item.item_type_id;
+      } else {
+        parent_type_id = item.parent_type_id;
+      }
+      const entry = {
+        id: item.id,
+        all_info: item.all_info,
+        title: item.title,
+        image: item.image,
+        year: item.year,
+        url: item.url,
+        item_type_id: item.item_type_id,
+        parent_type_id: parent_type_id,
+        volume: item.volume,
+        number: item.number,
+        amount: item.quantity
+      };
+      entries.push(entry);
+    });
+
+    const total = res.total_found;
+    const pages = res.pages;
+    const lookup = res.lookup;
+    const hierarchy = res.hierarchy;
+    const children = res.children;
+    const parent = res.parent;
+  
+    // returns
+    const results_obj = {
+      entries, pages, total, lookup, parent, children, hierarchy
+    };
+
+    console.log(results_obj);
+
+    import("./rest-handler.js")
+      .then((module) => {
+        module.updateResults(results_obj);
+      });
+  });
 }
 
 
@@ -313,14 +362,12 @@ function applyFilters() {
     let id_arr = []; // blank array for checkbox ids
     cb_arr.forEach((cb) => {
       if (cb.checked == true) {
-        let filter = { 'term_id': cb.getAttribute("data-id"),
-          'slug': cb.getAttribute("data-slug")};
-        id_arr.push(filter);
+        id_arr.push(cb.getAttribute("data-id"));
       }
     });
     // if any option is checked in panel push to the master filters 
     if (id_arr.length > 0) {
-      filter_arr.push({'taxonomy': tax, 'term_id_array': id_arr});
+      filter_arr.push({'taxonomy': tax, 'terms': id_arr});
       }
     });
     // let tester = document.querySelector("#filter-test-display");
@@ -329,6 +376,11 @@ function applyFilters() {
     //   tester.innerText += JSON.stringify(f);
     // });
     filterManager.setState({filters: filter_arr});
+
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('filter', filter_arr);
+      });
     console.log('applying filters');
 }
 
@@ -536,13 +588,13 @@ function populateFlatFilters(termData) {
   const media_terms = termData['media_type'];
   media_terms.forEach((term) => {
     let media_panel = document.getElementById('media-filter-panel');
-    media_panel.setAttribute("data-taxonomy", "inventory_media");
+    media_panel.setAttribute("data-taxonomy", "media_type");
     addFilterOption(term, media_panel);
   });
   const origin_terms = termData['inventory_item_origin'];
   origin_terms.forEach((term) => {
     let origin_panel = document.getElementById('origin-filter-panel');
-    origin_panel.setAttribute("data-taxonomy", "inventory_origin");
+    origin_panel.setAttribute("data-taxonomy", "inventory_item_origin");
     addFilterOption(term, origin_panel);
   });
 }

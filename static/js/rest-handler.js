@@ -85,7 +85,7 @@ const QueryDetails = {
     console.log(`per_page: ${oldper} changed to per_page: ${per}`);
   },
   queryCompile: function () {
-    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}${this.orderby}`;
+    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}&q[orderby]=${this.orderby}`;
     console.log(comp);
     return comp;
   },
@@ -129,60 +129,58 @@ const QueryDetails = {
 async function getFromEndpoint(url, filter = null) {
 
   console.log(getFunc(new Error().stack));
-  console.log(url, filter);
+  console.log("YEP: ", url, filter);
 
-  try {
-    if (filter != null) {
-       url = url + filter;
-    }
-    // if (!resp.ok) {
-    //   throw new Error(`Error: ${url}`);
-    // }
+  let st = JSON.parse($("#state_object").text());
+  
+  let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(st)
+  }).then(res => res.json()).then(res => {
+    let entries = [];
 
-    const resp = fetch(url)
-      .then(res => res.json())
-      .then((res) => {
-        let entries = [];
+    $.each(res.entries, function(idx, item) {
+      let parent_type_id;
+      if (item.parent_type_id === false) {
+        parent_type_id = item.item_type_id;
+      } else {
+        parent_type_id = item.parent_type_id;
+      }
+      const entry = {
+        id: item.id,
+        all_info: item.all_info,
+        title: item.title,
+        image: item.image,
+        year: item.year,
+        url: item.url,
+        item_type_id: item.item_type_id,
+        parent_type_id: parent_type_id,
+        volume: item.volume,
+        number: item.number,
+        amount: item.quantity
+      };
+      entries.push(entry);
+    });
 
-        $.each(res.entries, function(idx, item) {
-          let parent_type_id;
-          if (item.parent_type_id === false) {
-            parent_type_id = item.item_type_id;
-          } else {
-            parent_type_id = item.parent_type_id;
-          }
-          const entry = {
-            id: item.id,
-            all_info: item.all_info,
-            title: item.title,
-            image: item.image,
-            year: item.year,
-            url: item.url,
-            item_type_id: item.item_type_id,
-            parent_type_id: parent_type_id,
-            volume: item.volume,
-            number: item.number,
-            amount: item.quantity
-          };
-          entries.push(entry);
-        });
-      const total = res.total_found;
-      const pages = res.pages;
-      const lookup = res.lookup;
-      const hierarchy = res.hierarchy;
-      const children = res.children;
-      const parent = res.parent;
-    
+    const total = res.total_found;
+    const pages = res.pages;
+    const lookup = res.lookup;
+    const hierarchy = res.hierarchy;
+    const children = res.children;
+    const parent = res.parent;
+  
     // returns
     const results_obj = {
       entries, pages, total, lookup, parent, children, hierarchy
-    }; 
+    };
+
     // added lookup information
     updateResults(results_obj);
   });
-  } catch (err) {
-    console.error('fetch error:', err);
-  }
 }
 
 
@@ -226,9 +224,9 @@ function dropdownHandler( event ) {
       newOption.setAttribute("style", "height: 24px;");
       newOption.textContent = lookup[child_id];
       options_array.push(newOption);
-      });
-    }
+    });
   }
+}
 
 
   $("#current-per-page").bind('dropDownEvent', function() {
@@ -273,7 +271,7 @@ function dropdownHandler( event ) {
 
   function updateQuery(inline_state) {
     /* updates query from html object */
-    console.log(getFunc(new Error().stack)); 
+    console.log(new Error().stack); 
     let st = getState();
     QueryDetails.pagenum = st.page;
 
@@ -285,6 +283,7 @@ function dropdownHandler( event ) {
       } else {
       QueryDetails.setChildOf("");
       QueryDetails.setChildOf(st.childof);
+      }
     }
     QueryDetails.per_page = st.perpage;
     QueryDetails.show_search = st.search;
@@ -293,19 +292,18 @@ function dropdownHandler( event ) {
     QueryDetails.pod = st.pod;
 
     let new_query = QueryDetails.queryCompile();
-    console.log(new_query);
+    console.log("New query: ", new_query);
     /* kick off the search */
     getFromEndpoint(QueryDetails.queryCompile());
 
     // getFromEndpoint(QueryDetails.queryCompile()).then((result_data) => {
     //   updateResults(result_data);
     // }).catch(err)(console.log('getFromEndpoint promise:', e));
-    }
   }
 
 
 
-  function updateResults(results_obj) {
+  export function updateResults(results_obj) {
     
     // await results_obj;
 
@@ -431,7 +429,7 @@ function main($) {
 
   // NOTE: Bottom buttons bindings
 
-  $('#goto_firstpage_button').bind('click', function() {
+  $('#goto-firstpage-button').bind('click', function() {
     let st = getState();
     if (st.firstpage != st.page) {
       setStateItem('page', getState().firstpage);
@@ -439,7 +437,7 @@ function main($) {
   });
 
 
-  $('#goto_lastpage_button').bind('click', function() {
+  $('#goto-lastpage-button').bind('click', function() {
 
     let st = getState();
     if (st.lastpage != st.page) {
@@ -449,7 +447,7 @@ function main($) {
   
 
   
-  $('#back_onepage_button').bind('click', function() {
+  $('#back-onepage-button').bind('click', function() {
     let st = getState();
     if (st.firstpage != st.page) {
     }
@@ -459,7 +457,7 @@ function main($) {
 
 
 
-  $('#forward_onepage_button').bind('click', function() {
+  $('#forward-onepage-button').bind('click', function() {
     let st = getState();
     st.lastpage
     st.page;
