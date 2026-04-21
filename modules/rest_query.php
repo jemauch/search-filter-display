@@ -62,8 +62,8 @@ function sfd_archive_inventory_callback( WP_REST_Request $request) {
   if (isset($q['orderby'])) {
     $orderby = $q['orderby'];
   }
-  if (isset($q['limit'])) {
-    $limit = $q['limit'];
+  if (isset($q['perpage'])) {
+    $limit = $q['perpage'];
   }
   if (isset($q['page'])) {
     $page = $q['page'];
@@ -96,7 +96,7 @@ function sfd_archive_inventory_callback( WP_REST_Request $request) {
       'filter' => $filter ?? null,
       'orderby' => $orderby ?? null,
       'order' => $order ?? 'DESC',
-      'limit' => $limit ?? null,
+      'perpage' => $limit ?? null,
       'page' => $page ?? '1');
     if (isset($childof)) {
       $pod_params['childof'] = $childof;
@@ -122,23 +122,30 @@ function sfd_archive_inventory_callback( WP_REST_Request $request) {
 function sfd_pods($data) {
 
   $pod_name = $data['pod'];
-  $limit = $data['limit'] ?? 10;
+  $limit = $data['perpage'] ?? 10;
   $pagin = true;
   $current_page = $data['page'];
   $orderby = $data['orderby'] . " " . $data['order'];
 
   if (isset($data['filter'])) {
-    $flt_tax = $data['filter'][0]['taxonomy'] . '.term_id';
-    $flt_arr = $data['filter'][0]['terms'];
-    $flt_terms = implode("', '", $flt_arr);
+    $filter_where = [];
 
-    $filter_where = "$flt_tax IN ('$flt_terms')";
+    foreach ($data['filter'] as $params) {
+      $flt_tax = $params['taxonomy'] . '.term_id';
+      $flt_arr = $params['terms'];
+      $flt_terms = implode("', '", $flt_arr);
+
+      $filter_where[] = "$flt_tax IN ('$flt_terms')";
+    }
+
+    $where_query = implode(' AND ', $filter_where);
+
     $params = array(
       'limit' => $limit, 
       'pagination' => $pagin,
       'page' => $current_page, 
       'orderby' => $orderby,
-      'where' => $filter_where
+      'where' => $where_query,
     );
     /* var_dump($params); */
   } else {

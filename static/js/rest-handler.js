@@ -131,58 +131,56 @@ async function getFromEndpoint(url, filter = null) {
   console.log(getFunc(new Error().stack));
   console.log("YEP: ", url, filter);
 
-  try {
-    if (filter != null) {
-       url = url + filter;
-    }
-    // if (!resp.ok) {
-    //   throw new Error(`Error: ${url}`);
-    // }
+  let st = JSON.parse($("#state_object").text());
+  
+  let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(st)
+  }).then(res => res.json()).then(res => {
+    let entries = [];
 
-    const resp = fetch(url)
-      .then(res => res.json())
-      .then((res) => {
-        let entries = [];
+    $.each(res.entries, function(idx, item) {
+      let parent_type_id;
+      if (item.parent_type_id === false) {
+        parent_type_id = item.item_type_id;
+      } else {
+        parent_type_id = item.parent_type_id;
+      }
+      const entry = {
+        id: item.id,
+        all_info: item.all_info,
+        title: item.title,
+        image: item.image,
+        year: item.year,
+        url: item.url,
+        item_type_id: item.item_type_id,
+        parent_type_id: parent_type_id,
+        volume: item.volume,
+        number: item.number,
+        amount: item.quantity
+      };
+      entries.push(entry);
+    });
 
-        $.each(res.entries, function(idx, item) {
-          let parent_type_id;
-          if (item.parent_type_id === false) {
-            parent_type_id = item.item_type_id;
-          } else {
-            parent_type_id = item.parent_type_id;
-          }
-          const entry = {
-            id: item.id,
-            all_info: item.all_info,
-            title: item.title,
-            image: item.image,
-            year: item.year,
-            url: item.url,
-            item_type_id: item.item_type_id,
-            parent_type_id: parent_type_id,
-            volume: item.volume,
-            number: item.number,
-            amount: item.quantity
-          };
-          entries.push(entry);
-        });
-      const total = res.total_found;
-      const pages = res.pages;
-      const lookup = res.lookup;
-      const hierarchy = res.hierarchy;
-      const children = res.children;
-      const parent = res.parent;
-    
+    const total = res.total_found;
+    const pages = res.pages;
+    const lookup = res.lookup;
+    const hierarchy = res.hierarchy;
+    const children = res.children;
+    const parent = res.parent;
+  
     // returns
     const results_obj = {
       entries, pages, total, lookup, parent, children, hierarchy
-    }; 
+    };
+
     // added lookup information
     updateResults(results_obj);
   });
-  } catch (err) {
-    console.error('fetch error:', err);
-  }
 }
 
 
@@ -305,7 +303,7 @@ function dropdownHandler( event ) {
 
 
 
-  function updateResults(results_obj) {
+  export function updateResults(results_obj) {
     
     // await results_obj;
 
