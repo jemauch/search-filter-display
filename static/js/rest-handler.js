@@ -85,7 +85,7 @@ const QueryDetails = {
     console.log(`per_page: ${oldper} changed to per_page: ${per}`);
   },
   queryCompile: function () {
-    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}${this.orderby}`;
+    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}&q[orderby]=${this.orderby}`;
     console.log(comp);
     return comp;
   },
@@ -129,7 +129,7 @@ const QueryDetails = {
 async function getFromEndpoint(url, filter = null) {
 
   console.log(getFunc(new Error().stack));
-  console.log(url, filter);
+  console.log("YEP: ", url, filter);
 
   try {
     if (filter != null) {
@@ -226,9 +226,9 @@ function dropdownHandler( event ) {
       newOption.setAttribute("style", "height: 24px;");
       newOption.textContent = lookup[child_id];
       options_array.push(newOption);
-      });
-    }
+    });
   }
+}
 
 
   $("#current-per-page").bind('dropDownEvent', function() {
@@ -431,7 +431,7 @@ function main($) {
 
   // NOTE: Bottom buttons bindings
 
-  $('#goto_firstpage_button').bind('click', function() {
+  $('#goto-firstpage-button').bind('click', function() {
     let st = getState();
     if (st.firstpage != st.page) {
       setStateItem('page', getState().firstpage);
@@ -439,7 +439,7 @@ function main($) {
   });
 
 
-  $('#goto_lastpage_button').bind('click', function() {
+  $('#goto-lastpage-button').bind('click', function() {
 
     let st = getState();
     if (st.lastpage != st.page) {
@@ -449,7 +449,7 @@ function main($) {
   
 
   
-  $('#back_onepage_button').bind('click', function() {
+  $('#back-onepage-button').bind('click', function() {
     let st = getState();
     if (st.firstpage != st.page) {
     }
@@ -459,7 +459,7 @@ function main($) {
 
 
 
-  $('#forward_onepage_button').bind('click', function() {
+  $('#forward-onepage-button').bind('click', function() {
     let st = getState();
     st.lastpage
     st.page;
