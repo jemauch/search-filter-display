@@ -26,9 +26,12 @@ function sfd_inventory_filter_callback( WP_REST_Request $request) {
   $param_list = $request->get_query_params();
   $data = file_get_contents('php://input');
   $json = json_decode($data, true);
+  $sfd = sfd_pods($json);
+  $response = new WP_REST_Response($sfd, 200);
   /* $data = array( 'some', 'response', 'data'); */
   /* var_dump($request); */
-  $response = new WP_REST_Response($json);
+  $response->header('X-WP-Total', $sfd['total_found']);
+  $response->header('X-WP-Totalpages', $sfd['pages']);
   /* $response->header('X-WP-Total', "100000"); */
   return $response;
 }
@@ -125,8 +128,11 @@ function sfd_pods($data) {
   $orderby = $data['orderby'] . " " . $data['order'];
 
   if (isset($data['filter'])) {
-    $flt_arr = explode(",", $data['filter']);
-    $filter_where = "$flt_arr[0]=$flt_arr[1]";
+    $flt_tax = $data['filter'][0]['taxonomy'] . '.term_id';
+    $flt_arr = $data['filter'][0]['terms'];
+    $flt_terms = implode("', '", $flt_arr);
+
+    $filter_where = "$flt_tax IN ('$flt_terms')";
     $params = array(
       'limit' => $limit, 
       'pagination' => $pagin,

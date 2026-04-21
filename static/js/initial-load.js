@@ -73,13 +73,18 @@ window.onload = function() {
 
 async function filterQuery(data) {
   console.log(data);
+
+  let st = JSON.parse($("#state_object").text());
+  
+  st['filter'] = data.filters;
+
   let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(st)
   }).then(res => res.json()).then(res => console.log(res));
 }
 
@@ -313,14 +318,12 @@ function applyFilters() {
     let id_arr = []; // blank array for checkbox ids
     cb_arr.forEach((cb) => {
       if (cb.checked == true) {
-        let filter = { 'term_id': cb.getAttribute("data-id"),
-          'slug': cb.getAttribute("data-slug")};
-        id_arr.push(filter);
+        id_arr.push(cb.getAttribute("data-id"));
       }
     });
     // if any option is checked in panel push to the master filters 
     if (id_arr.length > 0) {
-      filter_arr.push({'taxonomy': tax, 'term_id_array': id_arr});
+      filter_arr.push({'taxonomy': tax, 'terms': id_arr});
       }
     });
     // let tester = document.querySelector("#filter-test-display");
