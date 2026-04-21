@@ -352,21 +352,21 @@ jQuery(document).ready(function($) {
 
   // NOTE: Bottom buttons bindings
 
-  $('#goto_firstpage_button').bind('click', function() {
+  $('#goto-firstpage-button').bind('click', function() {
     st = getState();
     if (st.firstpage != st.page) {
       setStateItem('page', getState().firstpage);
     }
   });
 
-  $('#goto_lastpage_button').bind('click', function() {
+  $('#goto-lastpage-button').bind('click', function() {
     st = getState();
     if (st.lastpage != st.page) {
       setStateItem('page', getState().lastpage);
     }
   });
   
-  $('#back_onepage_button').bind('click', function() {
+  $('#back-onepage-button').bind('click', function() {
     st = getState();
     if (st.firstpage != st.page) {
     }
@@ -374,7 +374,7 @@ jQuery(document).ready(function($) {
     setStateItem('page', back_page);
   });
 
-  $('#forward_onepage_button').bind('click', function() {
+  $('#forward-onepage-button').bind('click', function() {
     st = getState();
     st.lastpage
     st.page;

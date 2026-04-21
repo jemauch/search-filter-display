@@ -455,7 +455,7 @@ function main($) {
 
   // NOTE: Bottom buttons bindings
 
-  $('#goto_firstpage_button').bind('click', function() {
+  $('#goto-firstpage-button').bind('click', function() {
     let st = getState();
     if (st.firstpage != st.page) {
       setStateItem('page', getState().firstpage);
@@ -463,7 +463,7 @@ function main($) {
   });
 
 
-  $('#goto_lastpage_button').bind('click', function() {
+  $('#goto-lastpage-button').bind('click', function() {
 
     let st = getState();
     if (st.lastpage != st.page) {
@@ -473,7 +473,7 @@ function main($) {
   
 
   
-  $('#back_onepage_button').bind('click', function() {
+  $('#back-onepage-button').bind('click', function() {
     let st = getState();
     if (st.firstpage != st.page) {
     }
@@ -483,7 +483,7 @@ function main($) {
 
 
 
-  $('#forward_onepage_button').bind('click', function() {
+  $('#forward-onepage-button').bind('click', function() {
     let st = getState();
     st.lastpage
     st.page;
