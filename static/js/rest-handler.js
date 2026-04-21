@@ -273,7 +273,7 @@ function dropdownHandler( event ) {
 
   function updateQuery(inline_state) {
     /* updates query from html object */
-    console.log(getFunc(new Error().stack)); 
+    console.log(new Error().stack); 
     let st = getState();
     QueryDetails.pagenum = st.page;
 
@@ -285,6 +285,7 @@ function dropdownHandler( event ) {
       } else {
       QueryDetails.setChildOf("");
       QueryDetails.setChildOf(st.childof);
+      }
     }
     QueryDetails.per_page = st.perpage;
     QueryDetails.show_search = st.search;
@@ -293,14 +294,13 @@ function dropdownHandler( event ) {
     QueryDetails.pod = st.pod;
 
     let new_query = QueryDetails.queryCompile();
-    console.log(new_query);
+    console.log("New query: ", new_query);
     /* kick off the search */
     getFromEndpoint(QueryDetails.queryCompile());
 
     // getFromEndpoint(QueryDetails.queryCompile()).then((result_data) => {
     //   updateResults(result_data);
     // }).catch(err)(console.log('getFromEndpoint promise:', e));
-    }
   }
 
 
