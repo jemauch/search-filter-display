@@ -474,6 +474,75 @@ function sfd_childof($data) {
   return $results;
 }
 
+/**
+  * termTree
+  * ---
+  * Function to get terms from a taxonomy and create a hierarchical-structured array.
+  * 
+  * @param string  $taxonomy  Name of taxonomy.
+  * 
+  * @return array             Returns an array of terms.
+  *
+**/
+function termTree($taxonomy) {
+  // Get all terms in unstructured array
+  $terms = get_terms([
+    'taxonomy' => $taxonomy,
+    'hide_empty' => false,
+    'fields' => 'all',
+  ]);
+
+  // Put terms in array with parent id as key value
+  $parents = [];
+  foreach ($terms as $term) {
+    $term_fields = [
+      'name' => $term->name,
+      'term_id' => $term->term_id,
+      'slug' => $term->slug,
+      'parent' => $term->parent,
+    ];
+    
+    $parents[$term->parent][] = $term_fields;
+  }
+
+  // Populate structured array using $parents as a reference
+  $terms_list = [];
+  return termChildren($parents, $terms_list);
+}
+
+/**
+  * termChildren
+  * ---
+  * Recursive function used by termTree() to populate an array with terms in a hierarchical structure.
+  * 
+  * @param array  $parents   Flattened array created by termTree used to make a new structured array.
+  * @param array  $children  Structured array to use for output.
+  * @param int    $root      Key value to use for $parents array.
+  *
+  * @return array            Returns an array of structured terms ($children).
+  *
+**/
+function termChildren($parents, &$children, $root = 0) {
+  // Return empty array if parent ID is not a key in reference array
+  if (!array_key_exists($root, $parents)) {
+    return [];
+  }
+
+  // Go through reference array for each parent and populate structured array, recursively calling termChildren for children terms
+  $i = 0;
+  foreach ($parents[$root] as $term) {
+    $children[$i] = [
+      'name' => $term['name'],
+      'term_id' => $term['term_id'],
+      'slug' => $term['slug'],
+      'parent' => $term['parent'],
+      'children' => termChildren($parents, $children[$i], $term['term_id'])
+    ];
+
+    ++$i;
+  }
+  return $children;
+}
 
 
 function getTermHierarchy($data) {
@@ -490,7 +559,7 @@ function getTermHierarchy($data) {
       // loop through the input taxonomy strings in the array
       foreach ($tax_arr as $tax) {
         // attempt to pull hierarchy (object of sub objects)
-        $h = _get_term_hierarchy($tax);
+        $h = termTree($tax);
 
         // if returned data is 0 then its not hierarchical so we need terms instead
         if (sizeof($h)=== 0) {
