@@ -194,6 +194,20 @@ function sfd_pods($data) {
       "quantity" => $pod_obj->field('inventory_total_number_of_item'),
       "image" => $pod_obj->display('inventory_featured_image.guid'),
     ];
+
+    // Try to get the highest level parent term, like Collectible or Publication
+    $parent_term = '';
+
+    if (!empty($item['item_type_id'])) {
+      $current_term = $item['item_type_id'];
+      
+      while (!empty($current_term)) {
+        $parent_term = $current_term;
+        $current_term = wp_get_term_taxonomy_parent_id($current_term, 'inventory_main_type');
+      }
+    }
+    $item['parent_type_id'] = $parent_term;
+
     array_push($proc, $item);
   }
 
@@ -651,7 +665,3 @@ function rest_archive_inventory_filter_param($args, $request) {
   /* $args['orderby'] = 'inventory_year'; */
   return $args;
 }
-
-
-      
-
