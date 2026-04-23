@@ -186,11 +186,12 @@ function sfd_pods($data) {
       "url" => esc_url($link), 
       "year" => $pod_obj->display('inventory_year'),
       "title" => $pod_obj->field('inventory_title'),
+      "subtitle" => $pod_obj->display('inventory_subtitle'),
       "item_main_type" => $pod_obj->field('inventory_item_main_type.term_id'),
       "item_type_id" => $pod_obj->display('inventory_item_main_type.term_id'),
       "parent_type_id" => $pod_obj->display('inventory_item_main_type.parent'),
-      "volume" => $pod_obj->display('inventory_volume_raw'),
-      "number" => $pod_obj->display('inventory_number_raw'),
+      "volume" => $pod_obj->display('inventory_volume'),
+      "number" => $pod_obj->display('inventory_number'),
       "quantity" => $pod_obj->field('inventory_total_number_of_item'),
       "image" => $pod_obj->display('inventory_featured_image.guid'),
     ];
@@ -200,7 +201,7 @@ function sfd_pods($data) {
 
     if (!empty($item['item_type_id'])) {
       $current_term = $item['item_type_id'];
-      
+
       while (!empty($current_term)) {
         $parent_term = $current_term;
         $current_term = wp_get_term_taxonomy_parent_id($current_term, 'inventory_main_type');

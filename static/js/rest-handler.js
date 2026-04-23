@@ -154,6 +154,7 @@ async function getFromEndpoint(url, filter = null) {
         id: item.id,
         all_info: item.all_info,
         title: item.title,
+        subtitle: item.subtitle,
         image: item.image,
         year: item.year,
         url: item.url,

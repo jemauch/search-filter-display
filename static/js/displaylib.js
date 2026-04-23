@@ -25,12 +25,22 @@ export function rebuildTable(data, lookup) {
 
     // loop through the items
     $.each(data, function(idx, item) {
+
+      // Create string for volume and/or issue number
       let volnum = "";
-        if (item.volume.length>0) {
-          if (item.number.length>0){
-            volnum = `(Vol. ${item.volume}, No. ${item.number})`;
-          }
-        }
+      let el = [];
+
+      if (item.volume.length > 0) {
+        el.push(`Vol. ${item.volume}`);
+      }
+      if (item.number.length > 0){
+        el.push(`No. ${item.number}`);
+      }
+      if (el.length > 0) {
+        volnum = "(" + el.join(", ") + ")";
+      }
+      
+      // Quantity
       let quantity = Number(item.amount) ?? 0;
       let quant_display = "";
       if (quantity<3){
@@ -41,6 +51,16 @@ export function rebuildTable(data, lookup) {
         quant_display = `<span class="simpui-badge subtle sm">${quantity}</span>`;
       }
 
+      // Create full title of item (title, subtitle, volume, and number)
+      let full_title = item.title;
+      if (item.subtitle.length > 0) {
+        full_title = full_title.concat(": ", item.subtitle);
+      }
+      if (volnum.length > 0) {
+        full_title = full_title.concat(" ", volnum);
+      }
+
+
       // process id to name
       // console.log(lookup);
       let item_type_name = lookup[item.item_type_id];
@@ -49,7 +69,7 @@ export function rebuildTable(data, lookup) {
       return_list.push(
         `<tr data-id="${item.id}">
           <td style="text-align: center;">${item.year}</td>
-          <td style="text-align: left;"><b><a href="${item.url}">${item.title}</a><b></td>
+          <td style="text-align: left;"><b><a href="${item.url}">${full_title}</a><b></td>
           <td style="text-align: center;">${parent_type_name}</td>
           <td style="text-align: center;"></td>
           <td>${item_type_name}</td>
@@ -148,4 +168,3 @@ export function rebuildTable(data, lookup) {
     $('#grid_content').html(return_list);
     $("#spinner").hide();
   }
-
