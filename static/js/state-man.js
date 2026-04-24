@@ -50,6 +50,8 @@ class StateMan {
     page: 1,
     search: false,
     filter: 'View All',
+    missingitems: false,
+    conference: 'both',
     orderby: 'inventory_year DESC',
     pagination: true
   });

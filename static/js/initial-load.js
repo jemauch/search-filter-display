@@ -370,13 +370,52 @@ function applyFilters() {
     if (id_arr.length > 0) {
       filter_arr.push({'taxonomy': tax, 'terms': id_arr});
       }
-    });
+  });
+
+  // Missing items checkbox
+  if (document.getElementById('missing-items').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('missingitems', true, false);
+      });
+  }
+  else {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('missingitems', false, false);
+      });
+  }
+
+  // Conference radio buttons
+  // TODO: Refactor this
+  if (document.getElementById('siggraph').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('conference', 'siggraph', false);
+      });
+  }
+  if (document.getElementById('siggraph-asia').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('conference', 'siggraph-asia', false);
+      });
+  }
+  if (document.getElementById('both-conferences').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('conference', 'both', false);
+      });
+  }
+
+    console.log('applying filters');
     // let tester = document.querySelector("#filter-test-display");
     // tester.innerText = "";
     // filter_arr.forEach((f) => {
     //   tester.innerText += JSON.stringify(f);
     // });
-    filterManager.setState({filters: filter_arr});
+
+    // ATTENTION: line below commented out because it was making an unneeded POST request. 
+    // filterManager.setState({filters: filter_arr});
 
     import("./statelib.js")
       .then((module) => {

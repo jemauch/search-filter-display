@@ -39,6 +39,34 @@
                   </div>
                 </div>
               </div>
+              
+              <fieldset>
+                <legend>Quantity</legend>
+                <div>
+                  <input type="checkbox" name="missing-items" id="missing-items">
+                  <label for="missing-items">Show missing and needed items only</label>
+                </div>
+              </fieldset>
+              
+
+              <fieldset>
+                <legend>Conference</legend>
+                <div>
+                  <input type="radio" name="conference" id="both-conferences" value="both" checked>
+                  <label for="both-conferences">Both Conferences</label>
+                </div>
+
+                <div>
+                  <input type="radio" name="conference" id="siggraph" value="siggraph">
+                  <label for="siggraph">SIGGRAPH</label>
+                </div>
+
+                <div>
+                  <input type="radio" name="conference" id="siggraph-asia" value="siggraph-asia">
+                  <label for="siggraph-asia">SIGGRAPH Asia</label>
+                </div>
+              </fieldset>
+
               <div style="display: flex; flex-wrap: wrap; justify-content: end;">
                 <div id="filterReset">
                   <button id="filter-reset" class="simpui-btn danger sm">Reset</button>

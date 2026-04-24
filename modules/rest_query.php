@@ -126,10 +126,14 @@ function sfd_pods($data) {
   $pagin = true;
   $current_page = $data['page'];
   $orderby = $data['orderby'] . " " . $data['order'];
+  $conference = $data['conference'];
+  $filter_where = [];
+
+  if ($data['missingitems'] == true) {
+    $filter_where[] = "inventory_total_number_of_item.meta_value IN ('1', '0')";
+  }
 
   if (isset($data['filter'])) {
-    $filter_where = [];
-
     foreach ($data['filter'] as $params) {
       $flt_tax = $params['taxonomy'] . '.term_id';
       $flt_arr = $params['terms'];
@@ -137,25 +141,26 @@ function sfd_pods($data) {
 
       $filter_where[] = "$flt_tax IN ('$flt_terms')";
     }
-
-    $where_query = implode(' AND ', $filter_where);
-
-    $params = array(
-      'limit' => $limit, 
-      'pagination' => $pagin,
-      'page' => $current_page, 
-      'orderby' => $orderby,
-      'where' => $where_query,
-    );
-    /* var_dump($params); */
-  } else {
-    $params = array(
-      'limit' => $limit, 
-      'pagination' => $pagin, 
-      'page' => $current_page, 
-      'orderby' => $orderby
-    );
   }
+
+  if ($conference == 'siggraph') {
+    $filter_where[] = "inventory_conference.post_title NOT LIKE '%Asia%'";
+  }
+  if ($conference == 'siggraph-asia') {
+    $filter_where[] = "inventory_conference.post_title LIKE '%Asia%'";
+  }
+
+  $params = array(
+    'limit' => $limit, 
+    'pagination' => $pagin,
+    'page' => $current_page, 
+    'orderby' => $orderby,
+  );
+
+  if (!empty($filter_where)) {
+    $params['where'] = implode(' AND ', $filter_where);
+  }
+  
   /* if (isset($data['childof'])) { */
   /*   $childof = $data['childof']; */
   /*   $children = get_term_children($childof, 'inventory_main_type'); */

@@ -64,6 +64,8 @@ const QueryDetails = {
   'inventory_total_number_of_item',
   '_links'
   ],
+  missingitems: "false",
+  conference: "both",
   baseurl: 'localhost',
   endpoint: '',
   setEndpoint: function (e) {
@@ -85,7 +87,7 @@ const QueryDetails = {
     console.log(`per_page: ${oldper} changed to per_page: ${per}`);
   },
   queryCompile: function () {
-    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}&q[orderby]=${this.orderby}`;
+    let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}&q[orderby]=${this.orderby}&q[missingitems]=${this.missingitems}`;
     console.log(comp);
     return comp;
   },
@@ -291,6 +293,8 @@ function dropdownHandler( event ) {
     QueryDetails.mode = st.mode;
     QueryDetails.orderby = st.orderby;
     QueryDetails.pod = st.pod;
+    QueryDetails.missingitems = st.missingitems;
+    QueryDetails.conference = st.conference;
 
     let new_query = QueryDetails.queryCompile();
     console.log("New query: ", new_query);
@@ -376,35 +380,6 @@ function main($) {
 
   // call the main REST endpoint request 
   getFromEndpoint(QueryDetails.queryCompile());     // FUNC:
-
-  //  NOTE: Dropdown binding
-
-  const filter01 = $("#current-filter-level-01");
-  const group01 = $("#dropdown-group-level-01");
-  filter01.index = 1;
-  group01.index = 1;
-  const filter02 = $("#current-filter-level-02");
-  const group02 = $("#dropdown-group-level-02");
-  filter02.index = 2;
-  group02.index = 2;
-  const filter03 = $("#current-filter-level-03");
-  const group03 = $("#dropdown-group-level-03");
-  group03.index = 3;
-  filter03.index = 3;
-  const filter04 = $("#current-filter-level-04");
-  const group04 = $("#dropdown-group-level-04");
-  group04.index = 4;
-  filter04.index = 4;
-
-  //  NOTE: ---- One by One method --- starting with small chunks ------------
-  
-  // * Filter01 is already set up with options.
-  // * the logic is build into the data-term value
-  
-  filter01.on('dropDownEvent', { level: 1 }, dropdownHandler);
-  filter02.on('dropDownEvent', { level: 2 }, dropdownHandler);
-  filter03.on('dropDownEvent', { level: 3 }, dropdownHandler);
-  filter04.on('dropDownEvent', { level: 4 }, dropdownHandler);
 
 
   //  NOTE:  Bindings to buttons and changes
