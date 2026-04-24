@@ -99,6 +99,7 @@ async function filterQuery(data) {
         id: item.id,
         all_info: item.all_info,
         title: item.title,
+        subtitle: item.subtitle,
         image: item.image,
         year: item.year,
         url: item.url,
@@ -402,6 +403,12 @@ function populateHierarchicalFilters(termData) {
   type_panel.setAttribute("data-taxonomy", "inventory_main_type");
   recursiveMenuBuild(type_terms, type_panel);
   bindCheckboxToMoreAndPanel(type_panel); 
+
+  const origin_terms = termData['inventory_item_origin'];
+  let origin_panel = document.getElementById('origin-filter-panel');
+  origin_panel.setAttribute("data-taxonomy", "inventory_item_origin");
+  recursiveMenuBuild(origin_terms, origin_panel);
+  bindCheckboxToMoreAndPanel(origin_panel); 
 }
 
 
@@ -590,11 +597,5 @@ function populateFlatFilters(termData) {
     let media_panel = document.getElementById('media-filter-panel');
     media_panel.setAttribute("data-taxonomy", "media_type");
     addFilterOption(term, media_panel);
-  });
-  const origin_terms = termData['inventory_item_origin'];
-  origin_terms.forEach((term) => {
-    let origin_panel = document.getElementById('origin-filter-panel');
-    origin_panel.setAttribute("data-taxonomy", "inventory_item_origin");
-    addFilterOption(term, origin_panel);
   });
 }

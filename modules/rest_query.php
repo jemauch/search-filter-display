@@ -186,14 +186,29 @@ function sfd_pods($data) {
       "url" => esc_url($link), 
       "year" => $pod_obj->display('inventory_year'),
       "title" => $pod_obj->field('inventory_title'),
+      "subtitle" => $pod_obj->display('inventory_subtitle'),
       "item_main_type" => $pod_obj->field('inventory_item_main_type.term_id'),
       "item_type_id" => $pod_obj->display('inventory_item_main_type.term_id'),
       "parent_type_id" => $pod_obj->display('inventory_item_main_type.parent'),
-      "volume" => $pod_obj->display('inventory_volume_raw'),
-      "number" => $pod_obj->display('inventory_number_raw'),
+      "volume" => $pod_obj->display('inventory_volume'),
+      "number" => $pod_obj->display('inventory_number'),
       "quantity" => $pod_obj->field('inventory_total_number_of_item'),
       "image" => $pod_obj->display('inventory_featured_image.guid'),
     ];
+
+    // Try to get the highest level parent term, like Collectible or Publication
+    $parent_term = '';
+
+    if (!empty($item['item_type_id'])) {
+      $current_term = $item['item_type_id'];
+
+      while (!empty($current_term)) {
+        $parent_term = $current_term;
+        $current_term = wp_get_term_taxonomy_parent_id($current_term, 'inventory_main_type');
+      }
+    }
+    $item['parent_type_id'] = $parent_term;
+
     array_push($proc, $item);
   }
 
@@ -459,6 +474,75 @@ function sfd_childof($data) {
   return $results;
 }
 
+/**
+  * termTree
+  * ---
+  * Function to get terms from a taxonomy and create a hierarchical-structured array.
+  * 
+  * @param string  $taxonomy  Name of taxonomy.
+  * 
+  * @return array             Returns an array of terms.
+  *
+**/
+function termTree($taxonomy) {
+  // Get all terms in unstructured array
+  $terms = get_terms([
+    'taxonomy' => $taxonomy,
+    'hide_empty' => false,
+    'fields' => 'all',
+  ]);
+
+  // Put terms in array with parent id as key value
+  $parents = [];
+  foreach ($terms as $term) {
+    $term_fields = [
+      'name' => $term->name,
+      'term_id' => $term->term_id,
+      'slug' => $term->slug,
+      'parent' => $term->parent,
+    ];
+    
+    $parents[$term->parent][] = $term_fields;
+  }
+
+  // Populate structured array using $parents as a reference
+  $terms_list = [];
+  return termChildren($parents, $terms_list);
+}
+
+/**
+  * termChildren
+  * ---
+  * Recursive function used by termTree() to populate an array with terms in a hierarchical structure.
+  * 
+  * @param array  $parents   Flattened array created by termTree used to make a new structured array.
+  * @param array  $children  Structured array to use for output.
+  * @param int    $root      Key value to use for $parents array.
+  *
+  * @return array            Returns an array of structured terms ($children).
+  *
+**/
+function termChildren($parents, &$children, $root = 0) {
+  // Return empty array if parent ID is not a key in reference array
+  if (!array_key_exists($root, $parents)) {
+    return [];
+  }
+
+  // Go through reference array for each parent and populate structured array, recursively calling termChildren for children terms
+  $i = 0;
+  foreach ($parents[$root] as $term) {
+    $children[$i] = [
+      'name' => $term['name'],
+      'term_id' => $term['term_id'],
+      'slug' => $term['slug'],
+      'parent' => $term['parent'],
+      'children' => termChildren($parents, $children[$i], $term['term_id'])
+    ];
+
+    ++$i;
+  }
+  return $children;
+}
 
 
 function getTermHierarchy($data) {
@@ -475,7 +559,7 @@ function getTermHierarchy($data) {
       // loop through the input taxonomy strings in the array
       foreach ($tax_arr as $tax) {
         // attempt to pull hierarchy (object of sub objects)
-        $h = _get_term_hierarchy($tax);
+        $h = termTree($tax);
 
         // if returned data is 0 then its not hierarchical so we need terms instead
         if (sizeof($h)=== 0) {
@@ -651,7 +735,3 @@ function rest_archive_inventory_filter_param($args, $request) {
   /* $args['orderby'] = 'inventory_year'; */
   return $args;
 }
-
-
-      
-
