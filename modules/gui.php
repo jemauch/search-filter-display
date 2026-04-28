@@ -2,9 +2,8 @@
 
 require 'helpers.php';
 
-
-
-
+define('FIRST_YEAR', 1974);
+define('CURRENT_YEAR', (int) date('Y'));
 
 // NOTE: Helper functions to build UI components/styles
 //
@@ -101,6 +100,18 @@ function search_filter_gui ($atts) {
   // [16-02-2026] ----------------------------------------------------------------------- container ----
   $container_url = THIS_PLUGIN_PATH . "/static/html/container.html";
   $container = file_get_contents("$container_url");
+
+  // --------------------------------------------------------------------------------- year options ----
+  $years = [];
+  $year_options = [];
+
+  $years = range(CURRENT_YEAR, FIRST_YEAR);
+
+  foreach ($years as $year) {
+    $year_options[] = "<option value=\"$year\">$year</option>";
+  }
+
+  $container = preg_replace("/\[years\]/", implode($year_options), $container);
 
   // ----------------------------------------------------------------------------- results dropdown ----
   $dropdown_url = THIS_PLUGIN_PATH . "/static/html/rpp.html";

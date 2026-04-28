@@ -66,6 +66,7 @@ const QueryDetails = {
   ],
   missingitems: "false",
   conference: "both",
+  year: "",
   baseurl: 'localhost',
   endpoint: '',
   setEndpoint: function (e) {
@@ -295,6 +296,7 @@ function dropdownHandler( event ) {
     QueryDetails.pod = st.pod;
     QueryDetails.missingitems = st.missingitems;
     QueryDetails.conference = st.conference;
+    QueryDetails.year = st.year;
 
     let new_query = QueryDetails.queryCompile();
     console.log("New query: ", new_query);

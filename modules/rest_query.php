@@ -127,10 +127,15 @@ function sfd_pods($data) {
   $current_page = $data['page'];
   $orderby = $data['orderby'] . " " . $data['order'];
   $conference = $data['conference'];
+  $year = $data['year'];
   $filter_where = [];
 
   if ($data['missingitems'] == true) {
     $filter_where[] = "inventory_total_number_of_item.meta_value IN ('1', '0')";
+  }
+
+  if ($year != "") {
+    $filter_where[] = "inventory_year.meta_value IN ('$year')";
   }
 
   if (isset($data['filter'])) {

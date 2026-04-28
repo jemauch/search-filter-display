@@ -44,27 +44,6 @@ window.onload = function() {
       }
     });
   }
-  const yearnow = new Date();
-  const thisYear = yearnow.getFullYear()
-
-  $('.yearpicker').yearpicker({
-    year: thisYear,
-    startYear: 1974,
-    endYear: thisYear,
-    template: `
-        <div class="yearpicker-container">
-          <div class="yearpicker-header">
-            <div class="yearpicker-prev" data-view="yearpicker-prev">&lsaquo;</div>
-            <div class="yearpicker-current" data-view="yearpicker-current">SelectedYear</div>
-            <div class="yearpicker-next" data-view="yearpicker-next">&rsaquo;</div>
-          </div>
-          <div class="yearpicker-body">
-            <ul class="yearpicker-year" data-view="years">
-            </ul>
-          </div>
-        </div>`
-  });
-
 };
 
 
@@ -164,20 +143,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     bindFilterPanelButtons();
     const unsubFilterApply = filterManager.subscribe(filterUrlDisplay);
   });
-
-  const picker = document.getElementById('year-filter-picker');
-  document.getElementById('year-filter-cb').addEventListener('click', (e) => {
-      console.log(e);
-      if (e.target.checked) {
-        console.log('year checked');
-        picker.disabled = false;
-      } else {
-        console.log('year unchecked');
-        picker.disabled = true;
-      }
-      // tableManager.setState({ perpage: current });
-  });
-
 });
 
 
@@ -406,6 +371,12 @@ function applyFilters() {
         module.setStateItem('conference', 'both', false);
       });
   }
+
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('year', document.getElementById('year').value, false);
+      });
+
 
     console.log('applying filters');
     // let tester = document.querySelector("#filter-test-display");

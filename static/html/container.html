@@ -1,4 +1,4 @@
-    <section id="ui-section" data-page="1" data-filter="none" style="width: 100%">
+      <section id="ui-section" data-page="1" data-filter="none" style="width: 100%">
       <div id="toolbar" style="display: flex; flex-direction: row; border-bottom: 1px solid #bbbbbb; margin-top: 15px; padding-bottom: 3px;">
 
       <div id="filter-wrapper" style="width: auto">
@@ -25,20 +25,14 @@
               <div id="origin-filter-panel" class="panel"></div>
               <button class="filter-accordion">Media</button>
               <div id="media-filter-panel" class="panel"></div>
-              <button class="filter-accordion">Year</button>
-              <div id="year-filter-panel" class="panel" data-taxonomy="inventory_year">  
-                <div class="filter-option" style="display: flex; flex-direction: row; align-items: end;">
-                  <div style="display: inline-block; height: fit-content;">
-                    <label class="simpui-checkbox" style="gap:0.325rem">
-                      <input type="checkbox" id="year-filter-cb"/>
-                      <span class="simpui-box"></span>
-                    </label>
-                  </div>
-                  <div style="margin-left: 5px;">
-                    <input id="year-filter-picker" type="text" class="simpui-input-lookonly yearpicker" style="height: 22px; width: 65px" value="" disabled>
-                  </div>
-                </div>
-              </div>
+
+              <fieldset>
+                <legend>Year</legend>
+                <select name="year" id="year">
+                  <option value="">--Please choose an option--</option>
+                  [years]
+                </select>
+              </fieldset>
               
               <fieldset>
                 <legend>Quantity</legend>
@@ -47,15 +41,9 @@
                   <label for="missing-items">Show missing and needed items only</label>
                 </div>
               </fieldset>
-              
 
               <fieldset>
                 <legend>Conference</legend>
-                <div>
-                  <input type="radio" name="conference" id="both-conferences" value="both" checked>
-                  <label for="both-conferences">Both Conferences</label>
-                </div>
-
                 <div>
                   <input type="radio" name="conference" id="siggraph" value="siggraph">
                   <label for="siggraph">SIGGRAPH</label>
@@ -64,6 +52,11 @@
                 <div>
                   <input type="radio" name="conference" id="siggraph-asia" value="siggraph-asia">
                   <label for="siggraph-asia">SIGGRAPH Asia</label>
+                </div>
+
+                <div>
+                  <input type="radio" name="conference" id="both-conferences" value="both" checked>
+                  <label for="both-conferences">Both Conferences</label>
                 </div>
               </fieldset>
 
