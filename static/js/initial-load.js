@@ -138,7 +138,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
   terms.then((v) => {
     console.log(v); // v is the returned data from the promise
     // take action
-    populateFlatFilters(v); 
     populateHierarchicalFilters(v);
     bindFilterPanelButtons();
     const unsubFilterApply = filterManager.subscribe(filterUrlDisplay);
@@ -420,6 +419,12 @@ function populateHierarchicalFilters(termData) {
   origin_panel.setAttribute("data-taxonomy", "inventory_item_origin");
   recursiveMenuBuild(origin_terms, origin_panel);
   bindCheckboxToMoreAndPanel(origin_panel); 
+
+  const media_terms = termData['media_type'];
+  let media_panel = document.getElementById('media-filter-panel');
+  media_panel.setAttribute("data-taxonomy", "media_type");
+  recursiveMenuBuild(media_terms, media_panel);
+  bindCheckboxToMoreAndPanel(media_panel);
 }
 
 
@@ -564,48 +569,5 @@ function recursiveMenuBuild(items, parent_element) {
         recursiveMenuBuild(item.children, filter_subpanel);
       }
     }
-  });
-}
-
-
-
-/**
-  * addFilterOption(data, el)
-  * ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-  * Build filter-option HTML from individual entry item data and update
-  * the supplied HTML element contents
-  * @param {Array}        data  - item data object 
-  * @param {HTMLElement}  el    - HTMLElement to append the filter-option to 
-  */
-
-function addFilterOption(data, el) {
-  el.innerHTML += `
-      <div class="filter-option" id="${data.term_id}" style="display: flex; flex-direction: row;">
-        <label class="simpui-checkbox" style="gap:0.325rem">
-          <input type="checkbox" data-id="${data.term_id}" data-slug="${data.slug}">
-          <span class="simpui-box"></span><span class="simpui-checkbox-label">
-            ${data.name}
-          </span>
-        </label>
-      </div>`;
-}
-
-
-
-/**
-  * populateFlatFilters(termData)
-  * ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-  * Menu builder for the flat / non-hierachical taxonomies (default)
-  * @param termData - object contains 'search' values
-  * @return none
-  */
-
-function populateFlatFilters(termData) {
-  
-  const media_terms = termData['media_type'];
-  media_terms.forEach((term) => {
-    let media_panel = document.getElementById('media-filter-panel');
-    media_panel.setAttribute("data-taxonomy", "media_type");
-    addFilterOption(term, media_panel);
   });
 }
