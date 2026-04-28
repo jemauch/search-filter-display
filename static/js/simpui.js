@@ -733,11 +733,6 @@ if (filter_close) {
       filter_card.classList.remove("visible");
     });
 }
-if (filter_reset) {
-    filter_reset.addEventListener("click", () => {
-      filter_card.classList.remove("visible");
-    });
-}
 if (filter_apply) {
     filter_apply.addEventListener("click", () => {
       filter_card.classList.remove("visible");
