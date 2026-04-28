@@ -298,6 +298,7 @@ function bindFilterPanelButtons() {
   const reset = document.getElementById('filter-reset'); 
   reset.addEventListener('click', () => {
     setChildren(filterCard, "unchecked");
+    document.getElementById('filter-form').reset(); 
     applyFilters();
   });
 

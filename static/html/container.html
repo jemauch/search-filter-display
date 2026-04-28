@@ -11,65 +11,68 @@
               src="[filter]"/ >
             </button>
           </div>
-          <div class="filter-card filter-popup" id="filterCard">
-            <h4>Filter</h4>
-            <div id="inv-main-type" class="filter-popup-item">
-              <!-- this is the close button -->
-              <div id="filterClose" class="filter-close" >
-                <img decoding="async" style="filter: invert(75%); margin: 0px;
-                height: 18px; width: 18px" src="[close]"/ >
-              </div> 
-              <button class="filter-accordion">Item Type</button>
-              <div id="type-filter-panel" class="panel"></div>
-              <button class="filter-accordion">Subject</button>
-              <div id="origin-filter-panel" class="panel"></div>
-              <button class="filter-accordion">Media</button>
-              <div id="media-filter-panel" class="panel"></div>
 
-              <fieldset>
-                <legend>Year</legend>
-                <select name="year" id="year">
-                  <option value="">--Please choose an option--</option>
-                  [years]
-                </select>
-              </fieldset>
-              
-              <fieldset>
-                <legend>Quantity</legend>
-                <div>
-                  <input type="checkbox" name="missing-items" id="missing-items">
-                  <label for="missing-items">Show missing and needed items only</label>
-                </div>
-              </fieldset>
+          <form id="filter-form">
+            <div class="filter-card filter-popup" id="filterCard">
+              <h4>Filter</h4>
+              <div id="inv-main-type" class="filter-popup-item">
+                <!-- this is the close button -->
+                <div id="filterClose" class="filter-close" >
+                  <img decoding="async" style="filter: invert(75%); margin: 0px;
+                  height: 18px; width: 18px" src="[close]"/ >
+                </div> 
+                <button class="filter-accordion">Item Type</button>
+                <div id="type-filter-panel" class="panel"></div>
+                <button class="filter-accordion">Subject</button>
+                <div id="origin-filter-panel" class="panel"></div>
+                <button class="filter-accordion">Media</button>
+                <div id="media-filter-panel" class="panel"></div>
 
-              <fieldset>
-                <legend>Conference</legend>
-                <div>
-                  <input type="radio" name="conference" id="siggraph" value="siggraph">
-                  <label for="siggraph">SIGGRAPH</label>
-                </div>
+                <fieldset>
+                  <legend>Year</legend>
+                  <select name="year" id="year">
+                    <option value="">--Please choose an option--</option>
+                    [years]
+                  </select>
+                </fieldset>
+                
+                <fieldset>
+                  <legend>Quantity</legend>
+                  <div>
+                    <input type="checkbox" name="missing-items" id="missing-items">
+                    <label for="missing-items">Show missing and needed items only</label>
+                  </div>
+                </fieldset>
 
-                <div>
-                  <input type="radio" name="conference" id="siggraph-asia" value="siggraph-asia">
-                  <label for="siggraph-asia">SIGGRAPH Asia</label>
-                </div>
+                <fieldset>
+                  <legend>Conference</legend>
+                  <div>
+                    <input type="radio" name="conference" id="siggraph" value="siggraph">
+                    <label for="siggraph">SIGGRAPH</label>
+                  </div>
 
-                <div>
-                  <input type="radio" name="conference" id="both-conferences" value="both" checked>
-                  <label for="both-conferences">Both Conferences</label>
-                </div>
-              </fieldset>
+                  <div>
+                    <input type="radio" name="conference" id="siggraph-asia" value="siggraph-asia">
+                    <label for="siggraph-asia">SIGGRAPH Asia</label>
+                  </div>
 
-              <div style="display: flex; flex-wrap: wrap; justify-content: end;">
-                <div id="filterReset">
-                  <button id="filter-reset" class="simpui-btn danger sm">Reset</button>
-                </div>
-                <div id="filterApply">
-                  <button id="filter-apply" class="simpui-btn dark sm">Apply</button>
+                  <div>
+                    <input type="radio" name="conference" id="both-conferences" value="both" checked>
+                    <label for="both-conferences">Both Conferences</label>
+                  </div>
+                </fieldset>
+
+                <div style="display: flex; flex-wrap: wrap; justify-content: end;">
+                  <div id="filterReset">
+                    <button id="filter-reset" class="simpui-btn danger sm">Reset</button>
+                  </div>
+                  <div id="filterApply">
+                    <button id="filter-apply" class="simpui-btn dark sm">Apply</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
