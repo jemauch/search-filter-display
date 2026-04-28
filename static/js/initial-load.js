@@ -246,11 +246,12 @@ function find_parent(id, termData) {
 
 function checkboxAction(checkbox, more_button) {
 
-  let box = checkbox.nextElementSibling;
+  let box = checkbox.closest('.filter-option');
+
   if (checkbox.checked == true) {
-    setChildren(checkbox.closest('div'), "checked");
+    setChildren(box.querySelector('.subpanel'), "checked");
     } else {
-    setChildren(checkbox.closest('div'), "unchecked");
+    setChildren(box.querySelector('.subpanel'), "unchecked");
   }
 }
 
@@ -526,23 +527,22 @@ function recursiveMenuBuild(items, parent_element) {
     filter_option.setAttribute("data-name", item.name);
     filter_option.style.position = "relative";
 
-    let filter_label = document.createElement('label');
+    let filter_label = document.createElement('div');
     filter_label.classList.add('simpui-checkbox');
 
     let filter_input = document.createElement('input');
     filter_input.setAttribute('type', 'checkbox');
+    filter_input.setAttribute('id', 'input-' + item.term_id);
     filter_input.setAttribute('data-id', item.term_id);
     filter_input.setAttribute('data-slug', item.slug);
 
-    let filter_box = document.createElement('span');
-    filter_box.classList.add('simpui-box');
 
-    let filter_name = document.createElement('span');
+    let filter_name = document.createElement('label');
     filter_name.innerText = item.name;
     filter_name.classList.add('simpui-checkbox-label');
+    filter_name.setAttribute('for', 'input-' + item.term_id);
     
     filter_label.appendChild(filter_input);
-    filter_label.appendChild(filter_box);
     filter_label.appendChild(filter_name);
     filter_option.appendChild(filter_label);
     parent_element.appendChild(filter_option);
@@ -583,7 +583,7 @@ function addFilterOption(data, el) {
   el.innerHTML += `
       <div class="filter-option" id="${data.term_id}" style="display: flex; flex-direction: row;">
         <label class="simpui-checkbox" style="gap:0.325rem">
-          <input type="checkbox" data-id="${data.term_id}" data-slug="${data.slug}" required/>
+          <input type="checkbox" data-id="${data.term_id}" data-slug="${data.slug}">
           <span class="simpui-box"></span><span class="simpui-checkbox-label">
             ${data.name}
           </span>
