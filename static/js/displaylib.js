@@ -157,7 +157,7 @@ export function rebuildTable(data, lookup) {
               <a href="${item.url}">${item.title} ${th_volnum}</a>
             </div>
             <div class="conference details">
-              <a href="">${parent_type_name}</a> | ${item_type_name}
+              ${parent_type_name} | ${item_type_name}
             </div>
             <div class="categories details" style="display: flex; flex-direction: row; justify-content: flex-end; position: absolute; bottom: 4px; right: 4px; z-index: 500">
               <div style="width: fit-content;">Quantity: ${quant_display}</div>
