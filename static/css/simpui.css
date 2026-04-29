@@ -23,7 +23,7 @@
     --simpui-heading-color: #262626;
     --simpui-text-dim: #262626;
     --simpui-text-light: #737373;
-    --simpui-placeholder: #a7a7a7;
+    --simpui-placeholder: #595959;
     --simpui-fileinput-placeholder: #888888;
 }
 
@@ -1413,14 +1413,14 @@
     width: 300px;
     padding: 16px;
     z-index: 1000;
-    opacity: 0;
+    display: none;
     pointer-events: none;
     transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
     white-space: normal;
 }
 
 .filter-card.visible {
-    opacity: 1;
+    display: block;
     pointer-events: auto;
     transform: translateX(-50%) translateY(5px);
 }

@@ -761,6 +761,10 @@
    border: 1px solid #b5b5b5;
 }
 
+form#filter-form {
+  margin: 0;
+}
+
 form#filter-form fieldset {
   border: 1px solid #d9d9d9;
 }

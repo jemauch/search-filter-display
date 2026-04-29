@@ -20,7 +20,7 @@ function style_from_array($arr) {
   return $s_new;
 }
 
-function make_button($src_icon, $b_id, $style_arr = null) {
+function make_button($src_icon, $b_id, $style_arr = null, $title = "", $aria = "") {
   // work through optional params
   if(isset($style_arr)) {
     $style = style_from_array($style_arr);
@@ -29,13 +29,15 @@ function make_button($src_icon, $b_id, $style_arr = null) {
   }
   // deal with loading the html component
   $b_url = THIS_PLUGIN_PATH . "/static/html/button.html";
-  $buttonA = file_get_contents("$b_url");
+  $button = file_get_contents("$b_url");
   // load provided icon url into the html
   $b_icon = THIS_PLUGIN_URL . "$src_icon";
-  $buttonB = preg_replace("/\[icon\]/", $b_icon, $buttonA);
-  $buttonC = preg_replace("/\[id\]/", $b_id, $buttonB);
-  $buttonD = preg_replace("/\[style\]/", $style, $buttonC);
-  return $buttonD; 
+  $button = preg_replace("/\[icon\]/", $b_icon, $button);
+  $button = preg_replace("/\[id\]/", $b_id, $button);
+  $button = preg_replace("/\[style\]/", $style, $button);
+  $button = preg_replace("/\[title\]/", $title, $button);
+  $button = preg_replace("/\[aria\]/", $aria, $button);
+  return $button; 
 }
 
 
@@ -75,17 +77,17 @@ function search_filter_gui ($atts) {
   }
   
   // ---------------------------------------------------------------- top row grid and list buttons ----
-  $list_button = make_button("/static/svg/layout-list.svg", "list-button");
-  $grid_button = make_button("/static/svg/layout-grid.svg", "grid-button");
+  $list_button = make_button("/static/svg/layout-list.svg", "list-button", null, "List view", "List view");
+  $grid_button = make_button("/static/svg/layout-grid.svg", "grid-button", null, "Grid view", "Grid view");
   $spinner = '<div class="loader"></div>';
 
   // [17-02-2026] ------------------------------------------------------- bottom pagination buttons ----
   $bottom_bar_style = array("padding" => "0.11rem", "margin" => "5px 2px");
-  $goto_firstpage_button = make_button("/static/svg/push-chevron-left.svg", "goto-firstpage-button", $bottom_bar_style );
-  $goto_lastpage_button = make_button("/static/svg/push-chevron-right.svg", "goto-lastpage-button", $bottom_bar_style );
+  $goto_firstpage_button = make_button("/static/svg/push-chevron-left.svg", "goto-firstpage-button", $bottom_bar_style, "First page", "First page");
+  $goto_lastpage_button = make_button("/static/svg/push-chevron-right.svg", "goto-lastpage-button", $bottom_bar_style, "Last page", "Last page");
   
-  $back_onepage_button = make_button("/static/svg/chevron-left.svg", "back-onepage-button", $bottom_bar_style );
-  $forward_onepage_button = make_button("/static/svg/chevron-right.svg", "forward-onepage-button", $bottom_bar_style );
+  $back_onepage_button = make_button("/static/svg/chevron-left.svg", "back-onepage-button", $bottom_bar_style, "Previous page", "Previous page");
+  $forward_onepage_button = make_button("/static/svg/chevron-right.svg", "forward-onepage-button", $bottom_bar_style, "Next page", "Next page");
   
   $page_buttons = "<div style='display:flex; flex-direction: row; align-items:center;'>
                     $goto_firstpage_button
