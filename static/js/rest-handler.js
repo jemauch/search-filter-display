@@ -236,6 +236,7 @@ function dropdownHandler( event ) {
   $("#current-per-page").bind('dropDownEvent', function() {
     let newValue = this.textContent;
     // console.log(this);
+    setStateItem('page', "1", false);
     setStateItem('perpage', newValue);
   });
 
@@ -256,15 +257,6 @@ function dropdownHandler( event ) {
   // rpp_amt_hidden.bind('input', function() { 
   //   console.log('result amount changed'); 
   // });
-
-
-
-  $("#current-per-page").bind('dropDownEvent', function() {
-    let newValue = this.textContent;
-    // console.log(this);
-    setStateItem('perpage', newValue);
-  });
-
 
   function logger(log_message) {
       let logtime = new Date();
@@ -334,9 +326,12 @@ function dropdownHandler( event ) {
     const total_found = getStateItem('total_found') ?? 0;
     const current_page = getStateItem('page');
     const per_page = getStateItem('perpage');
-    let count = 0;
+    let count = 1;
     if (total_found > 0){
       count = total_found/Number(per_page);
+      if (count < 1) {
+        count = 1;
+      }
     }
 
     // update pagination

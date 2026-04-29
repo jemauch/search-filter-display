@@ -345,13 +345,13 @@ function applyFilters() {
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('missingitems', true, false);
-      });
+    });
   }
   else {
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('missingitems', false, false);
-      });
+    });
   }
 
   // Conference radio buttons
@@ -360,25 +360,32 @@ function applyFilters() {
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('conference', 'siggraph', false);
-      });
+    });
   }
   if (document.getElementById('siggraph-asia').checked) {
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('conference', 'siggraph-asia', false);
-      });
+    });
   }
   if (document.getElementById('both-conferences').checked) {
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('conference', 'both', false);
-      });
+    });
   }
 
-    import("./statelib.js")
-      .then((module) => {
-        module.setStateItem('year', document.getElementById('year').value, false);
-      });
+  // Year selection
+  import("./statelib.js")
+    .then((module) => {
+      module.setStateItem('year', document.getElementById('year').value, false);
+  });
+
+  // Set to first page after applying filters
+  import("./statelib.js")
+  .then((module) => {
+    module.setStateItem('page', "1", false);
+  });
 
 
     // console.log('applying filters');
@@ -394,7 +401,7 @@ function applyFilters() {
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('filter', filter_arr);
-      });
+    });
     // console.log('applying filters');
 }
 
