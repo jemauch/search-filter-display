@@ -5,8 +5,8 @@ var $ = jQuery;
   
 
 export function rebuildTable(data, lookup) {
-    console.log('rebuild table called');
-    console.log(data);
+    // console.log('rebuild table called');
+    // console.log(data);
     $('#grid_content').hide()
     $('#grid_content').html("")
     $('#table-header').show();
@@ -85,7 +85,7 @@ export function rebuildTable(data, lookup) {
 
     // NOTE: Grid
     export function rebuildGrid(data, lookup) {
-      console.log('rebuild grid called');
+      // console.log('rebuild grid called');
 
       $('#table-header').hide();
       $('#custom_search_results').hide();

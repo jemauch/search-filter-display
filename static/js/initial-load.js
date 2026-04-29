@@ -12,6 +12,7 @@
 
 let $ = window.jQuery;
 const jQuery = window.jQuery;
+const base_url = document.location.origin;
 
 // Deep copy function
 // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
@@ -51,13 +52,15 @@ window.onload = function() {
 // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
 async function filterQuery(data) {
-  console.log(data);
+  // console.log(data);
 
   let st = JSON.parse($("#state_object").text());
   
   st['filter'] = data.filters;
 
-  let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
+  let req_url = base_url + '/wp-json/sfd/v1/archive_inventory';
+
+  let r = await fetch(req_url, {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
@@ -103,7 +106,7 @@ async function filterQuery(data) {
       entries, pages, total, lookup, parent, children, hierarchy
     };
 
-    console.log(results_obj);
+    // console.log(results_obj);
 
     import("./rest-handler.js")
       .then((module) => {
@@ -132,11 +135,11 @@ const filterUrlDisplay = (state) => {
 
 document.addEventListener("DOMContentLoaded", (event) => {
   let t = new Date();
-  console.log(`[${t.toTimeString()}] - DOM loaded & parsed`);
+  // console.log(`[${t.toTimeString()}] - DOM loaded & parsed`);
   document.getElementById('filtering-ids');
   var terms = pullTerms(); // terms is the Promise Object
   terms.then((v) => {
-    console.log(v); // v is the returned data from the promise
+    // console.log(v); // v is the returned data from the promise
     // take action
     populateHierarchicalFilters(v);
     bindFilterPanelButtons();
@@ -156,7 +159,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   */
 
 async function pullTerms() {
-  const base = "http://localhost/wp-json/sfd/v1/archive_inventory";
+  const base = base_url + '/wp-json/sfd/v1/archive_inventory';
   const query = "?q[taxonomy]=";
   const taxonomy = "inventory_main_type,media_type,inventory_item_origin";
   let url = base + query + taxonomy;
@@ -378,7 +381,7 @@ function applyFilters() {
       });
 
 
-    console.log('applying filters');
+    // console.log('applying filters');
     // let tester = document.querySelector("#filter-test-display");
     // tester.innerText = "";
     // filter_arr.forEach((f) => {
@@ -392,7 +395,7 @@ function applyFilters() {
       .then((module) => {
         module.setStateItem('filter', filter_arr);
       });
-    console.log('applying filters');
+    // console.log('applying filters');
 }
 
 
@@ -468,7 +471,7 @@ function setChildren(root_element, action) {
       });
       break;
     default:
-      console.log('default case');
+      // console.log('default case');
       break;
   }
 }

@@ -20,8 +20,6 @@ function style_from_array($arr) {
   return $s_new;
 }
 
-write_log(THIS_PLUGIN_URL);
-
 function make_button($src_icon, $b_id, $style_arr = null) {
   // work through optional params
   if(isset($style_arr)) {
@@ -144,7 +142,12 @@ function search_filter_gui ($atts) {
   $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js';
   $js_REST_inject = preg_replace("/\[state\]/", $js_REST_url, $js_REST_template);
 
-  $debug_hud = '<div id="corner_hud" class="hud-box"> 
+  $debug_display = 'style="display: none;"';
+  if (FILTRATION_DEBUG == true) {
+    $debug_display = '';
+  }
+
+  $debug_hud = '<div id="corner_hud" class="hud-box"' . $debug_display . '> 
       <div id="mode" class="hud-item"></div>
       <div id="pod" class="hud-item"></div>
       <div id="filtertype" class="hud-item"></div> 

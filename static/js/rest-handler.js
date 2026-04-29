@@ -67,7 +67,7 @@ const QueryDetails = {
   missingitems: "false",
   conference: "both",
   year: "",
-  baseurl: 'localhost',
+  baseurl: document.location.host,
   endpoint: '',
   setEndpoint: function (e) {
     var links = document.getElementsByTagName( 'link' );
@@ -80,16 +80,16 @@ const QueryDetails = {
   setPage: function (pnum) {
     let oldnum = this.pagenum;
     this.pagenum = pnum;
-    console.log(`page: ${oldnum} changed to page: ${pnum}`);
+    // console.log(`page: ${oldnum} changed to page: ${pnum}`);
   },
   setPerPage: function (per) {
     let oldper = this.per_page;
     this.per_page = per;
-    console.log(`per_page: ${oldper} changed to per_page: ${per}`);
+    // console.log(`per_page: ${oldper} changed to per_page: ${per}`);
   },
   queryCompile: function () {
     let comp = `${this.endpoint}?${this.filt}${this.childof}q[limit]=${this.per_page}&q[page]=${this.pagenum}&q[orderby]=${this.orderby}&q[missingitems]=${this.missingitems}`;
-    console.log(comp);
+    // console.log(comp);
     return comp;
   },
   addFilter: function (key, val) {
@@ -99,7 +99,7 @@ const QueryDetails = {
     } else {
       this.filt += `q[filter]=${key},${val}&`;
     }
-    console.log(`filter is now: ${this.filt}`);
+    // console.log(`filter is now: ${this.filt}`);
   },
   setChildOf: function (key) {
     // http://localhost/wp-json/sfd/v1/archive_inventory?q[childof]=
@@ -107,7 +107,7 @@ const QueryDetails = {
       this.childof = "";
     } else {
     this.childof = `q[childof]=${key}&`;
-    console.log(`childof is now: ${this.childof}`);
+    // console.log(`childof is now: ${this.childof}`);
     }
   },
   clearChildOf: function () {
@@ -131,12 +131,12 @@ const QueryDetails = {
 
 async function getFromEndpoint(url, filter = null) {
 
-  console.log(getFunc(new Error().stack));
-  console.log("YEP: ", url, filter);
+  // console.log(getFunc(new Error().stack));
+  // console.log("YEP: ", url, filter);
 
   let st = JSON.parse($("#state_object").text());
   
-  let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
+  let r = await fetch(document.location.origin + '/wp-json/sfd/v1/archive_inventory', {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
@@ -203,7 +203,7 @@ function dropdownHandler( event ) {
   } else {
     setStateItem('childof', chosen_id);
   }
-  console.log(selection);
+  // console.log(selection);
   
   function setWidgetVisibility(widget_name, isvisible) {
     const w = $(widget_name);
@@ -235,20 +235,20 @@ function dropdownHandler( event ) {
 
   $("#current-per-page").bind('dropDownEvent', function() {
     let newValue = this.textContent;
-    console.log(this);
+    // console.log(this);
     setStateItem('perpage', newValue);
   });
 
   const st_obj = $('#state_object');
 
   st_obj.bind('change', function() {
-    console.log('STATE_OBJECT changed');
+    // console.log('STATE_OBJECT changed');
     updateQuery(st_obj);
   });
 
   let filter_option = $("#current-filter");
   filter_option.bind('dropDownEvent', function() { 
-    console.log(`filter option changed: ${this.textContent}`);
+    // console.log(`filter option changed: ${this.textContent}`);
     updateQuery(st_obj);
   });
 
@@ -261,7 +261,7 @@ function dropdownHandler( event ) {
 
   $("#current-per-page").bind('dropDownEvent', function() {
     let newValue = this.textContent;
-    console.log(this);
+    // console.log(this);
     setStateItem('perpage', newValue);
   });
 
@@ -269,13 +269,13 @@ function dropdownHandler( event ) {
   function logger(log_message) {
       let logtime = new Date();
       const uuid = crypto.randomUUID();
-      console.log(`[${logtime.toLocaleString()}] - ${log_message} [${uuid}]`);
+      // console.log(`[${logtime.toLocaleString()}] - ${log_message} [${uuid}]`);
   }
 
 
   function updateQuery(inline_state) {
     /* updates query from html object */
-    console.log(new Error().stack); 
+    // console.log(new Error().stack); 
     let st = getState();
     QueryDetails.pagenum = st.page;
 
@@ -299,7 +299,7 @@ function dropdownHandler( event ) {
     QueryDetails.year = st.year;
 
     let new_query = QueryDetails.queryCompile();
-    console.log("New query: ", new_query);
+    // console.log("New query: ", new_query);
     /* kick off the search */
     getFromEndpoint(QueryDetails.queryCompile());
 
@@ -314,8 +314,8 @@ function dropdownHandler( event ) {
     
     // await results_obj;
 
-    console.log('result: ', results_obj);
-    console.log(getFunc(new Error().stack));
+    // console.log('result: ', results_obj);
+    // console.log(getFunc(new Error().stack));
     
     // HINT: put in new results object
     $('#results_object').text(JSON.stringify(results_obj));
@@ -365,7 +365,7 @@ function main($) {
 
   let state_obj = $("#state_object");
   state_obj = JSON.parse(state_obj.text());
-  console.log(state_obj); 
+  // console.log(state_obj); 
   
   // adjust query-details to match sfd
   QueryDetails.pagenum = state_obj.page;
@@ -388,7 +388,7 @@ function main($) {
   
   $('#list-button').bind('click', function() {
     let st = getState();
-    console.log(st);
+    // console.log(st);
     if (st.mode != 'list') {
       setStateItem('mode', 'list');
     }
@@ -400,7 +400,7 @@ function main($) {
     let st = getState();
     if (st.mode != 'grid') {
       setStateItem('mode', 'grid');
-      console.log(st);
+      // console.log(st);
     }
   });
 

@@ -16,6 +16,9 @@ License:		MIT
 require 'modules/rest_query.php';
 require 'modules/gui.php';
 
+// Turn off and on debug mode
+define('FILTRATION_DEBUG', false);
+define('SITE_URL', get_site_url());
 
 
 // Function to disable caching, tag with context and attach endpoint lookup
@@ -26,7 +29,7 @@ function search_filter_display_head() {
 ?>
     <meta property="og:type" content="search" />
     <meta http-equiv="pragma" content="no-cache">
-    <link rel='https://api.w.org/' href='http://localhost/wp-json/' />
+    <link rel='https://api.w.org/' href='<?php echo SITE_URL ?>/wp-json/' />
 <?php
   }
 }
