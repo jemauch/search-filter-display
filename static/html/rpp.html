@@ -1,21 +1,10 @@
-<div class="simpui-dropdown-wrapper" style="height: 28px;">
-    <div class="simpui-select" style="height: 28px; padding: 0px 10px;">
-        <div class="simpui-select-trigger" style="height: 28px;">
-          <span id="current-per-page" class="simpui-selected-text" style="height: 24px; vertical-align: middle;">[default]</span>
-            <svg class="simpui-chevron" width="16" height="16" viewBox="0 0 20 20" fill="none">
-                <path d="M6 8l4 4 4-4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </div>
-        <div class="simpui-options" >
-            <span data-value="100" style="height: 24px;">100</span>
-            <span data-value="75" style="height: 24px;">75</span>
-            <span data-value="50" style="height: 24px;">50</span>
-            <span data-value="25" style="height: 24px;">25</span>
-            <span data-value="10" style="height: 24px;">10</span>
-        </div>
-    </div>
-    <input type="hidden" id="rpp_amt" name="rpp" style="height: 24px;" required/>
-    <div class="simpui-error" style="height: 24px;">This field is required</div>
-</div>
 
+<label for="current-per-page">Items per page:</label>
 
+<select name="current-per-page" id="current-per-page" style="width: 50px; height: 28px">
+  <option value="100">100</option>
+  <option value="75">75</option>
+  <option value="50">50</option>
+  <option value="25" selected>25</option>
+  <option value="10">10</option>
+</select>

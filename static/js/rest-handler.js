@@ -233,8 +233,8 @@ function dropdownHandler( event ) {
 }
 
 
-  $("#current-per-page").bind('dropDownEvent', function() {
-    let newValue = this.textContent;
+  $("#current-per-page").bind('change', function() {
+    let newValue = this.value;
     // console.log(this);
     setStateItem('page', "1", false);
     setStateItem('perpage', newValue);
