@@ -6,26 +6,28 @@
 
         <div class="filter-card-wrapper" id="filterWrapper">
           <div class="filter-trigger" id="filterTrigger">
-            <button id="filter-button" class="simpui-btn secondary xs" style="padding: 2px; margin: 0px;">
+            <button id="filter-button" class="simpui-btn secondary" aria-expanded="false" aria-controls="filterCard" style="padding: 2px; margin: 0px;">
               <img decoding="async" style="filter: invert(100%); margin: 0px"
-              src="[filter]"/ >
+              src="[filter]" alt="">
+              Filters
             </button>
           </div>
 
           <form id="filter-form">
             <div class="filter-card filter-popup" id="filterCard">
-              <h4>Filter</h4>
+              <div class="filter-card-top">
+                <h2>Filters</h2>
+                <button id="filterClose" class="filter-close" type="button" aria-label="Close filters">
+                  <img decoding="async" src="[close]">
+                </button>
+              </div>
+
               <div id="inv-main-type" class="filter-popup-item">
-                <!-- this is the close button -->
-                <div id="filterClose" class="filter-close" >
-                  <img decoding="async" style="filter: invert(75%); margin: 0px;
-                  height: 18px; width: 18px" src="[close]"/ >
-                </div> 
-                <button type="button" class="filter-accordion">Item Type</button>
+                <button type="button" class="filter-accordion" aria-expanded="false" aria-controls="type-filter-panel">Item Type</button>
                 <div id="type-filter-panel" class="panel"></div>
-                <button type="button" class="filter-accordion">Subject</button>
+                <button type="button" class="filter-accordion" aria-expanded="false" aria-controls="origin-filter-panel">Subject</button>
                 <div id="origin-filter-panel" class="panel"></div>
-                <button type="button" class="filter-accordion">Media</button>
+                <button type="button" class="filter-accordion" aria-expanded="false" aria-controls="media-filter-panel">Media</button>
                 <div id="media-filter-panel" class="panel"></div>
 
                 <fieldset>

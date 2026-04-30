@@ -504,7 +504,6 @@
     color: #111;
     /*border-color: #bbb;*/
     box-shadow: 0 6px 18px rgba(50, 50, 80, 0.14), 0 1.5px 6px rgba(0, 0, 0, 0.08);
-    filter: brightness(1.04);
 }
 
 .simpui-btn:active:not(:disabled) {
@@ -1436,7 +1435,7 @@
     transform: translateX(0) translateY(5px);
 }
 
-.filter-card h4 {
+.filter-card h2 {
     margin: 0 0 4px;
     font-size: 16px;
     font-weight: 600;

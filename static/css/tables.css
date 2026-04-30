@@ -711,12 +711,12 @@
   margin-left: 14px;
   margin-top: 3px;
   margin-bottom: 3px;
-  border-bottom: 1px solid #d9d9d9; 
 }
 
 .subpanel {
   /* inactive */ 
   display: none;
+  border-left: 1px solid #d9d9d9;
 }
 
 .subpanel.active {
@@ -732,29 +732,56 @@
 }
 
 .filter-close {
+  padding: 0;
+  border: none;
+  background-color: unset;
   cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  height: fit-content;
+}
+
+.filter-close img {
+  filter: invert(60%);
+  margin: 0;
+  width: 20px;
+}
+
+.filter-card-top {
+  display: flex;
+  justify-content: space-between;
 }
 
 .more {
-/* display: none; */
-  content: url("../svg/add-r.svg");
-  filter: invert(75%);
-  margin-left: auto;
+  padding: 0;
+  border: none;
+  background-color: unset;
   cursor: pointer;
-  width: 18px;
-  height: 18px;
-  position:absolute;
-  right:20px;
-  top: 2px;
+  height: fit-content;
+  cursor: pointer;
 }
 
-.more.open {
-  content: url("../svg/remove-r.svg");
-  display: block;
- }
+.more::before {
+  filter: invert(0.5);
+  content: "";
+  background-image:url(../svg/add-r.svg);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  display: inline-block;
+
+  width: 16px;
+  height: 16px;
+}
+
+.more.open::before {
+  background-image:url(../svg/remove-r.svg);
+}
+
+.term-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-right: 25px;
+  border-bottom: 1px dotted #d9d9d9;
+}
 
 .simpui-checkbox input[type="checkbox"]:checked+.simpui-box.implicit { 
    background: #b5b5b5;
@@ -773,4 +800,8 @@ div.table-wrapper {
   display: block;
   overflow-x: auto;
   white-space: nowrap;
+}
+
+.term-container:hover, .term-container:focus-within {
+  background-color: #f3f3f3;
 }

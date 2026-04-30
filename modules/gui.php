@@ -20,7 +20,7 @@ function style_from_array($arr) {
   return $s_new;
 }
 
-function make_button($src_icon, $b_id, $style_arr = null, $title = "", $aria = "") {
+function make_button($src_icon, $b_id, $style_arr = null, $title = "", $alt = "") {
   // work through optional params
   if(isset($style_arr)) {
     $style = style_from_array($style_arr);
@@ -36,7 +36,7 @@ function make_button($src_icon, $b_id, $style_arr = null, $title = "", $aria = "
   $button = preg_replace("/\[id\]/", $b_id, $button);
   $button = preg_replace("/\[style\]/", $style, $button);
   $button = preg_replace("/\[title\]/", $title, $button);
-  $button = preg_replace("/\[aria\]/", $aria, $button);
+  $button = preg_replace("/\[alt\]/", $alt, $button);
   return $button; 
 }
 

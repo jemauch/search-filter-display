@@ -35,9 +35,11 @@ window.onload = function() {
       // panel.classList.toggle("active");
       if ($(panel).is(':visible')) {
         $(panel).slideUp('slow');
+        this.setAttribute('aria-expanded', false);
       } else {
         panel.style.maxHeight = "100vh";
         $(panel).slideDown('slow');
+        this.setAttribute('aria-expanded', true);
       }
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
@@ -274,9 +276,11 @@ function moreButtonAction(more, panel) {
   if ($(panel).is(':visible')) {
     $(panel).slideUp('slow');
     more.classList.remove('open');
+    more.setAttribute('aria-expanded', false);
   } else {
     $(panel).slideDown('slow');
     more.classList.add('open');
+    more.setAttribute('aria-expanded', true);
     type_panel.style.maxHeight = "100vh";
   }
 }
@@ -541,6 +545,9 @@ function recursiveMenuBuild(items, parent_element) {
     filter_option.setAttribute("data-name", item.name);
     filter_option.style.position = "relative";
 
+    let term_container = document.createElement('div');
+    term_container.classList.add('term-container');
+
     let filter_label = document.createElement('div');
     filter_label.classList.add('simpui-checkbox');
 
@@ -558,21 +565,28 @@ function recursiveMenuBuild(items, parent_element) {
     
     filter_label.appendChild(filter_input);
     filter_label.appendChild(filter_name);
-    filter_option.appendChild(filter_label);
+    term_container.appendChild(filter_label);
+    filter_option.appendChild(term_container);
     parent_element.appendChild(filter_option);
 
     if (item.children instanceof Array) {
       if (item.children.length > 0) {
 
         // more button to reveal children
-        let filter_more = document.createElement('span');
+        let filter_more = document.createElement('button');
+        filter_more.setAttribute('type', 'button');
         filter_more.setAttribute('data-id', item.term_id);
+        filter_more.setAttribute('aria-label', item.name + ' subtypes');
+        filter_more.setAttribute('aria-expanded', false);
+        filter_more.setAttribute('aria-controls', 'children-' + item.term_id);
         filter_more.classList.add('more');
+
         // filter_more.textContent = 'more..';
-        filter_option.appendChild(filter_more);
+        term_container.appendChild(filter_more);
 
         // create hidden subpanel which shows when parent is ticked
         let filter_subpanel = document.createElement('div');
+        filter_subpanel.setAttribute('id', 'children-' + item.term_id);
         filter_subpanel.setAttribute('data-id', item.term_id);
         filter_subpanel.classList.add('subpanel');
         filter_option.appendChild(filter_subpanel);
