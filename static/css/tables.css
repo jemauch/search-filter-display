@@ -427,7 +427,6 @@
 /**/
 .custom-table {
   min-width: 900px;
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue";
   font-size: 14px;
 }
   .custom-table thead tr, .custom-table thead th {
@@ -663,6 +662,8 @@
   transition: 0.4s;
   height: 26px;
   position: relative;
+  font-family: Arial;
+  font-size: 14px;
 }
 
 .filter-accordion:hover {
@@ -794,6 +795,18 @@ form#filter-form {
 
 form#filter-form fieldset {
   border: 1px solid #d9d9d9;
+  border-radius: 0.3em;
+  padding-left: 0;
+  margin-top: 5px;
+}
+
+form#filter-form fieldset legend {
+  color: #444;
+  font-weight: 700;
+}
+
+form#filter-form fieldset > :not(legend) {
+  margin-left: 10.5px;
 }
 
 div.table-wrapper {
