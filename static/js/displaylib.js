@@ -7,8 +7,8 @@ var $ = jQuery;
 export function rebuildTable(data, lookup) {
     // console.log('rebuild table called');
     // console.log(data);
-    $('#grid_content').hide()
-    $('#grid_content').html("")
+    $('#grid_content').hide();
+    $('#grid_content').html("");
     $('#table-header').show();
     $('#custom_search_results').show();
     $('#main_table').show();
@@ -77,7 +77,7 @@ export function rebuildTable(data, lookup) {
           </tr>`);
       });
       $('#custom_search_results').html(return_list);
-      $("#spinner").hide();
+      $("#spinner-layout").hide();
     }
 
 
@@ -166,5 +166,5 @@ export function rebuildTable(data, lookup) {
         </div>`);
     });
     $('#grid_content').html(return_list);
-    $("#spinner").hide();
+    $("#spinner-layout").hide();
   }

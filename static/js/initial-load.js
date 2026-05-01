@@ -54,7 +54,6 @@ window.onload = function() {
 // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
 async function filterQuery(data) {
-  // console.log(data);
 
   let st = JSON.parse($("#state_object").text());
   

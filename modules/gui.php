@@ -79,7 +79,10 @@ function search_filter_gui ($atts) {
   // ---------------------------------------------------------------- top row grid and list buttons ----
   $list_button = make_button("/static/svg/layout-list.svg", "list-button", null, "List view", "List view");
   $grid_button = make_button("/static/svg/layout-grid.svg", "grid-button", null, "Grid view", "Grid view");
-  $spinner = '<div class="loader"></div>';
+  $spinner = '<div id="spinner-layout">
+                <div id="spinner" class="loader"></div>
+                <span class="spinner-text">Loading...</span>
+              </div>';
 
   // [17-02-2026] ------------------------------------------------------- bottom pagination buttons ----
   $bottom_bar_style = array("padding" => "0.11rem", "margin" => "5px 2px");
@@ -139,6 +142,9 @@ function search_filter_gui ($atts) {
   $section_cap = "</section>";
   $grid_content = "<div id='grid_content' style='margin: 10px 0px'></div>";
 
+  $content = '<div id="content-wrapper">' . $spinner . $table . $grid_content . '</div>';
+  
+
   // ----------------------------------------------------------------- inject the js and return gui ----
   $js_REST_template = '<script lang="javascript" src="[state]" type="module"></script>';
   $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js';
@@ -160,7 +166,7 @@ function search_filter_gui ($atts) {
       <div id="query-text" class="hud-item">default</div>
     </div>';
   // ------------------------------------------------------------------- return value from function ----
-  return $json_state_obj . $json_results_obj . $debug_hud . $topbar_gui_compiled . $table . $grid_content . $bottombar . $section_cap . $js_REST_inject;
+  return $json_state_obj . $json_results_obj . $debug_hud . $topbar_gui_compiled . $content . $bottombar . $section_cap . $js_REST_inject;
 }
 
 

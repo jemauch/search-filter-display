@@ -133,6 +133,7 @@ async function getFromEndpoint(url, filter = null) {
 
   // console.log(getFunc(new Error().stack));
   // console.log("YEP: ", url, filter);
+  $('#spinner-layout').css('display', 'flex');
 
   let st = JSON.parse($("#state_object").text());
   
