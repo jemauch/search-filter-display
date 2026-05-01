@@ -781,7 +781,7 @@
   justify-content: space-between;
   align-items: baseline;
   margin-right: 25px;
-  border-bottom: 1px dotted #d9d9d9;
+  border-bottom: 1px solid #e7e7e7;
 }
 
 .simpui-checkbox input[type="checkbox"]:checked+.simpui-box.implicit { 
