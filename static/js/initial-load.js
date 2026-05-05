@@ -109,7 +109,7 @@ async function filterQuery(data) {
 
     // console.log(results_obj);
 
-    import("./rest-handler.js")
+    import("./rest-handler.js?ver=1.0.0")
       .then((module) => {
         module.updateResults(results_obj);
       });
@@ -345,13 +345,13 @@ function applyFilters() {
 
   // Missing items checkbox
   if (document.getElementById('missing-items').checked) {
-    import("./statelib.js")
+    import("./statelib.js?ver=1.0.0")
       .then((module) => {
         module.setStateItem('missingitems', true, false);
     });
   }
   else {
-    import("./statelib.js")
+    import("./statelib.js?ver=1.0.0")
       .then((module) => {
         module.setStateItem('missingitems', false, false);
     });
@@ -360,32 +360,32 @@ function applyFilters() {
   // Conference radio buttons
   // TODO: Refactor this
   if (document.getElementById('siggraph').checked) {
-    import("./statelib.js")
+    import("./statelib.js?ver=1.0.0")
       .then((module) => {
         module.setStateItem('conference', 'siggraph', false);
     });
   }
   if (document.getElementById('siggraph-asia').checked) {
-    import("./statelib.js")
+    import("./statelib.js?ver=1.0.0")
       .then((module) => {
         module.setStateItem('conference', 'siggraph-asia', false);
     });
   }
   if (document.getElementById('both-conferences').checked) {
-    import("./statelib.js")
+    import("./statelib.js?ver=1.0.0")
       .then((module) => {
         module.setStateItem('conference', 'both', false);
     });
   }
 
   // Year selection
-  import("./statelib.js")
+  import("./statelib.js?ver=1.0.0")
     .then((module) => {
       module.setStateItem('year', document.getElementById('year').value, false);
   });
 
   // Set to first page after applying filters
-  import("./statelib.js")
+  import("./statelib.js?ver=1.0.0")
   .then((module) => {
     module.setStateItem('page', "1", false);
   });
@@ -401,7 +401,7 @@ function applyFilters() {
     // ATTENTION: line below commented out because it was making an unneeded POST request. 
     // filterManager.setState({filters: filter_arr});
 
-    import("./statelib.js")
+    import("./statelib.js?ver=1.0.0")
       .then((module) => {
         module.setStateItem('filter', filter_arr);
     });

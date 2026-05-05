@@ -19,8 +19,8 @@
 
 
 import { getState, getStateItem, setState, setStateItem, setResults, getResults, 
-  getFunc } from './statelib.js';
-import {rebuildTable, rebuildGrid} from './displaylib.js';
+  getFunc } from './statelib.js?ver=1.0.0';
+import {rebuildTable, rebuildGrid} from './displaylib.js?ver=1.0.0';
 
 
 

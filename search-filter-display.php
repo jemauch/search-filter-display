@@ -3,7 +3,7 @@
 Plugin Name:	Search Filter Display
 Plugin URI:
 Description:	Heavily customizable search and filtration options per page via WP shortcodes. 
-Version:		1.0.0
+Version:		1.0.1
 Author:			Ken Stewart
 Author URI:		https:/kenstewart.ca
 License:		MIT
@@ -50,14 +50,14 @@ function inject_header_content() {
     $initialload_js = plugins_url( '/static/js/initial-load.js', __FILE__);
     $yearpicker_js = plugins_url( '/static/js/yearpicker.js', __FILE__);
     
-    wp_enqueue_style('sfd-css', $tables_css, [], null);
-    wp_enqueue_style('sfd-yearpicker-css', $yearpicker_css, [], null);
-    wp_enqueue_style('sfd-simpui-css', $simpui_css, [], null);
+    wp_enqueue_style('sfd-css', $tables_css, [], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/css/tables.css'));
+    wp_enqueue_style('sfd-yearpicker-css', $yearpicker_css, [], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/css/yearpicker.css'));
+    wp_enqueue_style('sfd-simpui-css', $simpui_css, [], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/css/simpui.css'));
     /* wp_enqueue_script('jquery'); */
-    wp_enqueue_script('sfd-simpui-js', $simpui_js, ['jquery'], null, true);
-    wp_enqueue_script('sfd-yearpicker-js', $yearpicker_js, ['jquery'], null, true);
-    wp_enqueue_script('sfd-stateman-js', $stateman_js, ['jquery'], null, true);
-    wp_enqueue_script('sfd-initialload-js', $initialload_js, ['jquery'], null, true);
+    wp_enqueue_script('sfd-simpui-js', $simpui_js, ['jquery'], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/js/simpui.js'), true);
+    wp_enqueue_script('sfd-yearpicker-js', $yearpicker_js, ['jquery'], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/js/yearpicker.js'), true);
+    wp_enqueue_script('sfd-stateman-js', $stateman_js, ['jquery'], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/js/state-man.js'), true);
+    wp_enqueue_script('sfd-initialload-js', $initialload_js, ['jquery'], filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/js/initial-load.js'), true);
     // note: the rest-handler.js is being injected into the body via the GUI
   }
 }
