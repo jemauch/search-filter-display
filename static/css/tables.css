@@ -860,3 +860,15 @@ div.table-wrapper {
 #content-wrapper {
   position: relative;
 }
+
+#filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  position: sticky;
+  bottom: 0;
+  background-color: #f7f7f7;
+  border: 1px solid #8f8f9d;
+  border-radius: 0.3em;
+  margin: 10px 0;
+}
