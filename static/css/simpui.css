@@ -1410,12 +1410,14 @@
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     width: 300px;
-    padding: 16px;
+    padding: 10px 10px 0 10px;
     z-index: 1000;
     display: none;
     pointer-events: none;
     transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
     white-space: normal;
+    max-height: 80vh;
+    overflow-y: scroll;
 }
 
 .filter-card.visible {
