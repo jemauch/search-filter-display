@@ -50,6 +50,9 @@ class StateMan {
     page: 1,
     search: false,
     filter: 'View All',
+    missingitems: false,
+    conference: 'both',
+    year: '',
     orderby: 'inventory_year DESC',
     pagination: true
   });
@@ -146,8 +149,8 @@ class StateMan {
 
   // dropdown cpp & filter
   document.getElementById('current-per-page')
-    .addEventListener('dropDownEvent', (e) => { 
-      const current = Number(e.target.textContent);
+    .addEventListener('change', (e) => { 
+      const current = Number(e.target.value);
       tableManager.setState({ perpage: current });
   });
 

@@ -19,7 +19,7 @@ class ButtonHandler {
   //       ----------------
   handler = () => {
     this.sto.mode = this.mode;
-    console.log(this.sto);
+    // console.log(this.sto);
   }
 }
 
@@ -51,11 +51,11 @@ let rpp_amt_hidden = document.getElementById("rpp_amt");
 // FUNC: Event listener for the dropdown results per-page
 //       ------------------------------------------------
 rpp_amt_hidden.addEventListener('input', function (e) {
-  console.log(e);
+  // console.log(e);
 });
 
 
 
 // TODO: Write handler for the Filter button and the search function
-console.log(rpp_amt_hidden.value);
+// console.log(rpp_amt_hidden.value);
 

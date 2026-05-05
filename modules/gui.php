@@ -2,9 +2,8 @@
 
 require 'helpers.php';
 
-
-
-
+define('FIRST_YEAR', 1974);
+define('CURRENT_YEAR', (int) date('Y'));
 
 // NOTE: Helper functions to build UI components/styles
 //
@@ -21,9 +20,7 @@ function style_from_array($arr) {
   return $s_new;
 }
 
-write_log(THIS_PLUGIN_URL);
-
-function make_button($src_icon, $b_id, $style_arr = null) {
+function make_button($src_icon, $b_id, $style_arr = null, $title = "", $alt = "") {
   // work through optional params
   if(isset($style_arr)) {
     $style = style_from_array($style_arr);
@@ -32,13 +29,15 @@ function make_button($src_icon, $b_id, $style_arr = null) {
   }
   // deal with loading the html component
   $b_url = THIS_PLUGIN_PATH . "/static/html/button.html";
-  $buttonA = file_get_contents("$b_url");
+  $button = file_get_contents("$b_url");
   // load provided icon url into the html
   $b_icon = THIS_PLUGIN_URL . "$src_icon";
-  $buttonB = preg_replace("/\[icon\]/", $b_icon, $buttonA);
-  $buttonC = preg_replace("/\[id\]/", $b_id, $buttonB);
-  $buttonD = preg_replace("/\[style\]/", $style, $buttonC);
-  return $buttonD; 
+  $button = preg_replace("/\[icon\]/", $b_icon, $button);
+  $button = preg_replace("/\[id\]/", $b_id, $button);
+  $button = preg_replace("/\[style\]/", $style, $button);
+  $button = preg_replace("/\[title\]/", $title, $button);
+  $button = preg_replace("/\[alt\]/", $alt, $button);
+  return $button; 
 }
 
 
@@ -78,17 +77,20 @@ function search_filter_gui ($atts) {
   }
   
   // ---------------------------------------------------------------- top row grid and list buttons ----
-  $list_button = make_button("/static/svg/layout-list.svg", "list-button");
-  $grid_button = make_button("/static/svg/layout-grid.svg", "grid-button");
-  $spinner = '<div class="loader"></div>';
+  $list_button = make_button("/static/svg/layout-list.svg", "list-button", null, "List view", "List view");
+  $grid_button = make_button("/static/svg/layout-grid.svg", "grid-button", null, "Grid view", "Grid view");
+  $spinner = '<div id="spinner-layout">
+                <div id="spinner" class="loader"></div>
+                <span class="spinner-text">Loading...</span>
+              </div>';
 
   // [17-02-2026] ------------------------------------------------------- bottom pagination buttons ----
   $bottom_bar_style = array("padding" => "0.11rem", "margin" => "5px 2px");
-  $goto_firstpage_button = make_button("/static/svg/push-chevron-left.svg", "goto-firstpage-button", $bottom_bar_style );
-  $goto_lastpage_button = make_button("/static/svg/push-chevron-right.svg", "goto-lastpage-button", $bottom_bar_style );
+  $goto_firstpage_button = make_button("/static/svg/push-chevron-left.svg", "goto-firstpage-button", $bottom_bar_style, "First page", "First page");
+  $goto_lastpage_button = make_button("/static/svg/push-chevron-right.svg", "goto-lastpage-button", $bottom_bar_style, "Last page", "Last page");
   
-  $back_onepage_button = make_button("/static/svg/chevron-left.svg", "back-onepage-button", $bottom_bar_style );
-  $forward_onepage_button = make_button("/static/svg/chevron-right.svg", "forward-onepage-button", $bottom_bar_style );
+  $back_onepage_button = make_button("/static/svg/chevron-left.svg", "back-onepage-button", $bottom_bar_style, "Previous page", "Previous page");
+  $forward_onepage_button = make_button("/static/svg/chevron-right.svg", "forward-onepage-button", $bottom_bar_style, "Next page", "Next page");
   
   $page_buttons = "<div style='display:flex; flex-direction: row; align-items:center;'>
                     $goto_firstpage_button
@@ -101,6 +103,18 @@ function search_filter_gui ($atts) {
   // [16-02-2026] ----------------------------------------------------------------------- container ----
   $container_url = THIS_PLUGIN_PATH . "/static/html/container.html";
   $container = file_get_contents("$container_url");
+
+  // --------------------------------------------------------------------------------- year options ----
+  $years = [];
+  $year_options = [];
+
+  $years = range(CURRENT_YEAR, FIRST_YEAR);
+
+  foreach ($years as $year) {
+    $year_options[] = "<option value=\"$year\">$year</option>";
+  }
+
+  $container = preg_replace("/\[years\]/", implode($year_options), $container);
 
   // ----------------------------------------------------------------------------- results dropdown ----
   $dropdown_url = THIS_PLUGIN_PATH . "/static/html/rpp.html";
@@ -128,12 +142,20 @@ function search_filter_gui ($atts) {
   $section_cap = "</section>";
   $grid_content = "<div id='grid_content' style='margin: 10px 0px'></div>";
 
+  $content = '<div id="content-wrapper">' . $spinner . $table . $grid_content . '</div>';
+  
+
   // ----------------------------------------------------------------- inject the js and return gui ----
   $js_REST_template = '<script lang="javascript" src="[state]" type="module"></script>';
   $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js';
   $js_REST_inject = preg_replace("/\[state\]/", $js_REST_url, $js_REST_template);
 
-  $debug_hud = '<div id="corner_hud" class="hud-box"> 
+  $debug_display = 'style="display: none;"';
+  if (FILTRATION_DEBUG == true) {
+    $debug_display = '';
+  }
+
+  $debug_hud = '<div id="corner_hud" class="hud-box"' . $debug_display . '> 
       <div id="mode" class="hud-item"></div>
       <div id="pod" class="hud-item"></div>
       <div id="filtertype" class="hud-item"></div> 
@@ -144,7 +166,7 @@ function search_filter_gui ($atts) {
       <div id="query-text" class="hud-item">default</div>
     </div>';
   // ------------------------------------------------------------------- return value from function ----
-  return $json_state_obj . $json_results_obj . $debug_hud . $topbar_gui_compiled . $table . $grid_content . $bottombar . $section_cap . $js_REST_inject;
+  return $json_state_obj . $json_results_obj . $debug_hud . $topbar_gui_compiled . $content . $bottombar . $section_cap . $js_REST_inject;
 }
 
 

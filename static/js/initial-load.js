@@ -12,6 +12,7 @@
 
 let $ = window.jQuery;
 const jQuery = window.jQuery;
+const base_url = document.location.origin;
 
 // Deep copy function
 // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
@@ -34,9 +35,11 @@ window.onload = function() {
       // panel.classList.toggle("active");
       if ($(panel).is(':visible')) {
         $(panel).slideUp('slow');
+        this.setAttribute('aria-expanded', false);
       } else {
         panel.style.maxHeight = "100vh";
         $(panel).slideDown('slow');
+        this.setAttribute('aria-expanded', true);
       }
       if (panel.style.maxHeight) {
         panel.style.maxHeight = null;
@@ -44,27 +47,6 @@ window.onload = function() {
       }
     });
   }
-  const yearnow = new Date();
-  const thisYear = yearnow.getFullYear()
-
-  $('.yearpicker').yearpicker({
-    year: thisYear,
-    startYear: 1974,
-    endYear: thisYear,
-    template: `
-        <div class="yearpicker-container">
-          <div class="yearpicker-header">
-            <div class="yearpicker-prev" data-view="yearpicker-prev">&lsaquo;</div>
-            <div class="yearpicker-current" data-view="yearpicker-current">SelectedYear</div>
-            <div class="yearpicker-next" data-view="yearpicker-next">&rsaquo;</div>
-          </div>
-          <div class="yearpicker-body">
-            <ul class="yearpicker-year" data-view="years">
-            </ul>
-          </div>
-        </div>`
-  });
-
 };
 
 
@@ -72,13 +54,14 @@ window.onload = function() {
 // ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
 async function filterQuery(data) {
-  console.log(data);
 
   let st = JSON.parse($("#state_object").text());
   
   st['filter'] = data.filters;
 
-  let r = await fetch('http://localhost/wp-json/sfd/v1/archive_inventory', {
+  let req_url = base_url + '/wp-json/sfd/v1/archive_inventory';
+
+  let r = await fetch(req_url, {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
@@ -124,7 +107,7 @@ async function filterQuery(data) {
       entries, pages, total, lookup, parent, children, hierarchy
     };
 
-    console.log(results_obj);
+    // console.log(results_obj);
 
     import("./rest-handler.js")
       .then((module) => {
@@ -153,31 +136,16 @@ const filterUrlDisplay = (state) => {
 
 document.addEventListener("DOMContentLoaded", (event) => {
   let t = new Date();
-  console.log(`[${t.toTimeString()}] - DOM loaded & parsed`);
+  // console.log(`[${t.toTimeString()}] - DOM loaded & parsed`);
   document.getElementById('filtering-ids');
   var terms = pullTerms(); // terms is the Promise Object
   terms.then((v) => {
-    console.log(v); // v is the returned data from the promise
+    // console.log(v); // v is the returned data from the promise
     // take action
-    populateFlatFilters(v); 
     populateHierarchicalFilters(v);
     bindFilterPanelButtons();
     const unsubFilterApply = filterManager.subscribe(filterUrlDisplay);
   });
-
-  const picker = document.getElementById('year-filter-picker');
-  document.getElementById('year-filter-cb').addEventListener('click', (e) => {
-      console.log(e);
-      if (e.target.checked) {
-        console.log('year checked');
-        picker.disabled = false;
-      } else {
-        console.log('year unchecked');
-        picker.disabled = true;
-      }
-      // tableManager.setState({ perpage: current });
-  });
-
 });
 
 
@@ -192,7 +160,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   */
 
 async function pullTerms() {
-  const base = "http://localhost/wp-json/sfd/v1/archive_inventory";
+  const base = base_url + '/wp-json/sfd/v1/archive_inventory';
   const query = "?q[taxonomy]=";
   const taxonomy = "inventory_main_type,media_type,inventory_item_origin";
   let url = base + query + taxonomy;
@@ -281,11 +249,12 @@ function find_parent(id, termData) {
 
 function checkboxAction(checkbox, more_button) {
 
-  let box = checkbox.nextElementSibling;
+  let box = checkbox.closest('.filter-option');
+
   if (checkbox.checked == true) {
-    setChildren(checkbox.closest('div'), "checked");
+    setChildren(box.querySelector('.subpanel'), "checked");
     } else {
-    setChildren(checkbox.closest('div'), "unchecked");
+    setChildren(box.querySelector('.subpanel'), "unchecked");
   }
 }
 
@@ -306,9 +275,11 @@ function moreButtonAction(more, panel) {
   if ($(panel).is(':visible')) {
     $(panel).slideUp('slow');
     more.classList.remove('open');
+    more.setAttribute('aria-expanded', false);
   } else {
     $(panel).slideDown('slow');
     more.classList.add('open');
+    more.setAttribute('aria-expanded', true);
     type_panel.style.maxHeight = "100vh";
   }
 }
@@ -333,7 +304,7 @@ function bindFilterPanelButtons() {
   const reset = document.getElementById('filter-reset'); 
   reset.addEventListener('click', () => {
     setChildren(filterCard, "unchecked");
-    applyFilters();
+    document.getElementById('filter-form').reset(); 
   });
 
 }
@@ -370,19 +341,71 @@ function applyFilters() {
     if (id_arr.length > 0) {
       filter_arr.push({'taxonomy': tax, 'terms': id_arr});
       }
+  });
+
+  // Missing items checkbox
+  if (document.getElementById('missing-items').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('missingitems', true, false);
     });
+  }
+  else {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('missingitems', false, false);
+    });
+  }
+
+  // Conference radio buttons
+  // TODO: Refactor this
+  if (document.getElementById('siggraph').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('conference', 'siggraph', false);
+    });
+  }
+  if (document.getElementById('siggraph-asia').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('conference', 'siggraph-asia', false);
+    });
+  }
+  if (document.getElementById('both-conferences').checked) {
+    import("./statelib.js")
+      .then((module) => {
+        module.setStateItem('conference', 'both', false);
+    });
+  }
+
+  // Year selection
+  import("./statelib.js")
+    .then((module) => {
+      module.setStateItem('year', document.getElementById('year').value, false);
+  });
+
+  // Set to first page after applying filters
+  import("./statelib.js")
+  .then((module) => {
+    module.setStateItem('page', "1", false);
+  });
+
+
+    // console.log('applying filters');
     // let tester = document.querySelector("#filter-test-display");
     // tester.innerText = "";
     // filter_arr.forEach((f) => {
     //   tester.innerText += JSON.stringify(f);
     // });
-    filterManager.setState({filters: filter_arr});
+
+    // ATTENTION: line below commented out because it was making an unneeded POST request. 
+    // filterManager.setState({filters: filter_arr});
 
     import("./statelib.js")
       .then((module) => {
         module.setStateItem('filter', filter_arr);
-      });
-    console.log('applying filters');
+    });
+    // console.log('applying filters');
 }
 
 
@@ -409,6 +432,12 @@ function populateHierarchicalFilters(termData) {
   origin_panel.setAttribute("data-taxonomy", "inventory_item_origin");
   recursiveMenuBuild(origin_terms, origin_panel);
   bindCheckboxToMoreAndPanel(origin_panel); 
+
+  const media_terms = termData['media_type'];
+  let media_panel = document.getElementById('media-filter-panel');
+  media_panel.setAttribute("data-taxonomy", "media_type");
+  recursiveMenuBuild(media_terms, media_panel);
+  bindCheckboxToMoreAndPanel(media_panel);
 }
 
 
@@ -452,7 +481,7 @@ function setChildren(root_element, action) {
       });
       break;
     default:
-      console.log('default case');
+      // console.log('default case');
       break;
   }
 }
@@ -515,87 +544,53 @@ function recursiveMenuBuild(items, parent_element) {
     filter_option.setAttribute("data-name", item.name);
     filter_option.style.position = "relative";
 
-    let filter_label = document.createElement('label');
+    let term_container = document.createElement('div');
+    term_container.classList.add('term-container');
+
+    let filter_label = document.createElement('div');
     filter_label.classList.add('simpui-checkbox');
 
     let filter_input = document.createElement('input');
     filter_input.setAttribute('type', 'checkbox');
+    filter_input.setAttribute('id', 'input-' + item.term_id);
     filter_input.setAttribute('data-id', item.term_id);
     filter_input.setAttribute('data-slug', item.slug);
 
-    let filter_box = document.createElement('span');
-    filter_box.classList.add('simpui-box');
 
-    let filter_name = document.createElement('span');
+    let filter_name = document.createElement('label');
     filter_name.innerText = item.name;
     filter_name.classList.add('simpui-checkbox-label');
+    filter_name.setAttribute('for', 'input-' + item.term_id);
     
     filter_label.appendChild(filter_input);
-    filter_label.appendChild(filter_box);
     filter_label.appendChild(filter_name);
-    filter_option.appendChild(filter_label);
+    term_container.appendChild(filter_label);
+    filter_option.appendChild(term_container);
     parent_element.appendChild(filter_option);
 
     if (item.children instanceof Array) {
       if (item.children.length > 0) {
 
         // more button to reveal children
-        let filter_more = document.createElement('span');
+        let filter_more = document.createElement('button');
+        filter_more.setAttribute('type', 'button');
         filter_more.setAttribute('data-id', item.term_id);
+        filter_more.setAttribute('aria-label', item.name + ' subtypes');
+        filter_more.setAttribute('aria-expanded', false);
+        filter_more.setAttribute('aria-controls', 'children-' + item.term_id);
         filter_more.classList.add('more');
+
         // filter_more.textContent = 'more..';
-        filter_option.appendChild(filter_more);
+        term_container.appendChild(filter_more);
 
         // create hidden subpanel which shows when parent is ticked
         let filter_subpanel = document.createElement('div');
+        filter_subpanel.setAttribute('id', 'children-' + item.term_id);
         filter_subpanel.setAttribute('data-id', item.term_id);
         filter_subpanel.classList.add('subpanel');
         filter_option.appendChild(filter_subpanel);
         recursiveMenuBuild(item.children, filter_subpanel);
       }
     }
-  });
-}
-
-
-
-/**
-  * addFilterOption(data, el)
-  * ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-  * Build filter-option HTML from individual entry item data and update
-  * the supplied HTML element contents
-  * @param {Array}        data  - item data object 
-  * @param {HTMLElement}  el    - HTMLElement to append the filter-option to 
-  */
-
-function addFilterOption(data, el) {
-  el.innerHTML += `
-      <div class="filter-option" id="${data.term_id}" style="display: flex; flex-direction: row;">
-        <label class="simpui-checkbox" style="gap:0.325rem">
-          <input type="checkbox" data-id="${data.term_id}" data-slug="${data.slug}" required/>
-          <span class="simpui-box"></span><span class="simpui-checkbox-label">
-            ${data.name}
-          </span>
-        </label>
-      </div>`;
-}
-
-
-
-/**
-  * populateFlatFilters(termData)
-  * ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
-  * Menu builder for the flat / non-hierachical taxonomies (default)
-  * @param termData - object contains 'search' values
-  * @return none
-  */
-
-function populateFlatFilters(termData) {
-  
-  const media_terms = termData['media_type'];
-  media_terms.forEach((term) => {
-    let media_panel = document.getElementById('media-filter-panel');
-    media_panel.setAttribute("data-taxonomy", "media_type");
-    addFilterOption(term, media_panel);
   });
 }

@@ -5,10 +5,10 @@ var $ = jQuery;
   
 
 export function rebuildTable(data, lookup) {
-    console.log('rebuild table called');
-    console.log(data);
-    $('#grid_content').hide()
-    $('#grid_content').html("")
+    // console.log('rebuild table called');
+    // console.log(data);
+    $('#grid_content').hide();
+    $('#grid_content').html("");
     $('#table-header').show();
     $('#custom_search_results').show();
     $('#main_table').show();
@@ -77,7 +77,7 @@ export function rebuildTable(data, lookup) {
           </tr>`);
       });
       $('#custom_search_results').html(return_list);
-      $("#spinner").hide();
+      $("#spinner-layout").hide();
     }
 
 
@@ -85,7 +85,7 @@ export function rebuildTable(data, lookup) {
 
     // NOTE: Grid
     export function rebuildGrid(data, lookup) {
-      console.log('rebuild grid called');
+      // console.log('rebuild grid called');
 
       $('#table-header').hide();
       $('#custom_search_results').hide();
@@ -157,7 +157,7 @@ export function rebuildTable(data, lookup) {
               <a href="${item.url}">${item.title} ${th_volnum}</a>
             </div>
             <div class="conference details">
-              <a href="">${parent_type_name}</a> | ${item_type_name}
+              ${parent_type_name} | ${item_type_name}
             </div>
             <div class="categories details" style="display: flex; flex-direction: row; justify-content: flex-end; position: absolute; bottom: 4px; right: 4px; z-index: 500">
               <div style="width: fit-content;">Quantity: ${quant_display}</div>
@@ -166,5 +166,5 @@ export function rebuildTable(data, lookup) {
         </div>`);
     });
     $('#grid_content').html(return_list);
-    $("#spinner").hide();
+    $("#spinner-layout").hide();
   }

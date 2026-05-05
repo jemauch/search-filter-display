@@ -697,6 +697,7 @@ const filter_reset = document.getElementById("filterReset");
 const filter_apply = document.getElementById("filterApply");
 const filter_card = document.getElementById("filterCard");
 const filter_wrapper = document.getElementById("filterWrapper");
+const filter_button = document.getElementById("filter-button");
 
 function adjustFilterCardPosition() {
     if (!filter_trigger || !filter_card) return;
@@ -723,24 +724,23 @@ if (filter_trigger && filter_card) {
     filter_trigger.addEventListener("click", () => {
         if (filter_card.classList.contains("visible")) {
           filter_card.classList.remove("visible");
+          filter_button.setAttribute("aria-expanded", false);
         } else {
           filter_card.classList.add("visible");
+          filter_button.setAttribute("aria-expanded", true);
           adjustFilterCardPosition();
         }
     });
 if (filter_close) {
     filter_close.addEventListener("click", () => {
       filter_card.classList.remove("visible");
-    });
-}
-if (filter_reset) {
-    filter_reset.addEventListener("click", () => {
-      filter_card.classList.remove("visible");
+      filter_button.setAttribute('aria-expanded', false);
     });
 }
 if (filter_apply) {
     filter_apply.addEventListener("click", () => {
       filter_card.classList.remove("visible");
+      filter_button.setAttribute('aria-expanded', false);
     });
 }
 
