@@ -3,7 +3,7 @@
 Plugin Name:	Search Filter Display
 Plugin URI:
 Description:	Heavily customizable search and filtration options per page via WP shortcodes. 
-Version:		1.0.0
+Version:		1.0.1
 Author:			Ken Stewart
 Author URI:		https:/kenstewart.ca
 License:		MIT
