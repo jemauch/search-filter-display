@@ -1,4 +1,4 @@
-import {getState, getStateItem, setState, setStateItem, setResults, getResults } from './statelib.js';
+import {getState, getStateItem, setState, setStateItem, setResults, getResults } from './statelib.js?ver=1.0.0';
 
 var jQuery = window.jQuery;
 var $ = jQuery;

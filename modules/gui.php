@@ -147,7 +147,7 @@ function search_filter_gui ($atts) {
 
   // ----------------------------------------------------------------- inject the js and return gui ----
   $js_REST_template = '<script lang="javascript" src="[state]" type="module"></script>';
-  $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js';
+  $js_REST_url = THIS_PLUGIN_URL . '/static/js/rest-handler.js?ver=' . filemtime(WP_PLUGIN_DIR . '/search-filter-display/static/js/rest-handler.js');
   $js_REST_inject = preg_replace("/\[state\]/", $js_REST_url, $js_REST_template);
 
   $debug_display = 'style="display: none;"';
