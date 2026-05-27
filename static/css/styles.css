@@ -1,0 +1,231 @@
+.filter-toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+    border-bottom: 1px solid #bbbbbb;
+    margin-top: 15px;
+    padding: 5px 0;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 100000;
+}
+
+.sfd-filter__card {
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 10px 10px 0 10px;
+    z-index: 1000;
+    max-height: 80vh;
+    overflow-y: scroll;
+    top: 110%;
+    width: min(380px, 100%);
+}
+
+.sfd-filter-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+
+.sfd-fieldset {
+    border: 1px solid #d9d9d9; 
+    border-radius: 0.3em;
+    padding-left: 0;
+}
+
+.sfd-fieldset--accordion {
+    padding: 0;
+    margin: 0 0 5px;
+    border: none;
+}
+
+.sfd-fieldset__legend {
+    font-weight: 700;
+    color: #444;
+}
+
+.sfd-fieldset__control {
+    display: flex;
+    border-bottom: 1px solid #d9d9d9; 
+    border-radius: 0.3em;
+    cursor: pointer;
+    width: 100%;
+
+    padding: 5px;
+    transition: 0.4s;
+}
+
+.sfd-fieldset__control:hover {
+    background-color: #ededed;
+}
+
+.sfd-fieldset__options {
+    margin: 0 0 0 10.5px;
+    padding: 0;
+    background-color: white;
+    transition: max-height 0.2s ease-out;
+}
+
+.term-group {
+    margin-top: 3px;
+}
+
+.term-group__term {
+    border-bottom: 1px solid #e7e7e7;
+    display: flex;
+    justify-content: space-between;
+}
+
+.term-group__children {
+    padding: 0;
+    padding-left: 20px;
+    border-left: 1px solid #e7e7e7;
+}
+
+.term__input {
+    display: flex;
+}
+
+.input__checkbox {
+    margin-left: 0;
+}
+
+.term__disclosure {
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background-color: white;
+    font-size: 20px;
+    color: #444;
+}
+
+.filter-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    border-top: 1px solid #bbbbbb;
+    padding-top: 5px;
+}
+
+.filter-pagination {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+    align-items: center;
+}
+
+.loader-wrapper {
+    position: absolute;
+    background-color: #ffffffc2;
+    width: 100%;
+    height: 100%;
+    min-height: 50px;
+}
+
+.loader-wrapper__loader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    font-size: xx-large;
+    font-weight: 700;
+    position: sticky;
+    top: 45vh;
+}
+
+.disclosure-trigger[aria-expanded="false"] > :is(.disclosure-trigger__minus, .disclosure-trigger__up) {
+  display: none;
+}
+
+.disclosure-trigger[aria-expanded="true"] > :is(.disclosure-trigger__plus, .disclosure-trigger__down) {
+  display: none;
+}
+
+.disclosure-trigger__up, .disclosure-trigger__down {
+    margin-left: auto;
+    font-size: 19px;
+}
+
+.sfd-button {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: background 0.18s, color 0.18s, border-color 0.18s, box-shadow 0.18s;
+    cursor: pointer;
+    padding: 2px;
+    background-color: #6c757d;
+    border: 1px solid #6c757d;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.sfd-button:hover {
+    background-color: #4b5157;
+    border: 1px solid #4b5157;
+}
+
+.sfd-button:disabled {
+    background-color: #a3a3a3;
+    border: 1px solid #a3a3a3;
+    cursor: default;
+}
+
+.sfd-filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    position: sticky;
+    bottom: 0;
+    background-color: #f7f7f7;
+    border: 1px solid #8f8f9d;
+    border-radius: 0.3em;
+    margin: 10px 0;
+    gap: 8px;
+    padding: 3px;
+}
+
+.sfd-filter-actions__reset {
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+.sfd-filter-actions__reset:hover {
+    background: #9b212d;
+    border-color: #9b212d;
+}
+
+.sfd-filter-actions__submit {
+    background: #3f3f46;
+    border-color: #3f3f46;
+}
+
+.sfd-filter-actions__submit:hover {
+    background: #19191d;
+    border-color: #19191d;
+}
+
+.sfd-table {
+    font-size: 0.9rem;
+}
+
+.sfd-table thead {
+    text-align: left;
+}
+
+.sfd-view-options {
+    display: flex;
+    gap: 5px;
+    align-items: end;
+}
+
+.view__output {
+    display: flex;
+    gap: 2px;
+}
