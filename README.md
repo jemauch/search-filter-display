@@ -1,13 +1,40 @@
 # SFD (Search Filter Display)
 
-A WP Plugin that acts as a filtering table SPA within a page.
+A WordPress plugin to create frontend filters. Built around and requires [Pods](https://github.com/pods-framework/pods).
 
-* Sensible configuration defaults.
-* Responsive UI with minimum server requests
-* Added via custom WP shortcode.
+## Installation
 
-## Todo
-* Searchable keywords
-* Clean up codebase
-* Refine state-ful architecture
-* Reduce REST-API code 
+1. Download the [latest release](https://github.com/jemauch/search-filter-display/releases/latest).
+2. Upload the .zip file through the Add Plugin page in WordPress.
+3. Activate the plugin.
+
+## How to Use
+
+### Shortcode
+
+Use the shortcode `[sfd]` with the following shortcode attributes:
+
+- `pod`: Slug of the pod you want to pull posts from. (REQUIRED)
+- `grid`: Name of the Pods template to use for the grid view. (REQUIRED)
+- `table`: Name of the Pods template to use for the table view. (REQUIRED)
+- `display`: Default display. Choose between "grid" or "table". (OPTIONAL; set to "grid" by default)
+
+#### Shortcode Example
+
+`[sfd pod="archive_inventory" grid="Inventory Cards Template" table="Inventory Table Template" display="table"]`
+
+### Filter Config
+
+The filter can only be displayed when a pod is configured inside [SFD_Config](classes\sfd-config.php).
+
+To edit the config, add the pod slug to the config array. In the order that you want them to appear on the frontend, add inputs. There are four types of inputs you can use: taxonomy, year, conference, and checkbox. Checkbox requires its own array of options for the input. There is a config for the order that posts will display as well.
+
+In the future, the config should be editable through a settings page in the admin dashboard.
+
+## To-do
+
+* Create a config page.
+* Sorting options.
+* Cache results.
+* Improve accessibility.
+* Add a search bar.
