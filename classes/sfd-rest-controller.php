@@ -56,8 +56,6 @@ class SFD_REST_Controller {
 		// Get the values from the request and prepare to query
         $name = $request['name'];
 		$data = $request->get_body_params();
-
-		error_log(print_r($data, true));
         
 		$params = [];
 		$params['limit'] = 25;
