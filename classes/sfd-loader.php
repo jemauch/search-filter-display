@@ -60,20 +60,12 @@ class SFD_Loader {
 	 * @since    2.0.0
 	 */
     private function enqueue_scripts() {
-        // state.js
-        wp_enqueue_script(
-            'sfd-state',
-            SFD_URL . '/static/js/state.js',
-            ['jquery'],
-            filemtime(SFD_DIR . '/static/js/state.js')
-        );
-
         // disclosure.js
         wp_enqueue_script(
             'sfd-disclosure',
             SFD_URL . '/static/js/disclosure.js',
             array(),
-            filemtime(SFD_DIR . '/static/js/disclosure.js')
+            filemtime(SFD_DIR . 'static/js/disclosure.js')
         );
 
         // checkboxes.js
@@ -81,7 +73,7 @@ class SFD_Loader {
             'sfd-checkboxes',
             SFD_URL . '/static/js/checkboxes.js',
             ['jquery'],
-            filemtime(SFD_DIR . '/static/js/checkboxes.js')
+            filemtime(SFD_DIR . 'static/js/checkboxes.js')
         );
 
         // form-handler.js
@@ -89,7 +81,7 @@ class SFD_Loader {
             'sfd-filter-handler',
             SFD_URL . '/static/js/form-handler.js',
             ['jquery'],
-            filemtime(SFD_DIR . '/static/js/form-handler.js')
+            filemtime(SFD_DIR . 'static/js/form-handler.js')
         );
         wp_add_inline_script(
             'sfd-filter-handler',
@@ -107,7 +99,7 @@ class SFD_Loader {
             'sfd-styles',
             SFD_URL . '/static/css/styles.css',
             array(),
-            filemtime(SFD_DIR . '/static/css/styles.css')
+            filemtime(SFD_DIR . 'static/css/styles.css')
         );
 
         // tables.css
@@ -115,7 +107,7 @@ class SFD_Loader {
             'sfd-tables',
             SFD_URL . '/static/css/tables.css',
             array(),
-            filemtime(SFD_DIR . '/static/css/tables.css')
+            filemtime(SFD_DIR . 'static/css/tables.css')
         );
     }
 
