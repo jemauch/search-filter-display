@@ -83,12 +83,72 @@ class SFD_Config {
                     'type' => 'conference',
                     'query' => 'award_conference',
                 ],
-            ]
+            ],
+            'experience' => [
+                'Experience Type' => [
+                    'legend' => 'Experience Type', 
+                    'slug' => 'experience_type', 
+                    'type' => 'taxonomy',
+                ],
+                'Year' => [
+                    'legend' => 'Year', 
+                    'slug' => 'year', 
+                    'type' => 'year',
+                    'query' => "experience_conference.conference_year.meta_value IN ('{VALUE}')",
+                ],
+                'Conference' => [
+                    'legend' => 'Conference', 
+                    'slug' => 'conference', 
+                    'type' => 'conference',
+                    'query' => 'experience_conference',
+                ],
+            ],
+            'learning' => [
+                'Learning Type' => [
+                    'legend' => 'Learning Type', 
+                    'slug' => 'learning_type', 
+                    'type' => 'taxonomy',
+                ],
+                'Year' => [
+                    'legend' => 'Year', 
+                    'slug' => 'year', 
+                    'type' => 'year',
+                    'query' => "learning_conference.conference_year.meta_value IN ('{VALUE}')",
+                ],
+                'Conference' => [
+                    'legend' => 'Conference', 
+                    'slug' => 'conference', 
+                    'type' => 'conference',
+                    'query' => 'learning_conference',
+                ],
+            ],
+            'animation_video_pod' => [
+                'Animation Type' => [
+                    'legend' => 'Animation Type', 
+                    'slug' => 'animation_video_event_type', 
+                    'type' => 'taxonomy',
+                ],
+                'Year' => [
+                    'legend' => 'Year', 
+                    'slug' => 'year', 
+                    'type' => 'year',
+                    'query' => "animation_video_conference_year.meta_value IN ('{VALUE}')",
+                ],
+                'Conference' => [
+                    'legend' => 'Conference', 
+                    'slug' => 'conference', 
+                    'type' => 'conference',
+                    'query' => 'animation_video_conference',
+                ],
+            ],
         ];
 
         $this->orderConfig = [
             'archive_inventory' => 'inventory_year DESC',
             'award' => 'award_year DESC',
+            'experience' => 'experience_conference.conference_year.meta_value DESC',
+            'learning' => 'learning_conference.conference_year.meta_value DESC',
+            'animation_video_pod' => 'animation_video_conference_year DESC',
         ];
     }
 
