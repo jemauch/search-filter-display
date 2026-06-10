@@ -63,6 +63,7 @@ class SFD_REST_Controller {
 		$display = 'grid';
 		$grid_template = '';
 		$table_template = '';
+		$cache = false;
 
 		if (array_key_exists('display', $data)) {
 			$display = $data['display'];
@@ -74,6 +75,10 @@ class SFD_REST_Controller {
 
 		if (array_key_exists('table', $data)) {
 			$table_template = $data['table'];
+		}
+
+		if (array_key_exists('cache', $data)) {
+			$cache = filter_var($data['cache'], FILTER_VALIDATE_BOOLEAN);
 		}
 
 		if (array_key_exists('page', $data)) {
@@ -140,8 +145,8 @@ class SFD_REST_Controller {
 
 		$cache_key = implode($params) . $template;
 
-		if ( false == ($results = pods_transient_get($cache_key)) ) {
-			// Query
+		// Query if results not cached yet or if cache is disabled from shortcode
+		if ( false == ($results = pods_transient_get($cache_key)) || false == $cache ) {
 			$posts = pods($name);
 			$posts = $posts->find($params);
 
@@ -153,7 +158,9 @@ class SFD_REST_Controller {
 			$output = $posts->template($template);
 			$results['output'] = $output;
 
-			pods_transient_set( $cache_key, $results, DAY_IN_SECONDS );
+			if (true == $cache) {
+				pods_transient_set( $cache_key, $results, DAY_IN_SECONDS );
+			}
 		}
 
 		// Return response to form-handler.js

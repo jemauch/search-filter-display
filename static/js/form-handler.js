@@ -84,6 +84,7 @@ async function getPosts(filterUpdated = true, p = 1) {
     const data = formData;
     data.set("page", p);
     data.set("display", display);
+    data.set("cache", sfd.cache);
 
     // Template names from SFD_Loader
     data.set("grid", sfd.grid);

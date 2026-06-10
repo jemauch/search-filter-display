@@ -16,6 +16,7 @@ class SFD_Loader {
     private $grid_template;     // Name of template used for grid.
     private $table_template;    // Name of template used for table.
     private $display;           // Default display at first load.
+    private $cache;             // Whether to cache filter results as transient option
 
     /**
      * Constructor
@@ -29,13 +30,14 @@ class SFD_Loader {
      * @param string $grid_template     Pod template name for grid.
      * @param string $table_template    Pod template name for table.
      */
-    public function __construct($pod, $grid_template, $table_template, $display) {
+    public function __construct($pod, $grid_template, $table_template, $display, $cache) {
 		$this->pod = $pod;
         $this->endpoint = get_site_url() . '/wp-json/' . SFD_REST_Controller::$namespace . '/' . $this->pod;
 
         $this->grid_template = $grid_template;
         $this->table_template = $table_template;
         $this->display = $display;
+        $this->cache = $cache;
 
         $this->load_dependencies();
         $this->enqueue_scripts();
@@ -90,6 +92,7 @@ class SFD_Loader {
                 grid: '$this->grid_template',
                 table: '$this->table_template',
                 default_display: '$this->display',
+                cache: '$this->cache',
             };",
             'before'
 	    );
