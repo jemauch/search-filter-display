@@ -48,14 +48,14 @@ class SFD_Form {
      * @return string   HTML output.
 	 */
     public function build() {
-        $form = "<div class='filter-toolbar'><div class='sfd-filter'><button class='sfd-filter__button disclosure-trigger sfd-button' aria-expanded='false' aria-controls='sfd-filter-card'>" . sfd_get_icon('filter-funnel') . "Filters</button><search class='sfd-filter__card' id='sfd-filter-card' hidden><form id='filters' class='sfd-filter-form'>
-                    <h2>Filters</h2>";
+        $form = "<div class='filter-toolbar'><div class='sfd-filter'><button class='sfd-filter__button modal-toggle sfd-button' aria-expanded='false' aria-controls='sfd-filter-card'>" . sfd_get_icon('filter-funnel') . "Filters</button><search class='sfd-filter__card' id='sfd-filter-card' hidden><form id='filters' class='sfd-filter-form'>
+                    <div class='sfd-filter-header'><h2>Filters</h2><button class='icon-button modal-close' type='button'><span class='sr-only'>Close</span>" . sfd_get_icon('gravity-ui--xmark') . "</button></div>";
 
         foreach ($this->filters as $input) {
             $form = $form . $input->build();
         }
 
-        $form = $form . "<div class='sfd-filter-actions'><input class='sfd-filter-actions__reset sfd-button' type='reset' value='Reset'><input class='sfd-filter-actions__submit sfd-button' type='submit' value='Apply'></div></form></search></div>";
+        $form = $form . "<div class='sfd-filter-actions'><input class='sfd-filter-actions__submit sfd-button modal-close' type='submit' value='Apply'><input class='sfd-filter-actions__reset sfd-button' type='reset' value='Reset'></div></form></search></div>";
 
         $form = $form . "<div class='sfd-view-options'>" . sfd_get_html('per-page') . "<div class='view__output'><button id='table-layout' class='sfd-button'>" . sfd_get_icon('layout-list') . "</button><button id='grid-layout' class='sfd-button'>" . sfd_get_icon('layout-grid') . "</button></div></div></div>";
 

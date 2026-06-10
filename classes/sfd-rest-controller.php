@@ -63,6 +63,7 @@ class SFD_REST_Controller {
 		$display = 'grid';
 		$grid_template = '';
 		$table_template = '';
+		$cache = false;
 
 		if (array_key_exists('display', $data)) {
 			$display = $data['display'];
@@ -74,6 +75,10 @@ class SFD_REST_Controller {
 
 		if (array_key_exists('table', $data)) {
 			$table_template = $data['table'];
+		}
+
+		if (array_key_exists('cache', $data)) {
+			$cache = filter_var($data['cache'], FILTER_VALIDATE_BOOLEAN);
 		}
 
 		if (array_key_exists('page', $data)) {
@@ -131,14 +136,6 @@ class SFD_REST_Controller {
 		// Build query string for 'where' parameter
 		$params['where'] = implode(' AND ', $where);
 
-		// Query
-		$posts = pods($name);
-		$posts = $posts->find($params);
-
-		$results = [];
-
-		$results['total'] = $posts->total_found();
-
 		// Get template, default is grid
 		$template = $grid_template;
 
@@ -146,9 +143,25 @@ class SFD_REST_Controller {
 			$template = $table_template;
 		}
 
-		// Get template output
-		$output = $posts->template($template);
-		$results['output'] = $output;
+		$cache_key = implode($params) . $template;
+
+		// Query if results not cached yet or if cache is disabled from shortcode
+		if ( false == ($results = pods_transient_get($cache_key)) || false == $cache ) {
+			$posts = pods($name);
+			$posts = $posts->find($params);
+
+			$results = [];
+
+			$results['total'] = $posts->total_found();
+
+			// Get template output
+			$output = $posts->template($template);
+			$results['output'] = $output;
+
+			if (true == $cache) {
+				pods_transient_set( $cache_key, $results, DAY_IN_SECONDS );
+			}
+		}
 
 		// Return response to form-handler.js
 		$response = new WP_REST_Response($results, 200);

@@ -15,6 +15,7 @@ function sfd_shortcode($atts, $content = null) {
         'grid' => '',
         'table' => '',
         'display' => 'grid',
+        'cache' => false,
     ), $atts);
 
     $pod = $atts['pod'];
@@ -24,7 +25,7 @@ function sfd_shortcode($atts, $content = null) {
         return '';
     }
 
-    $loader = new SFD_Loader($pod, $atts['grid'], $atts['table'], $atts['display']);
+    $loader = new SFD_Loader($pod, $atts['grid'], $atts['table'], $atts['display'], $atts['cache']);
 
     return $loader->build();
 }
