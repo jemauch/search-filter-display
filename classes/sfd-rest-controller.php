@@ -131,14 +131,6 @@ class SFD_REST_Controller {
 		// Build query string for 'where' parameter
 		$params['where'] = implode(' AND ', $where);
 
-		// Query
-		$posts = pods($name);
-		$posts = $posts->find($params);
-
-		$results = [];
-
-		$results['total'] = $posts->total_found();
-
 		// Get template, default is grid
 		$template = $grid_template;
 
@@ -146,9 +138,23 @@ class SFD_REST_Controller {
 			$template = $table_template;
 		}
 
-		// Get template output
-		$output = $posts->template($template);
-		$results['output'] = $output;
+		$cache_key = implode($params) . $template;
+
+		if ( false == ($results = pods_transient_get($cache_key)) ) {
+			// Query
+			$posts = pods($name);
+			$posts = $posts->find($params);
+
+			$results = [];
+
+			$results['total'] = $posts->total_found();
+
+			// Get template output
+			$output = $posts->template($template);
+			$results['output'] = $output;
+
+			pods_transient_set( $cache_key, $results, DAY_IN_SECONDS );
+		}
 
 		// Return response to form-handler.js
 		$response = new WP_REST_Response($results, 200);
