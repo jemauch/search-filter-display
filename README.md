@@ -18,10 +18,11 @@ Use the shortcode `[sfd]` with the following shortcode attributes:
 - `grid`: Name of the Pods template to use for the grid view. (REQUIRED)
 - `table`: Name of the Pods template to use for the table view. (REQUIRED)
 - `display`: Default display. Choose between "grid" or "table". (OPTIONAL; set to "grid" by default)
+- `cache`: Whether to use caching for filter results. Boolean. (OPTIONAL; set to "false" by default)
 
 #### Shortcode Example
 
-`[sfd pod="archive_inventory" grid="Inventory Cards Template" table="Inventory Table Template" display="table"]`
+`[sfd pod="archive_inventory" grid="Inventory Cards Template" table="Inventory Table Template" display="table" cache="true"]`
 
 ### Filter Config
 
@@ -31,10 +32,13 @@ To edit the config, add the pod slug to the config array. In the order that you 
 
 In the future, the config should be editable through a settings page in the admin dashboard.
 
+### Caching
+
+The cache option, if enabled, uses functions from Pods to save the HTML results to the wp_options table. These options are set to expire after 24 hours. However, if object cache is not enabled, install a plugin to automatically clear out expired options. Expired options will sit in the table and take up storage otherwise.
+
 ## To-do
 
 * Create a config page.
 * Sorting options.
-* Cache results.
 * Improve accessibility.
 * Add a search bar.
