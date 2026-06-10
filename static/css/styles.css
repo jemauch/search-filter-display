@@ -32,6 +32,17 @@
     margin-bottom: 0;
 }
 
+.sfd-filter-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.sfd-filter-header > h2 {
+    display: inline-block;
+    margin: 0;
+}
+
 .sfd-fieldset {
     border: 1px solid #d9d9d9; 
     border-radius: 0.3em;
@@ -95,7 +106,7 @@
     margin-left: 0;
 }
 
-.term__disclosure {
+.icon-button {
     border: none;
     padding: 0;
     cursor: pointer;
@@ -177,10 +188,46 @@
     cursor: default;
 }
 
+.sfd-button--link {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+    cursor: pointer;
+    text-decoration: underline;
+
+    background: transparent;
+
+    /* inherit font & color from ancestor */
+    color:  #0056ce;
+    font: inherit;
+
+    /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+    line-height: normal;
+
+    /* Corrects font smoothing for webkit */
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+
+    /* Corrects inability to style clickable `input` types in iOS */
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.sfd-button--link::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+
+.sfd-button--link:-moz-focusring {
+    outline: 1px dotted ButtonText;
+}
+
 .sfd-filter-actions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: end;
+    flex-direction: row-reverse;
     position: sticky;
     bottom: 0;
     background-color: #f7f7f7;
@@ -192,23 +239,31 @@
 }
 
 .sfd-filter-actions__reset {
-    background: #dc3545;
-    border-color: #dc3545;
+    background: #ffffff;
+    border-color: #b3b3b3;
+    flex-grow: 1;
+    color: #1a1a1a;
 }
 
 .sfd-filter-actions__reset:hover {
-    background: #9b212d;
-    border-color: #9b212d;
+    background: #f74949;
+    border-color: #ac2a2a;
+    color: white;
 }
 
 .sfd-filter-actions__submit {
-    background: #3f3f46;
-    border-color: #3f3f46;
+    background: #2683da;
+    border-color: #2683da;
+    flex-grow: 4;
 }
 
 .sfd-filter-actions__submit:hover {
-    background: #19191d;
-    border-color: #19191d;
+    background: #0d66b9;
+    border-color: #0d66b9;
+}
+
+.sfd-filter-actions__spacing {
+    flex-grow: 3;
 }
 
 .sfd-table {
