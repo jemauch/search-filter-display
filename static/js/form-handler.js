@@ -73,64 +73,72 @@ form.addEventListener("submit", (event) => {
  * See SFD_REST_Controller for response
  */
 async function getPosts(filterUpdated = true, p = 1) {
+    try {
+        document.querySelector("#loader").hidden = false;
+        
+        // Updated filter settings
+        if (filterUpdated == true) {
+            formData = new FormData(form);
+        }
 
-    document.querySelector("#loader").hidden = false;
-    
-    // Updated filter settings
-    if (filterUpdated == true) {
-        formData = new FormData(form);
-    }
+        const data = formData;
+        data.set("page", p);
+        data.set("display", display);
+        data.set("cache", sfd.cache);
 
-    const data = formData;
-    data.set("page", p);
-    data.set("display", display);
-    data.set("cache", sfd.cache);
+        // Template names from SFD_Loader
+        data.set("grid", sfd.grid);
+        data.set("table", sfd.table);
 
-    // Template names from SFD_Loader
-    data.set("grid", sfd.grid);
-    data.set("table", sfd.table);
+        // Request
+        const response = await fetch(sfd.endpoint, {
+            method: 'POST',
+            body: data,
+        });
 
-    // Request
-    const response = await fetch(sfd.endpoint, {
-    	method: 'POST',
-    	body: data,
-  	});
+        // Response
+        const res = await response.json();
 
-    // Response
-    const res = await response.json();
+        // Reset current page to 1 if new query
+        if (filterUpdated == true) {
+            page = 1;
+        }
 
-    // Reset current page to 1 if new query
-    if (filterUpdated == true) {
-        page = 1;
-    }
+        // Handle response
+        if (response.ok) {
+            var total = res['total'];
+            var output = res['output'];
 
-    // Handle response
-    if (response.ok) {
-        var total = res['total'];
-        var output = res['output'];
+            pageCount = 1;
+            if (total > 0){
+                pageCount = total / Number(data.get("per-page"));
 
-        pageCount = 1;
-        if (total > 0){
-            pageCount = total / Number(data.get("per-page"));
+                if (pageCount < 1) {
+                    pageCount = 1;
+                }
 
-            if (pageCount < 1) {
-                pageCount = 1;
+                pageCount = Math.ceil(pageCount);
             }
 
-            pageCount = Math.ceil(pageCount);
-        }
+            updatePagination();
 
-        updatePagination();
-
-        document.querySelector("#pagination-page-counter").innerHTML = page + ' / ' + pageCount;
-
-        if (filterUpdated == true) {
+            document.querySelector("#pagination-page-counter").innerHTML = page + ' / ' + pageCount;
             document.querySelector("#total").innerHTML = total + ' items found.';
+            document.querySelector("#output-view").innerHTML = output;
         }
-
-        document.querySelector("#output-view").innerHTML = output;
+        else {
+            // HTTP Response status not within 200-299
+            throw new Error(response.statusText);
+        }
+    }
+    catch (error) {
+        document.querySelector("#total").innerHTML = `There has been an error.`;
+        console.log(error);
+        document.querySelector("#output-view").innerHTML = '';
+    }
+    finally {
         document.querySelector("#loader").hidden = true;
-	}
+    }
 }
 
 function updatePagination() {
