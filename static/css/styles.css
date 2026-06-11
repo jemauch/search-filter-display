@@ -21,7 +21,7 @@
     padding: 10px 10px 0 10px;
     z-index: 1000;
     max-height: 80vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     top: 110%;
     width: min(380px, 100%);
 }
@@ -66,6 +66,7 @@
     border-radius: 0.3em;
     cursor: pointer;
     width: 100%;
+    align-items: center;
 
     padding: 5px;
     transition: 0.4s;
@@ -283,4 +284,8 @@
 .view__output {
     display: flex;
     gap: 2px;
+}
+
+span > svg {
+    display: block;
 }
