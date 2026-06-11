@@ -55,7 +55,7 @@ class SFD_Form {
             $form = $form . $input->build();
         }
 
-        $form = $form . "<div class='sfd-filter-actions'><input class='sfd-filter-actions__submit sfd-button modal-close' type='submit' value='Apply'><input class='sfd-filter-actions__reset sfd-button' type='reset' value='Reset'></div></form></search></div>";
+        $form = $form . "<div class='sfd-filter-actions'><input class='sfd-filter-actions__reset sfd-button' type='reset' value='Reset'><input class='sfd-filter-actions__submit sfd-button modal-close' type='submit' value='Apply'></div></form></search></div>";
 
         $form = $form . "<div class='sfd-view-options'>" . sfd_get_html('per-page') . "<div class='view__output'><button id='table-layout' class='sfd-button'>" . sfd_get_icon('layout-list') . "</button><button id='grid-layout' class='sfd-button'>" . sfd_get_icon('layout-grid') . "</button></div></div></div>";
 

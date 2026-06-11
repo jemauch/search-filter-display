@@ -228,7 +228,7 @@
 .sfd-filter-actions {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row-reverse;
+    flex-direction: row;
     position: sticky;
     bottom: 0;
     background-color: #f7f7f7;
