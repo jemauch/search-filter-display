@@ -53,7 +53,26 @@ class Disclosure {
 }
 
 // init disclosure triggers
-const triggers = document.querySelectorAll('.disclosure-trigger');
-triggers.forEach((disclosureEl) => {
+const disclosures = document.querySelectorAll('.disclosure-trigger');
+disclosures.forEach((disclosureEl) => {
   new Disclosure(disclosureEl);
+});
+
+// init modal
+const modalToggle = document.querySelector('.modal-toggle');
+const modal = new Disclosure(modalToggle);
+
+// Pressing ESC closes modal
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        modal.close();
+    }
+});
+
+// close modal when modalClosers are clicked
+const modalClosers = document.querySelectorAll('.modal-close');
+modalClosers.forEach((triggerEl) => {
+    triggerEl.addEventListener('click', function() {
+        modal.close();
+    });
 });

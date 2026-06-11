@@ -97,14 +97,6 @@ class SFD_Loader {
             'before'
 	    );
 
-        // modal.js
-        wp_enqueue_script(
-            'sfd-modal',
-            SFD_URL . '/static/js/modal.js',
-            array(),
-            filemtime(SFD_DIR . 'static/js/modal.js')
-        );
-
         // styles.css
         wp_enqueue_style(
             'sfd-styles',
