@@ -1,8 +1,42 @@
 const form = document.querySelector("#filters");
 var formData = new FormData(form);
-var page = 1;
+var page = document.querySelector("#page");
+var display = document.querySelector("#display");
 var pageCount = 1;
-var display = sfd.default_display;
+
+const initURL = new URL(window.location.href);
+const initParams = new URLSearchParams(initURL.search);
+var initRun = true;
+
+// console.log(LZString.decompressFromEncodedURIComponent(initParams.get("q")));
+
+// Autofill form from query params
+var prams = new URLSearchParams(LZString.decompressFromEncodedURIComponent(initParams.get("q")));
+prams.forEach((value, key) => {
+    // Set initial page
+    if (key == "page") {
+        page.value = value;
+        return;
+    }
+    // Set initial display
+    if (key == "display") {
+        display.value = value;
+        return;
+    }
+    // Check initial values for checkboxes
+    let v = document.querySelector("input[name='" + key + "'][value='" + value + "']");
+    if (v != null) {
+        v.checked = true;
+    }
+    // Set initial value for select elements
+    v = document.querySelector("select[name='" + key + "']");
+    if (v != null) {
+        v.value = value;
+    }
+});
+// get the length of initParams and put it into the first getPosts() as an arg
+// then the getPosts() function checks the length and gets the initParams and uses that string instead to query
+
 
 jQuery( document ).ready( function( $ ) {
 
@@ -16,45 +50,45 @@ jQuery( document ).ready( function( $ ) {
 
     // Pagination buttons
     $('#pagination-first').bind('click', function() {
-        if (page > 1) {
-            page = 1;
+        if (page.value > 1) {
+            page.value = 1;
             getPosts(false, page);
         }
     });
     
     $('#pagination-previous').bind('click', function() {
-        if (page > 1) {
-            page = --page;
+        if (page.value > 1) {
+            page.value = --page.value;
             getPosts(false, page);
         }
     });
 
     $('#pagination-next').bind('click', function() {
-        if (page < pageCount) {
-            page = ++page;
+        if (page.value < pageCount) {
+            page.value = ++page.value;
             getPosts(false, page);
         }
     });
 
     $('#pagination-last').bind('click', function() {
-        if (page < pageCount) {
-            page = pageCount;
-            getPosts(false, page);
+        if (page.value < pageCount) {
+            page.value = pageCount;
+            getPosts(false, page.value);
         }
     });
 
     // Output layout buttons
     $('#grid-layout').bind('click', function() {
-        if (display != 'grid') {
-            display = 'grid';
-            getPosts(false, page);
+        if (display.value != 'grid') {
+            display.value = 'grid';
+            getPosts(false, page.value);
         }
     });
 
     $('#table-layout').bind('click', function() {
-        if (display != 'table') {
-            display = 'table';
-            getPosts(false, page);
+        if (display.value != 'table') {
+            display.value = 'table';
+            getPosts(false, page.value);
         }
     });
 
@@ -62,7 +96,7 @@ jQuery( document ).ready( function( $ ) {
 
 form.addEventListener("submit", (event) => {
     event.preventDefault();
-    formData = new FormData(form);
+    page.value = 1;
     getPosts();
 });
 
@@ -76,33 +110,37 @@ async function getPosts(filterUpdated = true, p = 1) {
     try {
         document.querySelector("#loader").hidden = false;
         
-        // Updated filter settings
-        if (filterUpdated == true) {
-            formData = new FormData(form);
-        }
+        formData = new FormData(form);
 
         const data = formData;
-        data.set("page", p);
-        data.set("display", display);
         data.set("cache", sfd.cache);
 
         // Template names from SFD_Loader
         data.set("grid", sfd.grid);
         data.set("table", sfd.table);
 
+        let qstr = '';
+
+        if (initParams.size > 0 && initRun == true) {
+            qstr = "/?" + initParams.toString();
+            initRun = false;
+        }
+        else {
+            // Update URL without refreshing the page
+            qstr = new URLSearchParams(data).toString();
+            qstr = LZString.compressToEncodedURIComponent(qstr);
+            qstr = '?q=' + qstr;
+
+            window.history.replaceState({}, "", qstr);
+        }
+
         // Request
-        const response = await fetch(sfd.endpoint, {
-            method: 'POST',
-            body: data,
+        const response = await fetch(sfd.endpoint + qstr, {
+            method: 'GET',
         });
 
         // Response
         const res = await response.json();
-
-        // Reset current page to 1 if new query
-        if (filterUpdated == true) {
-            page = 1;
-        }
 
         // Handle response
         if (response.ok) {
@@ -122,7 +160,7 @@ async function getPosts(filterUpdated = true, p = 1) {
 
             updatePagination();
 
-            document.querySelector("#pagination-page-counter").innerHTML = page + ' / ' + pageCount;
+            document.querySelector("#pagination-page-counter").innerHTML = page.value + ' / ' + pageCount;
             document.querySelector("#total").innerHTML = total + ' items found.';
             document.querySelector("#output-view").innerHTML = output;
         }
@@ -145,11 +183,11 @@ function updatePagination() {
     let first = false;
     let last = false;
 
-    if (page == 1) {
+    if (page.value == 1) {
         first = true;
     }
 
-    if (page == pageCount) {
+    if (page.value == pageCount) {
         last = true;
     }
 

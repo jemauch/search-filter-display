@@ -8,7 +8,7 @@
  * @wordpress-plugin
  * Plugin Name:       Search Filter Display
  * Description:       Heavily customizable search and filtration options per page via WP shortcodes. 
- * Version:           2.2.1
+ * Version:           2.3.0
  * Author:            Ken Stewart
  * Author URI:        https:/kenstewart.ca
  * Text Domain:       search-filter-display
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Current plugin version
-define( 'SFD_VERSION', '2.2.1' );
+define( 'SFD_VERSION', '2.3.0' );
 
 define( 'SFD_URL', plugin_dir_url( __FILE__ ) );
 define( 'SFD_DIR', plugin_dir_path( __FILE__ ) );

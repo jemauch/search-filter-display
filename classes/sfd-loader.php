@@ -62,6 +62,12 @@ class SFD_Loader {
 	 * @since    2.0.0
 	 */
     private function enqueue_scripts() {
+        // lz-string.min.js
+        wp_enqueue_script(
+            'lz-string',
+            SFD_URL . '/static/js/lz-string.min.js',
+        );
+
         // disclosure.js
         wp_enqueue_script(
             'sfd-disclosure',
@@ -74,7 +80,7 @@ class SFD_Loader {
         wp_enqueue_script(
             'sfd-checkboxes',
             SFD_URL . '/static/js/checkboxes.js',
-            ['jquery'],
+            ['jquery', 'lz-string'],
             filemtime(SFD_DIR . 'static/js/checkboxes.js')
         );
 
@@ -91,11 +97,12 @@ class SFD_Loader {
                 endpoint: '$this->endpoint',
                 grid: '$this->grid_template',
                 table: '$this->table_template',
-                default_display: '$this->display',
                 cache: '$this->cache',
             };",
             'before'
 	    );
+
+
 
         // styles.css
         wp_enqueue_style(
@@ -145,7 +152,7 @@ class SFD_Loader {
 	 */
     public function build() {
         $filterConfig = $this->config->get_config($this->pod);
-        $builder = new SFD_Form($filterConfig);
+        $builder = new SFD_Form($filterConfig, $this->display);
 
         return $builder->build();
     }
