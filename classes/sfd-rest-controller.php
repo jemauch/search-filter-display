@@ -1,5 +1,10 @@
 <?php
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * REST API controller class.
  *
@@ -21,7 +26,7 @@ class SFD_REST_Controller {
 	public function register_routes() {
 		register_rest_route( self::$namespace, '/(?P<name>[\w-]+)', array(
 			array(
-				'methods'   => 'POST',
+				'methods'   => 'GET',
 				'callback'  => array( $this, 'get_items' ),
                 'permission_callback' => array( $this, 'get_items_permissions_check' ),
 			),
@@ -55,7 +60,13 @@ class SFD_REST_Controller {
 
 		// Get the values from the request and prepare to query
         $name = $request['name'];
-		$data = $request->get_body_params();
+		$qstr = $request->get_query_params();
+
+		if (array_key_exists('q', $qstr)) {
+			$q = \LZCompressor\LZString::decompressFromEncodedURIComponent($qstr['q']);
+			$q = urldecode($q);
+			parse_str($q, $data);
+		}
         
 		$params = [];
 		$params['limit'] = 25;
@@ -78,7 +89,9 @@ class SFD_REST_Controller {
 		}
 
 		if (array_key_exists('cache', $data)) {
-			$cache = filter_var($data['cache'], FILTER_VALIDATE_BOOLEAN);
+			// Since 2.3.0: ability to cache is disabled for now. Remove in the future if definitively not needed.
+			// $cache = filter_var($data['cache'], FILTER_VALIDATE_BOOLEAN);
+			$cache = false;
 		}
 
 		if (array_key_exists('page', $data)) {

@@ -74,7 +74,7 @@ class SFD_Input_Taxonomy extends SFD_Input {
             $id = $term['term_id'];
             $children = $term['children'];
 
-            $output = $output . "<li class='term-group'><div class='term-group__term'><div class='term__input'><input type='checkbox' class='input__checkbox' name='taxonomy[$this->slug][$id]' id='$id' value='$id'><label class='input__label' for='$id'>$name</label></div>";
+            $output = $output . "<li class='term-group'><div class='term-group__term'><div class='term__input'><input type='checkbox' class='input__checkbox' name='taxonomy[$this->slug][]' id='$id' value='$id'><label class='input__label' for='$id'>$name</label></div>";
             if (!empty($children)) {
                 $output = $output . "<button class='icon-button disclosure-trigger' type='button' aria-expanded='false' aria-controls='$id-children'><span class='sr-only' id='$id-children-accessibility'>$name subtypes</span><div class='disclosure-trigger__plus'>" . sfd_get_icon('gravity-ui--square-plus') . "</div><div class='disclosure-trigger__minus'>" . sfd_get_icon('gravity-ui--square-minus') . "</div></button>";
             }

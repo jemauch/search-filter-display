@@ -37,6 +37,7 @@ class SFD_Init {
         require_once( SFD_DIR . 'includes/shortcode.php' ); // Shortcode function and registration
         require_once( SFD_DIR . 'classes/sfd-loader.php' ); // Loader class to be used by shortcode
         require_once( SFD_DIR . 'classes/sfd-config.php' ); // Config for form
+        require_once( SFD_DIR . 'includes/LZCompressor/index.php' ); // lz-string
     }
 
     /**

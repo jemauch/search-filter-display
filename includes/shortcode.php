@@ -1,5 +1,10 @@
 <?php
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Shortcode support for use anywhere that support WP Shortcodes.
  * Will return empty string on failure.
