@@ -1,199 +1,221 @@
-const form = document.querySelector("#filters");
-var formData = new FormData(form);
-var page = document.querySelector("#page");
-var display = document.querySelector("#display");
-var pageCount = 1;
+class Filter {
 
-const initURL = new URL(window.location.href);
-const initParams = new URLSearchParams(initURL.search);
-var initRun = true;
+    // All changes should be made to the HTML DOM instead of formData.
+    // updateFormData() should be the only place where formData is updated/changed.
+    // The URL search params are created using formData.
+    // When the page is loaded with initial URL search params, the HTML DOM is updated using those search params.
+    #formData;
 
-// console.log(LZString.decompressFromEncodedURIComponent(initParams.get("q")));
+    constructor() {
+        this.form = document.querySelector("#filters");
+        this.loadingIndicator = document.querySelector("#loader");
+        this.perPage = document.querySelector("#per-page");
 
-// Autofill form from query params
-var prams = new URLSearchParams(LZString.decompressFromEncodedURIComponent(initParams.get("q")));
-prams.forEach((value, key) => {
-    // Set initial page
-    if (key == "page") {
-        page.value = value;
-        return;
+        let initParams = new URL(window.location.href).searchParams;
+        this.params = new URLSearchParams(LZString.decompressFromEncodedURIComponent(initParams.get("q")));
+
+        this.endpoint = sfd.endpoint;
+        this.cache = sfd.cache;
+        this.grid = sfd.grid;
+        this.table = sfd.table;
+
+        this.pageCount = 1;
+
+        // Functions to run when page first loads
+        this.autofillForm();
+        this.getPosts();
+        this.addEvents();
     }
-    // Set initial display
-    if (key == "display") {
-        display.value = value;
-        return;
+
+    // Autofill form input on first page load using URL search params
+    autofillForm() {
+        this.params.forEach((value, key) => {
+            // Set current page
+            if (key == "page") {
+                this.page = value;
+                return;
+            }
+            // Set display mode
+            if (key == "display") {
+                document.querySelector("#display").value = value;
+                return;
+            }
+            // Set checked checkboxes and radios
+            let v = document.querySelector("input[name='" + key + "'][value='" + value + "']");
+            if (v != null) {
+                v.checked = true;
+            }
+            // Set select element value
+            v = document.querySelector("select[name='" + key + "']");
+            if (v != null) {
+                v.value = value;
+            }
+            // Set default per page select option
+            if (key == "per-page") {
+                this.perPage.querySelector("option[selected]").removeAttribute("selected");
+                this.perPage.querySelector("option[value='" + value +"']").setAttribute('selected', 'selected');
+            }
+        });
     }
-    // Check initial values for checkboxes
-    let v = document.querySelector("input[name='" + key + "'][value='" + value + "']");
-    if (v != null) {
-        v.checked = true;
+
+    // Update formData, used at the start of getPosts()
+    updateFormData() {
+        this.#formData = new FormData(this.form);
+
+        this.#formData.set("cache", this.cache);
+        this.#formData.set("grid", this.grid);
+        this.#formData.set("table", this.table);
     }
-    // Set initial value for select elements
-    v = document.querySelector("select[name='" + key + "']");
-    if (v != null) {
-        v.value = value;
-    }
-});
-// get the length of initParams and put it into the first getPosts() as an arg
-// then the getPosts() function checks the length and gets the initParams and uses that string instead to query
 
+    // Make request and handle response
+    async getPosts() {
+        try {
+            this.loadingIndicator.hidden = false;
 
-jQuery( document ).ready( function( $ ) {
+            this.updateFormData();
+            
+            let qstr = '';
 
-    // Get posts on initial page load
-    getPosts();
-
-    // Per page selection
-    $('#per-page').bind('change', function() {
-        getPosts();
-    });
-
-    // Pagination buttons
-    $('#pagination-first').bind('click', function() {
-        if (page.value > 1) {
-            page.value = 1;
-            getPosts(false, page);
-        }
-    });
-    
-    $('#pagination-previous').bind('click', function() {
-        if (page.value > 1) {
-            page.value = --page.value;
-            getPosts(false, page);
-        }
-    });
-
-    $('#pagination-next').bind('click', function() {
-        if (page.value < pageCount) {
-            page.value = ++page.value;
-            getPosts(false, page);
-        }
-    });
-
-    $('#pagination-last').bind('click', function() {
-        if (page.value < pageCount) {
-            page.value = pageCount;
-            getPosts(false, page.value);
-        }
-    });
-
-    // Output layout buttons
-    $('#grid-layout').bind('click', function() {
-        if (display.value != 'grid') {
-            display.value = 'grid';
-            getPosts(false, page.value);
-        }
-    });
-
-    $('#table-layout').bind('click', function() {
-        if (display.value != 'table') {
-            display.value = 'table';
-            getPosts(false, page.value);
-        }
-    });
-
-});
-
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    page.value = 1;
-    getPosts();
-});
-
-/** 
- * Function to make and handle a POST request using REST API endpoint.
- * 
- * See SFD_Loader->enqueue_scripts() for request
- * See SFD_REST_Controller for response
- */
-async function getPosts(filterUpdated = true, p = 1) {
-    try {
-        document.querySelector("#loader").hidden = false;
-        
-        formData = new FormData(form);
-
-        const data = formData;
-        data.set("cache", sfd.cache);
-
-        // Template names from SFD_Loader
-        data.set("grid", sfd.grid);
-        data.set("table", sfd.table);
-
-        let qstr = '';
-
-        if (initParams.size > 0 && initRun == true) {
-            qstr = "/?" + initParams.toString();
-            initRun = false;
-        }
-        else {
             // Update URL without refreshing the page
-            qstr = new URLSearchParams(data).toString();
+            qstr = new URLSearchParams(this.#formData).toString();
             qstr = LZString.compressToEncodedURIComponent(qstr);
             qstr = '?q=' + qstr;
 
             window.history.replaceState({}, "", qstr);
-        }
 
-        // Request
-        const response = await fetch(sfd.endpoint + qstr, {
-            method: 'GET',
-        });
+            // Request
+            const response = await fetch(this.endpoint + qstr, {
+                method: 'GET',
+            });
 
-        // Response
-        const res = await response.json();
+            // Response
+            const res = await response.json();
 
-        // Handle response
-        if (response.ok) {
-            var total = res['total'];
-            var output = res['output'];
+            // Handle response
+            if (response.ok) {
+                let total = res['total'];
+                let output = res['output'];
 
-            pageCount = 1;
-            if (total > 0){
-                pageCount = total / Number(data.get("per-page"));
+                this.pageCount = 1;
+                if (total > 0){
+                    this.pageCount = total / Number(this.get("per-page"));
 
-                if (pageCount < 1) {
-                    pageCount = 1;
+                    if (this.pageCount < 1) {
+                        this.pageCount = 1;
+                    }
+
+                    this.pageCount = Math.ceil(this.pageCount);
                 }
 
-                pageCount = Math.ceil(pageCount);
+                this.updatePagination();
+
+                document.querySelector("#pagination-page-counter").innerHTML = this.get("page") + ' / ' + this.pageCount;
+                document.querySelector("#total").innerHTML = total + ' items found.';
+                document.querySelector("#output-view").innerHTML = output;
             }
-
-            updatePagination();
-
-            document.querySelector("#pagination-page-counter").innerHTML = page.value + ' / ' + pageCount;
-            document.querySelector("#total").innerHTML = total + ' items found.';
-            document.querySelector("#output-view").innerHTML = output;
+            else {
+                // HTTP Response status not within 200-299
+                throw new Error(response.statusText);
+            }
         }
-        else {
-            // HTTP Response status not within 200-299
-            throw new Error(response.statusText);
+        catch (error) {
+            document.querySelector("#total").innerHTML = `There has been an error.`;
+            console.log(error);
+            document.querySelector("#output-view").innerHTML = '';
+        }
+        finally {
+            this.loadingIndicator.hidden = true;
         }
     }
-    catch (error) {
-        document.querySelector("#total").innerHTML = `There has been an error.`;
-        console.log(error);
-        document.querySelector("#output-view").innerHTML = '';
+
+    // Check if pagination buttons should be disabled based on the current page and total page count
+    updatePagination() {
+        let first = false;
+        let last = false;
+
+        if (this.get("page") == 1) {
+            first = true;
+        }
+
+        if (this.get("page") == this.pageCount) {
+            last = true;
+        }
+
+        document.querySelector("#pagination-first").disabled = first;
+        document.querySelector("#pagination-previous").disabled = first;
+
+        document.querySelector("#pagination-next").disabled = last;
+        document.querySelector("#pagination-last").disabled = last;
     }
-    finally {
-        document.querySelector("#loader").hidden = true;
+
+    // Shorthand method to get formData values
+    get(k) {
+        return this.#formData.get(k);
+    }
+
+    // Setter method for current page, 
+    set page(v) {
+        document.querySelector("#page").value = v;
+    }
+
+    // Method to add event listeners for input
+    addEvents() {
+        // Submit button
+        this.form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            this.page = 1;
+            this.getPosts();
+        });
+
+        // Per-page input
+        this.perPage.addEventListener("change", (event) => {
+            this.perPage.querySelector("option[selected]").removeAttribute("selected");
+            this.perPage.querySelector("option[value='" + this.perPage.value +"']").setAttribute('selected', 'selected');
+
+            this.page = 1;
+            this.getPosts();
+        });
+
+        // Pagination buttons
+        document.querySelector("#pagination-first").addEventListener("click", (event) => {
+            if (this.get("page") > 1) {
+                this.page = 1;
+                this.getPosts();
+            }
+        });
+        document.querySelector("#pagination-previous").addEventListener("click", (event) => {
+            if (this.get("page") > 1) {
+                this.page = Number(this.get("page")) - 1;
+                this.getPosts();
+            }
+        });
+        document.querySelector("#pagination-next").addEventListener("click", (event) => {
+            if (this.get("page") < this.pageCount) {
+                this.page = Number(this.get("page")) + 1;
+                this.getPosts();
+            }
+        });
+        document.querySelector("#pagination-last").addEventListener("click", (event) => {
+            if (this.get("page") < this.pageCount) {
+                this.page = this.pageCount;
+                this.getPosts();
+            }
+        });
+
+        // Output display buttons
+        document.querySelector("#grid-layout").addEventListener("click", (event) => {
+            if (this.get("display") != 'grid') {
+                document.querySelector("#display").value = 'grid';
+                this.getPosts();
+            }
+        });
+        document.querySelector("#table-layout").addEventListener("click", (event) => {
+            if (this.get("display") != 'table') {
+                document.querySelector("#display").value = 'table';
+                this.getPosts();
+            }
+        });
     }
 }
 
-function updatePagination() {
-    let first = false;
-    let last = false;
-
-    if (page.value == 1) {
-        first = true;
-    }
-
-    if (page.value == pageCount) {
-        last = true;
-    }
-
-    document.querySelector("#pagination-first").disabled = first;
-    document.querySelector("#pagination-previous").disabled = first;
-
-    document.querySelector("#pagination-next").disabled = last;
-    document.querySelector("#pagination-last").disabled = last;
-}
+const instance = new Filter();
