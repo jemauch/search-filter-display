@@ -84,7 +84,9 @@ class SFD_REST_Controller {
 		}
 
 		if (array_key_exists('cache', $data)) {
-			$cache = filter_var($data['cache'], FILTER_VALIDATE_BOOLEAN);
+			// Since 2.3.0: ability to cache is disabled for now. Remove in the future if definitively not needed.
+			// $cache = filter_var($data['cache'], FILTER_VALIDATE_BOOLEAN);
+			$cache = false;
 		}
 
 		if (array_key_exists('page', $data)) {
