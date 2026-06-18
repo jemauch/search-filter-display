@@ -18,7 +18,7 @@ Use the shortcode `[sfd]` with the following shortcode attributes:
 - `grid`: Name of the Pods template to use for the grid view. (REQUIRED)
 - `table`: Name of the Pods template to use for the table view. (REQUIRED)
 - `display`: Default display. Choose between "grid" or "table". (OPTIONAL; set to "grid" by default)
-- `cache`: Whether to use caching for filter results. Boolean. (OPTIONAL; set to "false" by default)
+- `cache`: Whether to use caching for filter results. Boolean. (OPTIONAL; set to "false" by default) (DISABLED IN 2.3.0)
 
 #### Shortcode Example
 
