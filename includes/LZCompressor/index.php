@@ -1,5 +1,10 @@
 <?php
 
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 require_once( SFD_DIR . 'includes/LZCompressor/LZContext.php' );
 require_once( SFD_DIR . 'includes/LZCompressor/LZData.php' );
 require_once( SFD_DIR . 'includes/LZCompressor/LZReverseDictionary.php' );
