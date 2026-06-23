@@ -141,6 +141,25 @@ class SFD_Config {
                     'query' => 'animation_video_conference',
                 ],
             ],
+            'artwork' => [
+                'Artwork Type' => [
+                    'legend' => 'Artwork Type', 
+                    'slug' => 'artwork_category', 
+                    'type' => 'taxonomy',
+                ],
+                'Year' => [
+                    'legend' => 'Year', 
+                    'slug' => 'year', 
+                    'type' => 'year',
+                    'query' => "artwork_exhibition.exhibition_year.meta_value IN ('{VALUE}')",
+                ],
+                'Conference' => [
+                    'legend' => 'Conference', 
+                    'slug' => 'conference', 
+                    'type' => 'conference',
+                    'query' => 'artwork_exhibition.exhibition_conference',
+                ],
+            ],
         ];
 
         $this->orderConfig = [
@@ -149,6 +168,7 @@ class SFD_Config {
             'experience' => 'experience_conference.conference_year.meta_value DESC',
             'learning' => 'learning_conference.conference_year.meta_value DESC',
             'animation_video_pod' => 'animation_video_conference_year DESC',
+            'artwork' => 'artwork_exhibition.exhibition_year.meta_value DESC'
         ];
     }
 
