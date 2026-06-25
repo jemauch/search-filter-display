@@ -53,7 +53,7 @@ class SFD_Config {
                         1 => [
                             'label' => 'Show missing and needed items only',
                             'value' => 'missing',
-                            'query' => "inventory_total_number_of_item.meta_value IN ('1', '0')",
+                            'query' => "inventory_total_number_of_item.meta_value IN ('1', '0') AND NOT (inventory_digital_exclusive.meta_value = '1' AND inventory_digital.meta_value = '1') AND inventory_not_needed.meta_value != '1'",
                             'checked' => false,
                         ],
                     ],
