@@ -76,11 +76,11 @@ class SFD_Input_Taxonomy extends SFD_Input {
 
             $output = $output . "<li class='term-group'><div class='term-group__term'><div class='term__input'><input type='checkbox' class='input__checkbox' name='taxonomy[$this->slug][]' id='$id' value='$id'><label class='input__label' for='$id'>$name</label></div>";
             if (!empty($children)) {
-                $output = $output . "<button class='icon-button disclosure-trigger' type='button' aria-expanded='false' aria-controls='$id-children'><span class='sr-only' id='$id-children-accessibility'>$name subtypes</span><div class='disclosure-trigger__plus'>" . sfd_get_icon('gravity-ui--square-plus') . "</div><div class='disclosure-trigger__minus'>" . sfd_get_icon('gravity-ui--square-minus') . "</div></button>";
+                $output = $output . "<button class='icon-button disclosure-trigger' type='button' aria-expanded='false' aria-controls='children-$id'><span class='sr-only' id='children-$id-accessibility'>$name subtypes</span><div class='disclosure-trigger__plus'>" . sfd_get_icon('gravity-ui--square-plus') . "</div><div class='disclosure-trigger__minus'>" . sfd_get_icon('gravity-ui--square-minus') . "</div></button>";
             }
             $output = $output . "</div>";
             if (!empty($children)) {
-                $output = $output . "<ul class='term-group__children list' id='$id-children' hidden>" . $this->build_options($children) . "</ul>";
+                $output = $output . "<ul class='term-group__children list' id='children-$id' hidden>" . $this->build_options($children) . "</ul>";
             }
             $output = $output . "</li>";
         }
