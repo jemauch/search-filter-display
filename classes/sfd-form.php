@@ -64,7 +64,10 @@ class SFD_Form {
 
         $form .= "<div class='sfd-view-options'>" . sfd_get_html('per-page') . "<div class='view__output'><button id='table-layout' class='sfd-button'>" . sfd_get_icon('layout-list') . "</button><button id='grid-layout' class='sfd-button'>" . sfd_get_icon('layout-grid') . "</button></div></div></div>";
 
-        $form .= "<section><div id='loader' class='loader-wrapper'><div class='loader-wrapper__loader'>" . sfd_get_icon('svg-spinners--bars-rotate-fade') . "<span>Loading...</span></div></div><h3>Results:</h3><output id='total'></output>";
+        $form .= "<section>
+                    <div id='loader' class='loader-wrapper'><div class='loader-wrapper__loader'>" . sfd_get_icon('svg-spinners--bars-rotate-fade') . "<span>Loading...</span></div></div>
+                    <div class='applied-filters'><h3>Applied Filters: </h3><p id='applied-filters__none'>(none)</p><div role='list' id='applied-filters-list' hidden><div role='presentation' id='applied-filters-list__few'></div><div role='presentation' id='applied-filters-list__more' hidden></div></div><button id='applied-filters__disclosure' class='icon-button disclosure-trigger' aria-controls='applied-filters-list__more' aria-expanded='false' hidden><span class='sr-only'>All applied filters</span><div class='disclosure-trigger__plus'>" . sfd_get_icon('gravity-ui--square-plus') . "</div><div class='disclosure-trigger__minus'>" . sfd_get_icon('gravity-ui--square-minus') . "</div></button></div>
+                    <h2>Results:</h2><output id='total'></output>";
         
         $form .= '<div id="output-view"></div></section>';
 

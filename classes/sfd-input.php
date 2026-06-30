@@ -168,7 +168,7 @@ class SFD_Input_Year extends SFD_Input {
         $current_year = (int) date('Y');
         $years = range($current_year, $first_year);
 
-        $output = "<fieldset class='sfd-fieldset'><legend class='sfd-fieldset__legend'>$this->legend</legend><div class='sfd-fieldset__options'><select name='$this->slug' id='$this->slug'><option value='-1'>--View All--</option>";
+        $output = "<fieldset class='sfd-fieldset'><legend class='sfd-fieldset__legend'>$this->legend</legend><div class='sfd-fieldset__options'><select name='$this->slug' id='$this->slug'><option value=''>--View All--</option>";
 
         foreach ($years as $year) {
             $output = $output . "<option value=\"$year\">$year</option>";
@@ -195,7 +195,7 @@ class SFD_Input_Conference extends SFD_Input {
         $output = "<fieldset class='sfd-fieldset'><legend class='sfd-fieldset__legend'>$this->legend</legend><div class='sfd-fieldset__options'>";
         $output = $output . "<div><input type='radio' name='$this->slug' id='siggraph' value='siggraph'><label for='siggraph'>SIGGRAPH</label></div>";
         $output = $output . "<div><input type='radio' name='$this->slug' id='siggraph-asia' value='siggraph-asia'><label for='siggraph-asia'>SIGGRAPH Asia</label></div>";
-        $output = $output . "<div><input type='radio' name='$this->slug' id='both' value='both' checked><label for='both'>Both Conferences</label></div>";
+        $output = $output . "<div><input type='radio' name='$this->slug' id='both' value='' checked><label for='both'>Both Conferences</label></div>";
         $output = $output . "</div></fieldset>";
 
         return $output;

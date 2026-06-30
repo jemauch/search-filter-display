@@ -113,6 +113,7 @@
     cursor: pointer;
     background-color: white;
     font-size: 20px;
+    line-height: 0;
     color: #444;
 }
 
@@ -293,4 +294,21 @@
 
 span > svg {
     display: block;
+}
+
+.applied-filters > *:not([hidden]), #applied-filters-list > div:not([hidden]) {
+    display: inline;
+}
+
+.filter-pill {
+    background-color: #ddd;
+    border: none;
+    color: black;
+    padding: 2px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    border-radius: 16px;
+    font-size: 12px;
 }
