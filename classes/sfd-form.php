@@ -51,34 +51,88 @@ class SFD_Form {
      * @return string   HTML output.
 	 */
     public function build() {
-        $form = "<div class='filter-toolbar'><div class='sfd-filter'><button class='sfd-filter__button modal-toggle sfd-button' aria-expanded='false' aria-controls='sfd-filter-card'>" . sfd_get_icon('filter-funnel') . "Filters</button><search class='sfd-filter__card' id='sfd-filter-card' hidden><form id='filters' class='sfd-filter-form'>
-                    <div class='sfd-filter-header'><h2>Filters</h2><button class='icon-button modal-close' type='button'><span class='sr-only'>Close</span>" . sfd_get_icon('gravity-ui--xmark') . "</button></div>";
+        ob_start();
+        ?>
 
-        foreach ($this->filters as $input) {
-            $form .= $input->build();
-        }
+        <div class="filter-toolbar">
+            <div class="sfd-filter">
+                <button class="sfd-filter__button modal-toggle sfd-button" aria-expanded="false" aria-controls="sfd-filter-card"><?php echo sfd_get_icon('filter-funnel') ?>Filters</button>
+                <search class="sfd-filter__card" id="sfd-filter-card" hidden>
+                    <form id="filters" class="sfd-filter-form">
 
-        $form .= "<input type='hidden' id='page' name='page' value='1'>";
-        $form .= "<input type='hidden' id='display' name='display' value='" . $this->display . "'>";
-        $form .= "<div class='sfd-filter-actions'><input class='sfd-filter-actions__reset sfd-button' type='reset' value='Reset'><input class='sfd-filter-actions__submit sfd-button modal-close' type='submit' value='Apply'></div></form></search></div>";
+                        <div class="sfd-filter-header">
+                            <h2>Filters</h2>
+                            <button class="icon-button modal-close" type="button"><span class="sr-only">Close</span><?php echo sfd_get_icon('gravity-ui--xmark') ?></button>
+                        </div>
 
-        $form .= "<div class='sfd-view-options'>" . sfd_get_html('per-page') . "<div class='view__output'><button id='table-layout' class='sfd-button'>" . sfd_get_icon('layout-list') . "</button><button id='grid-layout' class='sfd-button'>" . sfd_get_icon('layout-grid') . "</button></div></div></div>";
+                        <?php
+                        // Build HTML for each form input
+                        foreach ($this->filters as $input) {
+                            echo $input->build();
+                        }
+                        ?>
+                        
+                        <input type="hidden" id="page" name="page" value="1">
+                        <input type="hidden" id="display" name="display" value="<?php echo $this->display ?>">
 
-        $form .= "<section>
-                    <div id='loader' class='loader-wrapper'><div class='loader-wrapper__loader'>" . sfd_get_icon('svg-spinners--bars-rotate-fade') . "<span>Loading...</span></div></div>
-                    <div class='applied-filters'><h3>Applied Filters: </h3><p id='applied-filters__none'>(none)</p><div role='list' id='applied-filters-list' hidden><div role='presentation' id='applied-filters-list__few'></div><div role='presentation' id='applied-filters-list__more' hidden></div></div><button id='applied-filters__disclosure' class='icon-button disclosure-trigger' aria-controls='applied-filters-list__more' aria-expanded='false' hidden><span class='sr-only'>All applied filters</span><div class='disclosure-trigger__plus'>" . sfd_get_icon('gravity-ui--square-plus') . "</div><div class='disclosure-trigger__minus'>" . sfd_get_icon('gravity-ui--square-minus') . "</div></button></div>
-                    <h2>Results:</h2><output id='total'></output>";
-        
-        $form .= '<div id="output-view"></div></section>';
+                        <div class="sfd-filter-actions">
+                            <input class="sfd-filter-actions__reset sfd-button" type="reset" value="Reset">
+                            <input class="sfd-filter-actions__submit sfd-button modal-close" type="submit" value="Apply">
+                        </div>
 
-        $form .= "<nav class='filter-nav' aria-label='pagination'><ul class='filter-pagination list'>
-        <li class='filter-pagination__item'><button class='filter-pagination-button sfd-button' id='pagination-first'>" . sfd_get_icon('push-chevron-left') . "</button></li>
-        <li class='filter-pagination__item'><button class='filter-pagination-button sfd-button' id='pagination-previous'>" . sfd_get_icon('chevron-left') . "</button></li>
-        <li class='filter-pagination__item'><span id='pagination-page-counter'> 1 / 1 </span></li>
-        <li class='filter-pagination__item'><button class='filter-pagination-button sfd-button' id='pagination-next'>" . sfd_get_icon('chevron-right') . "</button></li>
-        <li class='filter-pagination__item'><button class='filter-pagination-button sfd-button' id='pagination-last'>" . sfd_get_icon('push-chevron-right') . "</button></li>
-        </ul></nav>";
+                    </form>
+                </search>
+            </div>
 
-        return $form;
+            <div class="sfd-view-options">
+                <div class="view__per-page">
+                    <label for="per-page">Items per page:</label>
+                    <select name="per-page" id="per-page" form="filters">
+                        <option value="100" selected>100</option>
+                        <option value="75">75</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+
+                <div class="view__output">
+                    <button id="table-layout" class="sfd-button"><?php echo sfd_get_icon('layout-list') ?></button>
+                    <button id="grid-layout" class="sfd-button"><?php echo sfd_get_icon('layout-grid') ?></button>
+                </div>
+            </div>
+        </div>
+
+        <section>
+            <div id="loader" class="loader-wrapper">
+                <div class="loader-wrapper__loader"><?php echo sfd_get_icon('svg-spinners--bars-rotate-fade') ?><span>Loading...</span></div>
+            </div>
+
+            <div class="applied-filters">
+                <h3>Applied Filters: </h3>
+                <p id="applied-filters__none" class="applied-filters__total">(none)</p>
+                <details id="applied-filters__selected" open>
+                    <summary class="applied-filters__total sfd-button--link"><span id="applied-filters__num"></span> Total</summary>
+                    <ul id="applied-filters-list" class="applied-filters-list"></ul>
+                </details>
+            </div>
+
+            <h2>Results:</h2>
+            <output id="total"></output>
+            <div id="output-view"></div>
+        </section>
+
+        <nav class="filter-nav" aria-label="pagination">
+            <ul class="filter-pagination list">
+                <li class="filter-pagination__item"><button class="filter-pagination-button sfd-button" id="pagination-first"><?php echo sfd_get_icon('push-chevron-left') ?></button></li>
+                <li class="filter-pagination__item"><button class="filter-pagination-button sfd-button" id="pagination-previous"><?php echo sfd_get_icon('chevron-left') ?></button></li>
+                <li class="filter-pagination__item"><span id="pagination-page-counter"> 1 / 1 </span></li>
+                <li class="filter-pagination__item"><button class="filter-pagination-button sfd-button" id="pagination-next"><?php echo sfd_get_icon('chevron-right') ?></button></li>
+                <li class="filter-pagination__item"><button class="filter-pagination-button sfd-button" id="pagination-last"><?php echo sfd_get_icon('push-chevron-right') ?></button></li>
+            </ul>
+        </nav>
+
+        <?php
+        return ob_get_clean();
     }
 }

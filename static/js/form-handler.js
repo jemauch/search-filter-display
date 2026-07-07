@@ -63,50 +63,46 @@ class Filter {
         this.#formData = new FormData(this.form);
 
         // Show number of filters selected
-        let selectedFilters = [];
+        let selectedFiltersDisclosure = document.querySelector("#applied-filters__selected");
+        let selectedFilters = document.querySelector("#applied-filters-list");
+        let numSelected = document.querySelector("#applied-filters__num");
+        let noneSelected = document.querySelector("#applied-filters__none");
+        //let disclosure = document.querySelector("#applied-filters__disclosure");
 
-        document.querySelector("#applied-filters__disclosure").setAttribute("hidden", "");
-        let fewSelected = document.querySelector("#applied-filters-list__few");
-        let moreSelected = document.querySelector("#applied-filters-list__more");
-
-        fewSelected.innerHTML = "";
-        moreSelected.innerHTML = "";
+        //disclosure.setAttribute("hidden", "");
+        selectedFiltersDisclosure.setAttribute("hidden", "");
+        selectedFilters.innerHTML = '';
 
         for (const pair of this.#formData.entries()) {
             // Exclude empty string values (defaults), page, display, and per-page.
             // Include if year or if checkbox without children
-            if (pair[1] !== '' && pair[0] !== 'page' && pair[0] !== 'display' && pair[0] !== 'per-page' && (pair[0] === 'year' || this.form.querySelector("#children-" + pair[1]) == null)) {
-                let selectedValue = document.createElement("div");
-                selectedValue.setAttribute("role", "listitem");
+            if (pair[1] !== '' && pair[0] !== 'page' && pair[0] !== 'display' && pair[0] !== 'per-page') {
+                let selectedValue = document.createElement("li");
                 selectedValue.classList.add("filter-pill");
 
                 if (pair[0] === 'year') {
                     selectedValue.textContent = pair[1];
                 }
-                else if (this.form.querySelector("#children-" + pair[1]) == null) {
+                else {
                     selectedValue.textContent = this.form.querySelector("label[for='" + pair[1] +"']").textContent;
                 }
 
-                selectedFilters.push(selectedValue);
+                selectedFilters.appendChild(selectedValue);
             }
         }
 
-        if (selectedFilters.length > 0) {
-            document.querySelector("#applied-filters__none").setAttribute("hidden", "");
-            document.querySelector("#applied-filters-list").removeAttribute("hidden");
+        if (selectedFilters.childElementCount > 0) {
+            selectedFiltersDisclosure.removeAttribute("hidden");
+            noneSelected.setAttribute("hidden", "");
+            //numSelected.removeAttribute("hidden");
+            //disclosure.removeAttribute("hidden");
+
+            let numFilters = selectedFilters.childElementCount;
+            numSelected.textContent = numFilters;
         }
         else {
-            document.querySelector("#applied-filters__none").removeAttribute("hidden");
-            document.querySelector("#applied-filters-list").setAttribute("hidden", "");
+            noneSelected.removeAttribute("hidden");
         }
-        if (selectedFilters.length > 10) {
-            document.querySelector("#applied-filters__disclosure").removeAttribute("hidden");
-            let moreSelectedFilters = selectedFilters.splice(5);
-            
-            moreSelected.append(...moreSelectedFilters);
-        }
-
-        fewSelected.append(...selectedFilters);
 
         this.#formData.set("cache", this.cache);
         this.#formData.set("grid", this.grid);

@@ -296,8 +296,22 @@ span > svg {
     display: block;
 }
 
-.applied-filters > *:not([hidden]), #applied-filters-list > div:not([hidden]) {
-    display: inline;
+.applied-filters {
+    border-bottom: 1px solid #bbbbbb;
+    padding: 5px 0;
+}
+
+.applied-filters > :is(h3, p) {
+    margin: 0;
+}
+
+.applied-filters__total {
+    color: #7f7f7f;
+}
+
+.applied-filters-list {
+    padding-left: 0;
+    margin: 5px 0;
 }
 
 .filter-pill {
@@ -311,4 +325,8 @@ span > svg {
     margin: 4px 2px;
     border-radius: 16px;
     font-size: 12px;
+}
+
+h2 {
+    margin: 5px 0;
 }
