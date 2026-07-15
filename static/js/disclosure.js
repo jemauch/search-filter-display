@@ -18,6 +18,28 @@ class Disclosure {
 
     // add event listeners
     this.buttonEl.addEventListener('click', this.onButtonClick.bind(this));
+
+    // allow non-buttons to be toggled with enter and spacebar
+    if (this.buttonEl.tagName !== "BUTTON") {
+      // by default, buttons are opened with space on keyup and enter on keydown. replicating this
+      this.buttonEl.addEventListener('keyup', e => { 
+        if (e.key === " ") {
+          e.preventDefault();
+          this.toggle(!this.open);
+        }
+      });
+
+      this.buttonEl.addEventListener('keydown', e => { 
+        if (e.key === " ") {
+          e.preventDefault();
+        }
+
+        if (e.key === "Enter") {
+          e.preventDefault();
+          this.toggle(!this.open);
+        }
+      });
+    }
   }
 
   onButtonClick() {
