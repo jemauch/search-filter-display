@@ -10,6 +10,7 @@ class Filter {
         this.form = document.querySelector("#filters");
         this.loadingIndicator = document.querySelector("#loader");
         this.perPage = document.querySelector("#per-page");
+        this.sort = document.querySelector("#sort");
 
         let initParams = new URL(window.location.href).searchParams;
         this.params = new URLSearchParams(LZString.decompressFromEncodedURIComponent(initParams.get("q")));
@@ -73,10 +74,11 @@ class Filter {
         selectedFiltersDisclosure.setAttribute("hidden", "");
         selectedFilters.innerHTML = '';
 
+        // Display selected filter options
         for (const pair of this.#formData.entries()) {
-            // Exclude empty string values (defaults), page, display, and per-page.
-            // Include if year or if checkbox without children
-            if (pair[1] !== '' && pair[0] !== 'page' && pair[0] !== 'display' && pair[0] !== 'per-page') {
+            // Exclude empty string values (defaults), current page num, display option, per-page num, and sort option.
+            // Include if year or if checkbox without children.
+            if (pair[1] !== '' && pair[0] !== 'page' && pair[0] !== 'display' && pair[0] !== 'per-page' && pair[0] !== 'sort') {
                 let selectedValue = document.createElement("li");
                 selectedValue.classList.add("filter-pill");
 
@@ -215,6 +217,14 @@ class Filter {
             this.perPage.querySelector("option[value='" + this.perPage.value +"']").setAttribute('selected', 'selected');
 
             this.page = 1;
+            this.getPosts();
+        });
+
+        // Sort input
+        this.sort.addEventListener("change", (event) => {
+            this.sort.querySelector("option[selected]").removeAttribute("selected");
+            this.sort.querySelector("option[value='" + this.sort.value +"']").setAttribute('selected', 'selected');
+
             this.getPosts();
         });
 

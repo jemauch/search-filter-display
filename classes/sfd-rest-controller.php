@@ -74,6 +74,7 @@ class SFD_REST_Controller {
 		$display = 'grid';
 		$grid_template = '';
 		$table_template = '';
+		$sort_option = '';
 		$cache = false;
 
 		if (array_key_exists('display', $data)) {
@@ -102,12 +103,15 @@ class SFD_REST_Controller {
 			$params['limit'] = $data['per-page'];
 		}
 
+		if (array_key_exists('sort', $data)) {
+			$sort_option = $data['sort'];
+		}
+
 		// Get associated query values for input types
 		$queries = $this->config->get_queries($name);
 
 		// Get orderby parameter
-		// TODO: Ability to change between ASC and DESC
-		$params['orderby'] = $this->config->get_order_config($name);
+		$params['orderby'] = $this->config->get_order_config($name, $sort_option);
 
 		// Taxonomy query builder
 		if (array_key_exists('taxonomy', $data)) {
