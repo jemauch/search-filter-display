@@ -163,7 +163,7 @@ class SFD_Config {
         ];
 
         $this->orderConfig = [
-            'archive_inventory' => 'inventory_year.meta_value DESC, inventory_volume.meta_value ASC, CAST(inventory_number.meta_value AS int) ASC, inventory_number.meta_value ASC',
+            'archive_inventory' => 'inventory_year.meta_value DESC, inventory_volume.meta_value DESC, CAST(inventory_number.meta_value AS int) DESC, inventory_number.meta_value DESC',
             'award' => 'award_year DESC',
             'experience' => 'experience_conference.conference_year.meta_value DESC',
             'learning' => 'learning_conference.conference_year.meta_value DESC',
