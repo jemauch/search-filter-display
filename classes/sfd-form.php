@@ -82,19 +82,22 @@ class SFD_Form {
 
                     </form>
                 </search>
+
+                <input class="sfd-filter__search" type="search" placeholder="Search by title">
             </div>
 
             <div class="sfd-view-options">
-                <div class="view__per-page">
-                    <label for="per-page">Items per page:</label>
-                    <select name="per-page" id="per-page" form="filters">
-                        <option value="100" selected>100</option>
-                        <option value="75">75</option>
-                        <option value="50">50</option>
-                        <option value="25">25</option>
-                        <option value="10">10</option>
+                <div class="view__sort">
+                    <label for="sort" class="sfd-label--small">Sort:</label>
+                    <select name="sort" id="sort" form="filters">
+                            <option value="yearASC">Year (Ascending)</option>
+                            <option value="yearDESC" selected>Year (Descending)</option>
+                            <option value="titleASC">Title (Ascending)</option>
+                            <option value="titleDESC">Title (Descending)</option>
                     </select>
                 </div>
+
+                
 
                 <div class="view__output">
                     <button id="table-layout" class="sfd-button"><?php echo sfd_get_icon('layout-list') ?></button>
@@ -118,7 +121,20 @@ class SFD_Form {
             </div>
 
             <h2>Results:</h2>
-            <output id="total"></output>
+            <div class="result-nums">
+                <output id="total"></output>
+
+                <div class="view__per-page">
+                    <label for="per-page" class="sfd-label--small">Per page:</label>
+                    <select name="per-page" id="per-page" form="filters">
+                        <option value="100" selected>100</option>
+                        <option value="75">75</option>
+                        <option value="50">50</option>
+                        <option value="25">25</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
             <div id="output-view"></div>
         </section>
 
