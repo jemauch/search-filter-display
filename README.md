@@ -35,10 +35,3 @@ In the future, the config should be editable through a settings page in the admi
 ### Caching
 
 The cache option, if enabled, uses functions from Pods to save the HTML results to the wp_options table. These options are set to expire after 24 hours. However, if object cache is not enabled, install a plugin to automatically clear out expired options. Expired options will sit in the table and take up storage otherwise.
-
-## To-do
-
-* Create a config page.
-* Sorting options.
-* Improve accessibility.
-* Add a search bar.
