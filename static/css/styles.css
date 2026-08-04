@@ -10,7 +10,7 @@
     top: 0;
     background-color: white;
     z-index: 100000;
-    gap: 0 15px;
+    gap: 5px 15px;
 }
 
 .sfd-filter {
@@ -280,10 +280,10 @@
     flex-grow: 3;
 }
 
-.sfd-filter__search {
+.search__input {
+    border: none;
     flex-grow: 1;
-    border-radius: 5px;
-    display: none;  /* TODO: Remove this rule when search is implemented. */
+    outline: none;
 }
 
 .sfd-table {
@@ -363,15 +363,33 @@ select {
     font-size: 0.7rem;
 }
 
+.sfd-filter__search {
+    flex-grow: 0.2;
+    display: flex;
+    border: 1px solid black;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.sfd-filter__search:focus-within {
+    outline: #2da4ff 1px solid;
+}
+
+.search__submit {
+    padding: 5px;
+}
+
 @media (width <= 600px) {
-  /* TODO: Implement when search bar is implemented.
   .filter-toolbar {
     flex-direction: column;
     align-items: initial;
   }
-    */
-
+   
   .sfd-filter__card {
     top: 60%;
+  }
+
+  .sfd-filter__search {
+    flex-grow: 1;
   }
 }

@@ -41,6 +41,10 @@ class Filter {
                 document.querySelector("#display").value = value;
                 return;
             }
+            // Set search input
+            if (key == "search") {
+                document.querySelector("#search").value = value;
+            }
             // Set checked checkboxes and radios
             let v = document.querySelector("input[name='" + key + "'][value='" + value + "']");
             if (v != null) {
@@ -78,7 +82,7 @@ class Filter {
         for (const pair of this.#formData.entries()) {
             // Exclude empty string values (defaults), current page num, display option, per-page num, and sort option.
             // Include if year or if checkbox without children.
-            if (pair[1] !== '' && pair[0] !== 'page' && pair[0] !== 'display' && pair[0] !== 'per-page' && pair[0] !== 'sort') {
+            if (pair[1] !== '' && pair[0] !== 'page' && pair[0] !== 'display' && pair[0] !== 'per-page' && pair[0] !== 'sort' && pair[0] !== 'search') {
                 let selectedValue = document.createElement("li");
                 selectedValue.classList.add("filter-pill");
 

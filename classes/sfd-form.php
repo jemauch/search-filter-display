@@ -83,7 +83,10 @@ class SFD_Form {
                     </form>
                 </search>
 
-                <input class="sfd-filter__search" type="search" placeholder="Search by title">
+                <div class="sfd-filter__search">
+                    <input id="search" name="search" class="search__input" type="search" form="filters" placeholder="Search by title">
+                    <input id="search-submit" name="search-submit" class="search__submit" type="image" src="<?php echo esc_url( SFD_URL ); ?>static/svg/codex--search.svg" alt="Submit Search" form="filters">
+                </div>
             </div>
 
             <div class="sfd-view-options">
