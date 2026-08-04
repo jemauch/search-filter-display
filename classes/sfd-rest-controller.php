@@ -76,6 +76,7 @@ class SFD_REST_Controller {
 		$table_template = '';
 		$sort_option = '';
 		$cache = false;
+		$search = '';
 
 		if (array_key_exists('display', $data)) {
 			$display = $data['display'];
@@ -105,6 +106,10 @@ class SFD_REST_Controller {
 
 		if (array_key_exists('sort', $data)) {
 			$sort_option = $data['sort'];
+		}
+
+		if (array_key_exists('search', $data)) {
+			$search = sanitize_text_field($data['search']);
 		}
 
 		// Get associated query values for input types
@@ -148,6 +153,11 @@ class SFD_REST_Controller {
 					$where[] = $queries['checkbox'][$input];
 				}
 			}
+		}
+
+		// Search title query builder
+		if ( !empty($search) ) {
+			$where[] = "post_title LIKE '%$search%'";
 		}
 
 		// Build query string for 'where' parameter
