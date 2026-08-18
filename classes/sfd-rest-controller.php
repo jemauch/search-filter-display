@@ -157,7 +157,7 @@ class SFD_REST_Controller {
 
 		// Search title query builder
 		if ( !empty($search) ) {
-			$where[] = "post_title LIKE '%$search%'";
+			$where[] = "t.post_title LIKE '%$search%'";
 		}
 
 		// Build query string for 'where' parameter
