@@ -160,6 +160,44 @@ class SFD_Config {
                     'query' => 'artwork_exhibition.exhibition_conference',
                 ],
             ],
+            'publication' => [
+                'Publication Type' => [
+                    'legend' => 'Publication Type', 
+                    'slug' => 'publication_type', 
+                    'type' => 'taxonomy',
+                ],
+                'Year' => [
+                    'legend' => 'Year', 
+                    'slug' => 'year', 
+                    'type' => 'year',
+                    'query' => "publication_year.meta_value IN ('{VALUE}')",
+                ],
+                'Conference' => [
+                    'legend' => 'Conference', 
+                    'slug' => 'conference', 
+                    'type' => 'conference',
+                    'query' => 'publication_conference',
+                ],
+            ],
+            'collectible' => [
+                'Collectible Type' => [
+                    'legend' => 'Collectible Type', 
+                    'slug' => 'collectible_type', 
+                    'type' => 'taxonomy',
+                ],
+                'Year' => [
+                    'legend' => 'Year', 
+                    'slug' => 'year', 
+                    'type' => 'year',
+                    'query' => "collectible_year.meta_value LIKE '%{VALUE}%'",
+                ],
+                'Conference' => [
+                    'legend' => 'Conference', 
+                    'slug' => 'conference', 
+                    'type' => 'conference',
+                    'query' => 'collectible_conference',
+                ],
+            ],
         ];
 
         $this->orderConfig = [
@@ -198,6 +236,18 @@ class SFD_Config {
                 'yearDESC' => 'artwork_exhibition.exhibition_year.meta_value DESC',
                 'titleASC' => 'artwork_title ASC',
                 'titleDESC' => 'artwork_title DESC',
+            ],
+            'publication' => [
+                'yearASC' => 'publication_year.meta_value ASC, publication_volume.meta_value ASC, publication_number.meta_value ASC',
+                'yearDESC' => 'publication_year.meta_value DESC, publication_volume.meta_value DESC, publication_number.meta_value DESC',
+                'titleASC' => 'publication_title.meta_value ASC, publication_subtitle.meta_value ASC',
+                'titleDESC' => 'publication_title.meta_value DESC, publication_subtitle.meta_value DESC',
+            ],
+            'collectible' => [
+                'yearASC' => 'collectible_year ASC',
+                'yearDESC' => 'collectible_year DESC',
+                'titleASC' => 'collectible_name ASC',
+                'titleDESC' => 'collectible_name DESC',
             ],
         ];
     }
