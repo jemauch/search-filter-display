@@ -220,8 +220,8 @@ class SFD_Config {
                 'titleDESC' => 'experience_title DESC',
             ],
             'learning' => [
-                'yearASC' => 'learning_conference.conference_year.meta_value ASC',
-                'yearDESC' => 'learning_conference.conference_year.meta_value DESC',
+                'yearASC' => 'learning_conference.conference_year.meta_value ASC, CAST(learning_entry_number.meta_value AS int) ASC, learning_entry_number.meta_value ASC',
+                'yearDESC' => 'learning_conference.conference_year.meta_value DESC, CAST(learning_entry_number.meta_value AS int) DESC, learning_entry_number.meta_value DESC',
                 'titleASC' => 'learning_title ASC',
                 'titleDESC' => 'learning_title DESC',
             ],
